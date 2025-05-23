@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Message } from '$lib/types';
+	import type { Message } from '$lib/types'
 
 	let formState = $state({
 		model: 'gpt-4',
@@ -12,17 +12,16 @@
 		summary: '',
 		suggestedReplies: [],
 		loading: false
-	});
+	})
 
 	let hasMoreContext = $derived(formState.additionalContext.trim().length > 0)
 
-const { data } = $props();
+const { data } = $props()
 
 // Initialize formState.messages from server data
 if (data && 'messages' in data && Array.isArray(data.messages)) {
-  formState.messages = data.messages;
+  formState.messages = data.messages
 }
-
 
 </script>
 

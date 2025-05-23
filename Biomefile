@@ -1,6 +1,0 @@
-{
-  "name": "meet-svelte",
-  "formatter": {
-    "semicolons": "asNeeded"
-  }
-}
