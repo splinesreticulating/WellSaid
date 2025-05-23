@@ -23,6 +23,18 @@ if (data && 'messages' in data && Array.isArray(data.messages)) {
   formState.messages = data.messages
 }
 
+async function getMessages() {
+	// trigger server action: load messages
+	// this function takes a start date and an end date which should be calculated based on the lookBackHours
+	const startDate = new Date()
+	startDate.setHours(startDate.getHours() - parseInt(formState.lookBackHours))
+	const res = await fetch(`/api/messages?start=${encodeURIComponent(startDate.toISOString())}&end=${encodeURIComponent(new Date().toISOString())}`);
+	const data = await res.json();
+	if (data && 'messages' in data && Array.isArray(data.messages)) {
+		formState.messages = data.messages;
+	}
+}
+
 </script>
 
 <h1>Well Said</h1>
@@ -34,7 +46,7 @@ if (data && 'messages' in data && Array.isArray(data.messages)) {
 	<form>
 		<div class="timeframe-controls">
 			<label for="window-back">summarize the last:</label>
-			<select id="window-back" name="window-back" bind:value={formState.lookBackHours}>
+			<select id="window-back" name="window-back" bind:value={formState.lookBackHours} oninput={getMessages}>
 				<option value="1">hour</option>
 				<option value="2">2 hours</option>
 				<option value="3">3 hours</option>
