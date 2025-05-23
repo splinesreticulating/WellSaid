@@ -24,15 +24,22 @@ if (data && 'messages' in data && Array.isArray(data.messages)) {
 }
 
 async function getMessages() {
-	// trigger server action: load messages
-	// this function takes a start date and an end date which should be calculated based on the lookBackHours
-	const startDate = new Date()
-	startDate.setHours(startDate.getHours() - parseInt(formState.lookBackHours))
-	const res = await fetch(`/api/messages?start=${encodeURIComponent(startDate.toISOString())}&end=${encodeURIComponent(new Date().toISOString())}`);
+	const end = new Date();
+	const start = new Date(end.getTime() - parseInt(formState.lookBackHours) * 60 * 60 * 1000);
+	const res = await fetch(`/api/messages?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`);
 	const data = await res.json();
 	if (data && 'messages' in data && Array.isArray(data.messages)) {
 		formState.messages = data.messages;
 	}
+}
+
+// Update messages when lookBackHours changes (on mount and whenever it changes)
+$effect(() => {
+  getMessages();
+});
+
+function handleSubmit(event: Event) {
+  event.preventDefault();
 }
 
 </script>
@@ -43,10 +50,10 @@ async function getMessages() {
 <details>{JSON.stringify({formState})}</details>
 
 <div class="content-container">
-	<form>
+	<form onsubmit={handleSubmit}>
 		<div class="timeframe-controls">
 			<label for="window-back">summarize the last:</label>
-			<select id="window-back" name="window-back" bind:value={formState.lookBackHours} oninput={getMessages}>
+			<select id="window-back" name="window-back" bind:value={formState.lookBackHours} onchange={getMessages}>
 				<option value="1">hour</option>
 				<option value="2">2 hours</option>
 				<option value="3">3 hours</option>
@@ -56,7 +63,6 @@ async function getMessages() {
 				<option value="12">12 hours</option>
 				<option value="24">24 hours</option>
 			</select>
-			<button id="go-btn">go</button>
 		</div>
 		<details id="context-details" open={false}>
 			<summary>add more context</summary>
@@ -136,15 +142,7 @@ async function getMessages() {
 		padding: 1rem;
 	}
 
-	button {
-		background: var(--primary);
-		color: white;
-		border: none;
-		padding: 0.75rem 1.5rem;
-		font-weight: 500;
-		cursor: pointer;
-		transition: var(--standard-transition);
-	}
+	
 
 	details {
 		text-align: left;
