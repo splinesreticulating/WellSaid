@@ -4,7 +4,7 @@
 	let formState = $state({
 		model: 'gpt-4',
 		systemPrompt: 'You are a helpful assistant.',
-		lookBackHours: "24",
+		lookBackHours: "1",
 		messages: [] as Message[],
 		additionalContext: '',
 		userQuery: '',
