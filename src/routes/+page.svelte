@@ -16,13 +16,9 @@
 
 	let hasMoreContext = $derived(formState.additionalContext.trim().length > 0)
 
-// Server-side logic moved to +page.server.ts
-// Messages are now loaded via the SvelteKit load function.
-
-// SvelteKit 5: Access server data via the `data` prop.
 const { data } = $props();
 
-// Optionally, initialize formState.messages from server data
+// Initialize formState.messages from server data
 if (data && 'messages' in data && Array.isArray(data.messages)) {
   formState.messages = data.messages;
 }
@@ -32,6 +28,7 @@ if (data && 'messages' in data && Array.isArray(data.messages)) {
 
 <h1>Well Said</h1>
 <p><i>Empathy. Upgraded.</i></p>
+
 <details>{JSON.stringify({formState})}</details>
 
 <div class="content-container">
