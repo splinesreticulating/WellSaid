@@ -1,9 +1,11 @@
 <script lang="ts">
+	import type { Message } from '$lib/types';
+
 	let formState = $state({
 		model: 'gpt-4',
 		systemPrompt: 'You are a helpful assistant.',
-		lookBackHours: 24,
-		messages: [],
+		lookBackHours: "24",
+		messages: [] as Message[],
 		additionalContext: '',
 		userQuery: '',
 		tone: 'gentle',
@@ -13,6 +15,19 @@
 	});
 
 	let hasMoreContext = $derived(formState.additionalContext.trim().length > 0)
+
+// Server-side logic moved to +page.server.ts
+// Messages are now loaded via the SvelteKit load function.
+
+// SvelteKit 5: Access server data via the `data` prop.
+const { data } = $props();
+
+// Optionally, initialize formState.messages from server data
+if (data && 'messages' in data && Array.isArray(data.messages)) {
+  formState.messages = data.messages;
+}
+
+
 </script>
 
 <h1>Well Said</h1>
@@ -32,8 +47,6 @@
 				<option value="6">6 hours</option>
 				<option value="12">12 hours</option>
 				<option value="24">24 hours</option>
-				<!-- always set it to the value of formState.lookBackHours -->
-				<option value={formState.lookBackHours}>{formState.lookBackHours} hours</option>
 			</select>
 			<button id="go-btn">go</button>
 		</div>
