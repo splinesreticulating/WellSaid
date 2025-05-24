@@ -18,7 +18,8 @@
     "formatter": {
         "enabled": true,
         "indentStyle": "space",
-        "indentWidth": 4
+        "indentWidth": 4,
+        "lineWidth": 80
     },
     "organizeImports": {
         "enabled": true
@@ -42,7 +43,8 @@
             "include": ["**/*.svelte"],
             "javascript": {
                 "formatter": {
-                    "semicolons": "asNeeded"
+                    "semicolons": "asNeeded",
+                    "lineWidth": 80
                 }
             }
         }
