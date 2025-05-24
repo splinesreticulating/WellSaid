@@ -56,7 +56,10 @@
 		// Simulate a delay to mimic API call
 		setTimeout(() => {
 			// Mock data
-			formState.summary = `Summary of ${formState.messages.length} messages from the last ${formState.lookBackHours} ${+formState.lookBackHours === 1 ? 'hour' : 'hours'}: The conversation covered several topics including project updates, meeting schedules, and feedback on recent presentations.`
+			const hourUnit = +formState.lookBackHours === 1 ? 'hour' : 'hours'
+			formState.summary = `Summary of ${formState.messages.length} messages from the last ${formState.lookBackHours} ${hourUnit}: 
+				The conversation covered several topics including project updates, 
+				meeting schedules, and feedback on recent presentations.`
 			
 			// Generate mock replies based on selected tone
 			const toneReplies: Record<ToneType, string[]> = {
