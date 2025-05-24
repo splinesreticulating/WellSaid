@@ -14,8 +14,6 @@
 		loading: false
 	});
 
-	let hasMoreContext = $derived(formState.additionalContext.trim().length > 0);
-
 	const { data } = $props();
 
 	// Initialize formState.messages from server data
@@ -23,6 +21,7 @@
 		formState.messages = data.messages;
 	}
 
+	// Fetch messages via internal API
 	async function getMessages() {
 		const end = new Date();
 		const start = new Date(end.getTime() - parseInt(formState.lookBackHours) * 60 * 60 * 1000);
@@ -30,6 +29,7 @@
 			`/api/messages?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`
 		);
 		const data = await res.json();
+		
 		if (data && 'messages' in data && Array.isArray(data.messages)) {
 			formState.messages = data.messages;
 		}
