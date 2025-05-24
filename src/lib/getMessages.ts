@@ -1,4 +1,4 @@
-import type { Message, MessageRow } from "$lib/types";
+import type { MessageRow } from "$lib/types";
 import sqlite3 from "sqlite3";
 import { open } from "sqlite";
 import path from "path";
