@@ -152,7 +152,7 @@
 		--error: #ff5252;
 		--gray: #555b6e;
 		--white: #faf9f9;
-		--border-radius: 4px;
+		--border-radius: 8px;
 	}
 
 	/* Layout */
@@ -161,7 +161,6 @@
 		margin: 0 auto;
 		font-family: "Space Mono", Georgia, "Times New Roman", Times, serif;
 		color: var(--primary);
-		line-height: 1.5;
 	}
 
 	header {
