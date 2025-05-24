@@ -1,4 +1,7 @@
+import dotenv from 'dotenv'
 import pino from 'pino'
+
+dotenv.config()
 
 export const logger = pino({
   transport: {
@@ -9,5 +12,5 @@ export const logger = pino({
       ignore: 'pid,hostname',
     },
   },
-  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+  level: process.env.LOG_LEVEL || (process.env.NODE_ENV === 'production' ? 'info' : 'debug'),
 })
