@@ -49,45 +49,41 @@
 		formState.tone = tone
 	}
 
-	function generateSummaryAndReplies() {
-		// Mock function to simulate sending to LLM
+	async function generateSummaryAndReplies() {
 		formState.loading = true
 		
-		// Simulate a delay to mimic API call
-		setTimeout(() => {
-			// Mock data
-			const hourUnit = +formState.lookBackHours === 1 ? 'hour' : 'hours'
-			formState.summary = `Summary of ${formState.messages.length} messages from the last ${formState.lookBackHours} ${hourUnit}: 
-				The conversation covered several topics including project updates, 
-				meeting schedules, and feedback on recent presentations.`
+		try {
+			const response = await fetch('/api/generate', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					messages: formState.messages,
+					tone: formState.tone,
+					context: formState.additionalContext
+				})
+			});
 			
-			// Generate mock replies based on selected tone
-			const toneReplies: Record<ToneType, string[]> = {
-				gentle: [
-					"I appreciate your perspective on this matter. Perhaps we could consider an alternative approach?",
-					"Thank you for sharing your thoughts. I understand your concerns and I'm happy to discuss them further."
-				],
-				honest: [
-					"I have to be direct - this approach isn't working. Let's try something completely different.",
-					"To be frank, I think we need to reconsider our timeline and priorities here."
-				],
-				funny: [
-					"Well, that meeting was about as productive as trying to herd cats... on roller skates!",
-					"If our project timeline was any more ambitious, it would need its own superhero cape!"
-				],
-				reassuring: [
-					"Don't worry, we've faced challenges like this before and always found a solution together.",
-					"I'm confident we'll work through this. Our team has the expertise to handle these obstacles."
-				],
-				concise: [
-					"Understood. Will follow up by EOD.",
-					"Noted. Let's regroup tomorrow."
-				]
+			if (!response.ok) {
+				throw new Error(`API error: ${response.status}`);
 			}
 			
-			formState.suggestedReplies = toneReplies[formState.tone]
-			formState.loading = false
-		}, 1500)
+			const result = await response.json();
+			
+			if (result.error) {
+				throw new Error(result.error);
+			}
+			
+			formState.summary = result.summary;
+			formState.suggestedReplies = result.replies;
+		} catch (error) {
+			console.error('Error generating replies:', error);
+			formState.summary = 'Error generating summary. Please try again.';
+			formState.suggestedReplies = [];
+		} finally {
+			formState.loading = false;
+		}
 	}
 </script>
 
@@ -99,6 +95,7 @@
 
 	<div class="content-container">
 		<form onsubmit={handleSubmit}>
+
 			<!-- Time frame selector and message count -->
 			<section class="control-bar">
 				<div class="timeframe-controls">
@@ -118,12 +115,12 @@
 						<option value="24">24 hours</option>
 					</select>
 					<button type="button" class="go-button" onclick={generateSummaryAndReplies} disabled={formState.loading}>
-						{#if formState.loading}
-							loading...
-						{:else}
-							go
-						{/if}
-					</button>
+				{#if formState.loading}
+					<span class="loading-spinner"></span>
+				{:else}
+					go
+				{/if}
+			</button>
 				</div>
 				<div class="message-count">
 					messages:&nbsp;
@@ -146,7 +143,13 @@
 
 			<!-- Conversation summary -->
 			<section class="conversation">
-				<div class="summary">{formState.summary}</div>
+				<div class="summary">
+					{#if formState.loading}
+						<div class="loading-indicator">Generating summary and replies...</div>
+					{:else}
+						{formState.summary || 'Click "go" to generate a conversation summary'}
+					{/if}
+				</div>
 			</section>
 
 			<hr />
@@ -173,13 +176,21 @@
 
 				<!-- Where suggested replies will appear -->
 				<div class="suggestions">
-					{#each formState.suggestedReplies as reply}
-						<div class="suggestion-item">{reply}</div>
+					{#if formState.loading}
+						<div class="loading-suggestions">
+							<div class="pulse-loader"></div>
+							<div class="pulse-loader"></div>
+							<div class="pulse-loader"></div>
+						</div>
+					{:else if formState.suggestedReplies.length > 0}
+						{#each formState.suggestedReplies as reply}
+							<div class="suggestion-item">{reply}</div>
+						{/each}
 					{:else}
 						<div class="empty-state">
 							<strong>¯\_(ツ)_/¯</strong>
 						</div>
-					{/each}
+					{/if}
 				</div>
 			</section>
 		</form>
@@ -403,5 +414,58 @@
 		font-style: italic;
 		text-align: center;
 		padding: 1rem;
+	}
+	/* Loading indicators */
+	.loading-indicator {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--gray);
+		font-style: italic;
+		padding: 1rem;
+	}
+
+	.loading-spinner {
+		display: inline-block;
+		width: 12px;
+		height: 12px;
+		border: 2px solid var(--white);
+		border-radius: 50%;
+		border-top-color: transparent;
+		animation: spin 1s linear infinite;
+	}
+
+	.loading-suggestions {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 1rem;
+		padding: 1.5rem;
+	}
+
+	.pulse-loader {
+		width: 12px;
+		height: 12px;
+		border-radius: 50%;
+		background-color: var(--primary-light);
+		animation: pulse 1.5s ease-in-out infinite;
+	}
+
+	.pulse-loader:nth-child(2) {
+		animation-delay: 0.3s;
+	}
+
+	.pulse-loader:nth-child(3) {
+		animation-delay: 0.6s;
+	}
+
+	@keyframes spin {
+		to { transform: rotate(360deg); }
+	}
+
+	@keyframes pulse {
+		0% { transform: scale(0.8); opacity: 0.5; }
+		50% { transform: scale(1.2); opacity: 1; }
+		100% { transform: scale(0.8); opacity: 0.5; }
 	}
 </style>

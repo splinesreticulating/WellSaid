@@ -1,13 +1,15 @@
 import type { Message } from "./types"
 import { buildReplyPrompt, permanentContext } from "./prompts"
 import { parseSummaryToHumanReadable } from "./utils"
+import dotenv from "dotenv"
 
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY
+dotenv.config()
+
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4"
 const OPENAI_TEMPERATURE = Number.parseFloat(process.env.OPENAI_TEMPERATURE || "0.7")
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions"
 
-if (!OPENAI_API_KEY) {
+if (!process.env.OPENAI_API_KEY) {
     console.warn("⚠️ OPENAI_API_KEY is not set. OpenAI integration will not work.")
 } else {
     console.info(`🤖 Using OpenAI API with model: ${OPENAI_MODEL}`)
@@ -18,7 +20,7 @@ export const getSuggestedReplies = async (
     tone: string,
     context: string,
 ): Promise<{ summary: string; replies: string[]; messageCount: number }> => {
-    if (!OPENAI_API_KEY) {
+    if (!process.env.OPENAI_API_KEY) {
         return {
             summary: "OpenAI API key is not configured.",
             replies: ["Please set up your OpenAI API key in the .env file."],
@@ -46,7 +48,7 @@ export const getSuggestedReplies = async (
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${OPENAI_API_KEY}`
+                "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
             },
             body: JSON.stringify({
                 model: OPENAI_MODEL,
