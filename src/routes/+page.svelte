@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Message } from '$lib/types';
+	import type { Message } from '$lib/types'
 
 	let formState = $state({
 		model: 'gpt-4',
@@ -12,36 +12,36 @@
 		summary: '',
 		suggestedReplies: [],
 		loading: false
-	});
+	})
 
-	const { data } = $props();
+	const { data } = $props()
 
 	// Initialize formState.messages from server data
 	if (data && 'messages' in data && Array.isArray(data.messages)) {
-		formState.messages = data.messages;
+		formState.messages = data.messages
 	}
 
 	// Fetch messages via internal API
 	async function getMessages() {
-		const end = new Date();
-		const start = new Date(end.getTime() - parseInt(formState.lookBackHours) * 60 * 60 * 1000);
+		const end = new Date()
+		const start = new Date(end.getTime() - parseInt(formState.lookBackHours) * 60 * 60 * 1000)
 		const res = await fetch(
 			`/api/messages?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`
-		);
-		const data = await res.json();
+		)
+		const data = await res.json()
 		
 		if (data && 'messages' in data && Array.isArray(data.messages)) {
-			formState.messages = data.messages;
+			formState.messages = data.messages
 		}
 	}
 
 	// Update messages when lookBackHours changes (on mount and whenever it changes)
 	$effect(() => {
-		getMessages();
-	});
+		getMessages()
+	})
 
 	function handleSubmit(event: Event) {
-		event.preventDefault();
+		event.preventDefault()
 	}
 </script>
 
