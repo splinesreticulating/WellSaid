@@ -1,9 +1,9 @@
-import type { MessageRow } from '$lib/types'
-import sqlite3 from 'sqlite3'
-import { open } from 'sqlite'
-import path from 'node:path'
 import os from 'node:os'
+import path from 'node:path'
+import type { MessageRow } from '$lib/types'
 import dotenv from 'dotenv'
+import { open } from 'sqlite'
+import sqlite3 from 'sqlite3'
 import { logger } from './logger'
 
 dotenv.config()
@@ -14,7 +14,7 @@ const PARTNER_HANDLE_ID = process.env.PARTNER_PHONE
 export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
     if (!PARTNER_HANDLE_ID) {
         logger.warn('PARTNER_PHONE env var not set cannot fetch messages.')
-        
+
         return { messages: [] }
     }
 
@@ -28,14 +28,14 @@ export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
 
     let dateWhere = ''
     const params: (string | number)[] = [PARTNER_HANDLE_ID]
-    
+
     if (startDate) {
-        dateWhere += " AND message.date >= ?"
+        dateWhere += ' AND message.date >= ?'
         params.push(isoToAppleNs(startDate))
     }
-    
+
     if (endDate) {
-        dateWhere += " AND message.date <= ?"
+        dateWhere += ' AND message.date <= ?'
         params.push(isoToAppleNs(endDate))
     }
 
@@ -56,7 +56,7 @@ export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
         ORDER BY message.date DESC`
 
     let rows: MessageRow[] = []
-    
+
     try {
         rows = await db.all(query, params) as MessageRow[]
     } finally {
@@ -70,8 +70,8 @@ export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
             sender: row.is_from_me
                 ? 'me'
                 : row.contact_id === PARTNER_HANDLE_ID
-                  ? 'partner'
-                  : 'unknown',
+                    ? 'partner'
+                    : 'unknown',
             text: row.text,
             timestamp: row.timestamp,
         }))
