@@ -1,4 +1,4 @@
-export const permanentContext = `Act as my therapist suggesting replies to my partner.`
+export const permanentContext = 'Act as my therapist suggesting replies to my partner.'
 
 export const buildReplyPrompt = (messages: string[], tone: string, context: string): string => {
     const formattedMessages = messages
