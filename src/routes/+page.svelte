@@ -55,12 +55,6 @@
 		<p><i>Empathy. Upgraded.</i></p>
 	</header>
 
-	<!-- Debug info (collapsible) -->
-	<details class="debug-info">
-		<summary>Debug Info</summary>
-		<pre>{JSON.stringify({ formState }, null, 2)}</pre>
-	</details>
-
 	<div class="content-container">
 		<form onsubmit={handleSubmit}>
 			<!-- Time frame selector and message count -->
@@ -138,6 +132,11 @@
 					{/each}
 				</div>
 			</section>
+			<!-- Debug info (collapsible) -->
+			<details class="debug-info">
+				<summary>Debug Info</summary>
+				<pre>{JSON.stringify({ formState }, null, 2)}</pre>
+			</details>
 		</form>
 	</div>
 </main>
