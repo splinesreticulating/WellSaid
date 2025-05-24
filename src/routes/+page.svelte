@@ -1,7 +1,6 @@
 <script lang="ts">
-import type { Message, PageData } from '$lib/types'
+import type { Message, PageData, ToneType } from '$lib/types'
 
-type ToneType = 'gentle' | 'honest' | 'funny' | 'reassuring' | 'concise'
 const TONES: ToneType[] = ['gentle', 'honest', 'funny', 'reassuring', 'concise']
 const { data } = $props<{ data: PageData }>()
 const formState = $state({
