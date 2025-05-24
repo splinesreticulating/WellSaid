@@ -249,8 +249,9 @@ async function generateSummaryAndReplies() {
 </main>
 
 <style>
-	/* Color variables */
+	/* ===== Variables ===== */
 	:root {
+		/* Colors */
 		--primary: #555b6e;
 		--primary-light: #89b0ae;
 		--light: #bee3db;
@@ -259,54 +260,32 @@ async function generateSummaryAndReplies() {
 		--error: #ff5252;
 		--gray: #555b6e;
 		--white: #faf9f9;
+		
+		/* Spacing & Sizing */
 		--border-radius: 8px;
+		--min-touch-size: 44px;
+		
+		/* Typography */
 		--summary-font: 'Georgia', serif;
 		--reply-font: 'Palatino', 'Garamond', serif;
+		--heading-font: 'Great Vibes', cursive;
+		--body-font: 'Space Mono', Georgia, 'Times New Roman', Times, serif;
 	}
 
-	/* Layout */
+	/* ===== Layout & Structure ===== */
 	main.app {
 		max-width: 800px;
 		margin: 0 auto;
-		font-family: "Space Mono", Georgia, "Times New Roman", Times, serif;
+		font-family: var(--body-font);
 		color: var(--primary);
 	}
 
-	header {
-		text-align: center;
-		margin-bottom: 1rem;
-	}
-
-	header h1 {
-		font-family: "Great Vibes", cursive;
-		font-size: 3rem;
-		color: var(--primary);
-		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-		margin-bottom: 0; /* Remove space below h1 */
-	}
-
-	header i {
-		font-style: italic;
-		/* color: var(--primary-light); */
-		font-size: 1rem;
-		display: block;
-		margin-bottom: 2rem;
-	}
-
-	/* Content layout */
 	.content-container {
 		width: 100%;
 		max-width: 100%;
 		display: flex;
 		flex-direction: column;
 		padding-right: 2.5rem;
-	}
-	
-	@media (min-width: 768px) {
-		.app {
-			padding: 0 1.5rem 0 0;
-			max-width: 800px;
-		}
 	}
 
 	form {
@@ -315,7 +294,36 @@ async function generateSummaryAndReplies() {
 		flex-direction: column;
 	}
 
-	/* Controls */
+	/* ===== Header ===== */
+	header {
+		text-align: center;
+		margin-bottom: 1rem;
+	}
+
+	header h1 {
+		font-family: var(--heading-font);
+		font-size: 3rem;
+		color: var(--primary);
+		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+		margin-bottom: 0;
+	}
+
+	header i {
+		font-style: italic;
+		font-size: 1rem;
+		display: block;
+		margin-bottom: 2rem;
+	}
+
+	/* ===== Responsive Adjustments ===== */
+	@media (min-width: 768px) {
+		.app {
+			padding: 0 1.5rem 0 0;
+			max-width: 800px;
+		}
+	}
+
+	/* ===== Controls & Inputs ===== */
 	.control-bar {
 		display: flex;
 		flex-direction: row;
@@ -325,6 +333,7 @@ async function generateSummaryAndReplies() {
 		justify-content: space-between;
 	}
 
+	/* Timeframe Controls */
 	.timeframe-controls {
 		display: flex;
 		align-items: center;
@@ -346,6 +355,13 @@ async function generateSummaryAndReplies() {
 		margin: 0;
 	}
 
+	.timeframe-controls select.hours-dropdown:focus {
+		outline: none;
+		border-color: var(--primary);
+		box-shadow: 0 0 0 2px rgba(85, 91, 110, 0.2);
+	}
+
+	/* Buttons */
 	.go-button {
 		padding: 0.5rem 1rem;
 		background-color: var(--primary-light);
@@ -356,8 +372,8 @@ async function generateSummaryAndReplies() {
 		cursor: pointer;
 		transition: background-color 0.2s, transform 0.1s;
 		margin-left: 0.25rem;
-		min-height: 44px; /* Minimum touch target size */
-		min-width: 44px;
+		min-height: var(--min-touch-size);
+		min-width: var(--min-touch-size);
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -377,17 +393,16 @@ async function generateSummaryAndReplies() {
 		cursor: not-allowed;
 		border-color: var(--light);
 	}
-
-	.timeframe-controls select.hours-dropdown:focus {
-		outline: none;
-		border-color: var(--primary);
-		box-shadow: 0 0 0 2px rgba(85, 91, 110, 0.2);
-	}
+	/* ===== Context Section ===== */
 	details.context-details {
 		text-align: left;
 		border: 1px solid var(--light);
 		background-color: var(--white);
 		margin-right: 1rem;
+		border-radius: var(--border-radius);
+		padding: 1rem;
+		margin-bottom: 1rem;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 	}
 
 	details summary {
@@ -396,6 +411,7 @@ async function generateSummaryAndReplies() {
 		/* Using the browser's default disclosure triangle */
 	}
 
+	/* ===== Form Inputs ===== */
 	textarea.context-input {
 		width: 90%;
 		margin-top: 0.75rem;
@@ -407,11 +423,10 @@ async function generateSummaryAndReplies() {
 		min-height: 80px;
 	}
 	
-	/* Make select elements bigger and easier to tap on mobile */
 	select {
 		font-size: 16px;
 		padding: 0.5rem;
-		height: 44px;
+		height: var(--min-touch-size);
 		border-radius: var(--border-radius);
 		border: 1px solid var(--light);
 		background-color: var(--white);
@@ -423,30 +438,20 @@ async function generateSummaryAndReplies() {
 		padding-right: 1.75rem;
 	}
 
-	/* Common styles for boxes */
-	.conversation, details.context-details {
-		border-radius: var(--border-radius);
-		padding: 1rem;
-		margin-bottom: 1rem;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-	}
-	
-	/* Conversation */
+	/* ===== Conversation Section ===== */
 	.conversation {
 		background-color: var(--light);
 		min-height: 120px;
 		transition: opacity 0.3s;
 		margin-right: 1rem;
-	}
-	
-	@media (min-width: 768px) {
-		.conversation, details.context-details {
-			padding: 1.25rem;
-		}
+		border-radius: var(--border-radius);
+		padding: 1rem;
+		margin-bottom: 1rem;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 	}
 
 	.summary {
-		font-family: 'Georgia', serif;
+		font-family: var(--summary-font);
 		font-size: 1.05rem;
 		line-height: 1.6;
 		color: var(--primary);
@@ -472,8 +477,14 @@ async function generateSummaryAndReplies() {
 		border-top: 1px solid var(--light);
 		margin: 1rem 0;
 	}
+	
+	@media (min-width: 768px) {
+		.conversation, details.context-details {
+			padding: 1.25rem;
+		}
+	}
 
-	/* Tone selector */
+	/* ===== Tone Selector ===== */
 	.tone-selector {
 		display: flex;
 		flex-wrap: wrap;
@@ -489,10 +500,7 @@ async function generateSummaryAndReplies() {
 		border-radius: var(--border-radius);
 		cursor: pointer;
 		font-size: 0.85rem;
-		transition:
-			background-color 0.2s,
-			color 0.2s,
-			box-shadow 0.2s;
+		transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
 		min-height: 28px;
 		min-width: 60px;
 	}
@@ -515,12 +523,12 @@ async function generateSummaryAndReplies() {
 		.tone-selector label {
 			padding: 0.75rem 1rem;
 			font-size: 1rem;
-			min-height: 44px;
+			min-height: var(--min-touch-size);
 			min-width: 70px;
 		}
 	}
 
-	/* Suggestions */
+	/* ===== Suggestions Section ===== */
 	.suggestions {
 		margin-top: 1rem;
 	}
@@ -531,7 +539,7 @@ async function generateSummaryAndReplies() {
 		border: 1px solid var(--light);
 		border-radius: var(--border-radius);
 		background-color: var(--white);
-		font-family: 'Palatino', 'Garamond', serif;
+		font-family: var(--reply-font);
 		font-size: 1.05rem;
 		line-height: 1.5;
 		letter-spacing: 0.03em;
@@ -558,8 +566,8 @@ async function generateSummaryAndReplies() {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		min-width: 44px;
-		min-height: 44px; /* Ensures good touch target size for iOS */
+		min-width: var(--min-touch-size);
+		min-height: var(--min-touch-size);
 		font-size: 1.2rem;
 		margin-top: -0.5rem;
 		margin-right: -0.5rem;
@@ -570,6 +578,13 @@ async function generateSummaryAndReplies() {
 		color: var(--primary);
 	}
 	
+	.empty-state {
+		color: var(--gray);
+		font-style: italic;
+		text-align: center;
+		padding: 1rem;
+	}
+	
 	@media (min-width: 768px) {
 		.suggestion-item {
 			padding: 0.75rem;
@@ -577,14 +592,7 @@ async function generateSummaryAndReplies() {
 			font-size: 1.02rem;
 		}
 	}
-
-	.empty-state {
-		color: var(--gray);
-		font-style: italic;
-		text-align: center;
-		padding: 1rem;
-	}
-	/* Loading indicators */
+	/* ===== Loading Indicators ===== */
 	.loading-indicator {
 		display: flex;
 		align-items: center;
@@ -628,6 +636,7 @@ async function generateSummaryAndReplies() {
 		animation-delay: 0.6s;
 	}
 
+	/* ===== Animations ===== */
 	@keyframes spin {
 		to { transform: rotate(360deg); }
 	}
