@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { parseSummaryToHumanReadable } from '../../src/lib/utils';
+import { parseSummaryToHumanReadable } from '$lib/utils';
+import { describe, expect, it } from 'vitest';
 
 describe('parseSummaryToHumanReadable', () => {
   it('should extract summary from text with "Summary:" prefix', () => {
