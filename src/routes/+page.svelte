@@ -17,6 +17,14 @@ const formState = $state({
     copiedIndex: -1, // Track which item was copied to show feedback
 })
 
+// Derived values
+const hasMessages = $derived(formState.messages.length > 0)
+const canGenerateReplies = $derived(hasMessages && !formState.loading)
+const showEmptyState = $derived(!formState.loading && formState.suggestedReplies.length === 0)
+const showSuggestions = $derived(!formState.loading && formState.suggestedReplies.length > 0)
+const showLoadingIndicators = $derived(formState.loading)
+const summaryContent = $derived(formState.loading ? 'Generating summary and replies...' : (formState.summary || 'Click "go" to generate a conversation summary'))
+
 if (data?.messages && Array.isArray(data.messages)) {
     formState.messages = data.messages
 }
@@ -89,6 +97,8 @@ async function copyToClipboard(text: string, index: number) {
 
 async function generateSummaryAndReplies() {
     formState.loading = true
+    formState.summary = ''
+    formState.suggestedReplies = []
 
     try {
         const response = await fetch('/api/generate', {
@@ -118,7 +128,6 @@ async function generateSummaryAndReplies() {
     } catch (error) {
         console.error('Error generating replies:', error)
         formState.summary = 'Error generating summary. Please try again.'
-        formState.suggestedReplies = []
     } finally {
         formState.loading = false
     }
@@ -152,8 +161,8 @@ async function generateSummaryAndReplies() {
 						<option value="12">12 hours</option>
 						<option value="24">24 hours</option>
 					</select>
-					<button type="button" class="go-button" onclick={generateSummaryAndReplies} disabled={formState.loading}>
-				{#if formState.loading}
+					<button type="button" class="go-button" onclick={generateSummaryAndReplies} disabled={!canGenerateReplies}>
+				{#if showLoadingIndicators}
 					<span class="loading-spinner"></span>
 				{:else}
 					go
@@ -182,10 +191,10 @@ async function generateSummaryAndReplies() {
 			<!-- Conversation summary -->
 			<section class="conversation">
 				<div class="summary">
-					{#if formState.loading}
-						<div class="loading-indicator">Generating summary and replies...</div>
+					{#if showLoadingIndicators}
+						<div class="loading-indicator">{summaryContent}</div>
 					{:else}
-						{formState.summary || 'Click "go" to generate a conversation summary'}
+						{summaryContent}
 					{/if}
 				</div>
 			</section>
@@ -214,13 +223,13 @@ async function generateSummaryAndReplies() {
 
 				<!-- Where suggested replies will appear -->
 				<div class="suggestions">
-					{#if formState.loading}
+					{#if showLoadingIndicators}
 						<div class="loading-suggestions">
 							<div class="pulse-loader"></div>
 							<div class="pulse-loader"></div>
 							<div class="pulse-loader"></div>
 						</div>
-					{:else if formState.suggestedReplies.length > 0}
+					{:else if showSuggestions}
 						{#each formState.suggestedReplies as reply, i}
 							<div class="suggestion-item">
 								<div class="suggestion-content">{reply}</div>
@@ -237,7 +246,7 @@ async function generateSummaryAndReplies() {
 								</button>
 							</div>
 						{/each}
-					{:else}
+					{:else if showEmptyState}
 						<div class="empty-state">
 							<strong>¯\_(ツ)_/¯</strong>
 						</div>
