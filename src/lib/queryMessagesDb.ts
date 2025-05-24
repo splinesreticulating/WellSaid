@@ -1,8 +1,8 @@
 import type { MessageRow } from '$lib/types'
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
-import path from 'path'
-import os from 'os'
+import path from 'node:path'
+import os from 'node:os'
 import dotenv from 'dotenv'
 import { logger } from './logger'
 

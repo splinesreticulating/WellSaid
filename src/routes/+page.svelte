@@ -1,90 +1,91 @@
 <script lang="ts">
-	import type { Message, PageData } from '$lib/types'
+import type { Message, PageData } from '$lib/types'
 
-	type ToneType = 'gentle' | 'honest' | 'funny' | 'reassuring' | 'concise'
-	const TONES: ToneType[] = ['gentle', 'honest', 'funny', 'reassuring', 'concise']
-	const { data } = $props<{ data: PageData }>()
-	let formState = $state({
-		model: 'gpt-4',
-		systemPrompt: 'You are a helpful assistant.',
-		lookBackHours: '1',
-		messages: [] as Message[],
-		additionalContext: '',
-		userQuery: '',
-		tone: 'gentle' as ToneType,
-		summary: '',
-		suggestedReplies: [] as string[],
-		loading: false,
-	})
+type ToneType = 'gentle' | 'honest' | 'funny' | 'reassuring' | 'concise'
+const TONES: ToneType[] = ['gentle', 'honest', 'funny', 'reassuring', 'concise']
+const { data } = $props<{ data: PageData }>()
+const formState = $state({
+    model: 'gpt-4',
+    systemPrompt: 'You are a helpful assistant.',
+    lookBackHours: '1',
+    messages: [] as Message[],
+    additionalContext: '',
+    userQuery: '',
+    tone: 'gentle' as ToneType,
+    summary: '',
+    suggestedReplies: [] as string[],
+    loading: false,
+})
 
-	if (data?.messages && Array.isArray(data.messages)) {
-		formState.messages = data.messages
-	}
+if (data?.messages && Array.isArray(data.messages)) {
+    formState.messages = data.messages
+}
 
-	async function getMessages() {
-		const end = new Date()
-		const start = new Date(
-			end.getTime() - parseInt(formState.lookBackHours) * 60 * 60 * 1000,
-		)
+async function getMessages() {
+    const end = new Date()
+    const start = new Date(
+        end.getTime() -
+            Number.parseInt(formState.lookBackHours) * 60 * 60 * 1000,
+    )
 
-		const res = await fetch(
-			`/api/messages?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`,
-		)
-		const data = await res.json()
+    const res = await fetch(
+        `/api/messages?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`,
+    )
+    const data = await res.json()
 
-		if (data?.messages && Array.isArray(data.messages)) {
-			formState.messages = data.messages
-		}
-	}
+    if (data?.messages && Array.isArray(data.messages)) {
+        formState.messages = data.messages
+    }
+}
 
-	$effect(() => {
-		getMessages()
-	})
+$effect(() => {
+    getMessages()
+})
 
-	function handleSubmit(event: Event) {
-		event.preventDefault()
-	}
+function handleSubmit(event: Event) {
+    event.preventDefault()
+}
 
-	function selectTone(tone: ToneType) {
-		formState.tone = tone
-	}
+function selectTone(tone: ToneType) {
+    formState.tone = tone
+}
 
-	async function generateSummaryAndReplies() {
-		formState.loading = true
-		
-		try {
-			const response = await fetch('/api/generate', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					messages: formState.messages,
-					tone: formState.tone,
-					context: formState.additionalContext
-				})
-			});
-			
-			if (!response.ok) {
-				throw new Error(`API error: ${response.status}`);
-			}
-			
-			const result = await response.json();
-			
-			if (result.error) {
-				throw new Error(result.error);
-			}
-			
-			formState.summary = result.summary;
-			formState.suggestedReplies = result.replies;
-		} catch (error) {
-			console.error('Error generating replies:', error);
-			formState.summary = 'Error generating summary. Please try again.';
-			formState.suggestedReplies = [];
-		} finally {
-			formState.loading = false;
-		}
-	}
+async function generateSummaryAndReplies() {
+    formState.loading = true
+
+    try {
+        const response = await fetch('/api/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                messages: formState.messages,
+                tone: formState.tone,
+                context: formState.additionalContext,
+            }),
+        })
+
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`)
+        }
+
+        const result = await response.json()
+
+        if (result.error) {
+            throw new Error(result.error)
+        }
+
+        formState.summary = result.summary
+        formState.suggestedReplies = result.replies
+    } catch (error) {
+        console.error('Error generating replies:', error)
+        formState.summary = 'Error generating summary. Please try again.'
+        formState.suggestedReplies = []
+    } finally {
+        formState.loading = false
+    }
+}
 </script>
 
 <main class="app">
