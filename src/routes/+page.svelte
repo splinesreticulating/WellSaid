@@ -1,47 +1,49 @@
 <script lang="ts">
-	import type { Message } from '$lib/types'
+	import type { Message } from "$lib/types";
 
 	let formState = $state({
-		model: 'gpt-4',
-		systemPrompt: 'You are a helpful assistant.',
-		lookBackHours: '1',
+		model: "gpt-4",
+		systemPrompt: "You are a helpful assistant.",
+		lookBackHours: "1",
 		messages: [] as Message[],
-		additionalContext: '',
-		userQuery: '',
-		tone: 'gentle',
-		summary: '',
+		additionalContext: "",
+		userQuery: "",
+		tone: "gentle",
+		summary: "",
 		suggestedReplies: [],
-		loading: false
-	})
+		loading: false,
+	});
 
-	const { data } = $props()
+	const { data } = $props();
 
 	// Initialize formState.messages from server data
-	if (data && 'messages' in data && Array.isArray(data.messages)) {
-		formState.messages = data.messages
+	if (data && "messages" in data && Array.isArray(data.messages)) {
+		formState.messages = data.messages;
 	}
 
 	// Fetch messages via internal API
 	async function getMessages() {
-		const end = new Date()
-		const start = new Date(end.getTime() - parseInt(formState.lookBackHours) * 60 * 60 * 1000)
+		const end = new Date();
+		const start = new Date(
+			end.getTime() - parseInt(formState.lookBackHours) * 60 * 60 * 1000,
+		);
 		const res = await fetch(
-			`/api/messages?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`
-		)
-		const data = await res.json()
-		
-		if (data && 'messages' in data && Array.isArray(data.messages)) {
-			formState.messages = data.messages
+			`/api/messages?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`,
+		);
+		const data = await res.json();
+
+		if (data && "messages" in data && Array.isArray(data.messages)) {
+			formState.messages = data.messages;
 		}
 	}
 
 	// Update messages when lookBackHours changes (on mount and whenever it changes)
 	$effect(() => {
-		getMessages()
-	})
+		getMessages();
+	});
 
 	function handleSubmit(event: Event) {
-		event.preventDefault()
+		event.preventDefault();
 	}
 </script>
 
@@ -58,7 +60,6 @@
 				id="window-back"
 				name="window-back"
 				bind:value={formState.lookBackHours}
-				onchange={getMessages}
 			>
 				<option value="1">hour</option>
 				<option value="2">2 hours</option>
@@ -77,7 +78,9 @@
 		</details>
 		<div id="conversation" class="conversation" style="display: block;">
 			<div class="summary"></div>
-			<div class="message-count">{formState.messages.length} messages</div>
+			<div class="message-count">
+				{formState.messages.length} messages
+			</div>
 		</div>
 		<hr />
 		<h2>suggested replies</h2>
@@ -88,7 +91,7 @@
 						type="radio"
 						name="tone"
 						value="gentle"
-						checked={formState.tone === 'gentle'}
+						checked={formState.tone === "gentle"}
 					/>gentle</label
 				>
 				<label
@@ -96,7 +99,7 @@
 						type="radio"
 						name="tone"
 						value="honest"
-						checked={formState.tone === 'honest'}
+						checked={formState.tone === "honest"}
 					/>honest</label
 				>
 				<label
@@ -104,7 +107,7 @@
 						type="radio"
 						name="tone"
 						value="funny"
-						checked={formState.tone === 'funny'}
+						checked={formState.tone === "funny"}
 					/>funny</label
 				>
 				<label
@@ -112,7 +115,7 @@
 						type="radio"
 						name="tone"
 						value="reassuring"
-						checked={formState.tone === 'reassuring'}
+						checked={formState.tone === "reassuring"}
 					/>reassuring</label
 				>
 				<label
@@ -120,7 +123,7 @@
 						type="radio"
 						name="tone"
 						value="concise"
-						checked={formState.tone === 'concise'}
+						checked={formState.tone === "concise"}
 					/>concise</label
 				>
 			</div>
