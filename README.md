@@ -31,8 +31,8 @@ Well Said is an empathy-focused communication tool built with Svelte 5 that help
 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/well-said.git
-cd well-said
+git clone https://github.com/splinesreticulating/WellSaid.git
+cd WellSaid
 ```
 
 2. Install dependencies
