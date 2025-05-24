@@ -342,14 +342,12 @@ async function generateSummaryAndReplies() {
 	details summary {
 		cursor: pointer;
 		font-weight: 500;
-		padding: 0.5rem 0;
-		min-height: 44px;
 		display: flex;
 		align-items: center;
 	}
 
 	textarea.context-input {
-		width: 100%;
+		width: 90%;
 		margin-top: 0.75rem;
 		padding: 0.75rem;
 		border: 1px solid var(--light);
