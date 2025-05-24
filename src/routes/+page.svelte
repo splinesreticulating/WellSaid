@@ -54,36 +54,36 @@ function selectTone(tone: ToneType) {
 async function copyToClipboard(text: string, index: number) {
     try {
         // Use modern clipboard API which works on iOS
-        await navigator.clipboard.writeText(text);
-        
+        await navigator.clipboard.writeText(text)
+
         // Show copy confirmation
-        formState.copiedIndex = index;
-        
+        formState.copiedIndex = index
+
         // Reset after 2 seconds
         setTimeout(() => {
-            formState.copiedIndex = -1;
-        }, 2000);
+            formState.copiedIndex = -1
+        }, 2000)
     } catch (err) {
         // Fallback method for older browsers
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
-        document.body.appendChild(textarea);
-        textarea.focus();
-        textarea.select();
-        
+        const textarea = document.createElement('textarea')
+        textarea.value = text
+        textarea.style.position = 'fixed'
+        textarea.style.opacity = '0'
+        document.body.appendChild(textarea)
+        textarea.focus()
+        textarea.select()
+
         try {
-            document.execCommand('copy');
-            formState.copiedIndex = index;
+            document.execCommand('copy')
+            formState.copiedIndex = index
             setTimeout(() => {
-                formState.copiedIndex = -1;
-            }, 2000);
+                formState.copiedIndex = -1
+            }, 2000)
         } catch (e) {
-            console.error('Failed to copy text: ', e);
+            console.error('Failed to copy text: ', e)
         }
-        
-        document.body.removeChild(textarea);
+
+        document.body.removeChild(textarea)
     }
 }
 
@@ -460,10 +460,9 @@ async function generateSummaryAndReplies() {
 
 	.message-count {
 		font-size: 0.95rem;
-		color: var(--gray);
 		display: flex;
 		align-items: center;
-		padding: 0.5rem 0;
+		margin-right: 1rem;
 	}
 
 	.message-count-value {
