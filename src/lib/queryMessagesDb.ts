@@ -10,7 +10,7 @@ dotenv.config()
 const CHAT_DB_PATH = path.join(os.homedir(), 'Library', 'Messages', 'chat.db')
 const PARTNER_HANDLE_ID = process.env.PARTNER_PHONE
 
-export const getMessages = async (startDate?: string, endDate?: string) => {
+export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
     if (!PARTNER_HANDLE_ID) {
         console.warn('PARTNER_PHONE env var not set cannot fetch messages.')
         return { messages: [] }

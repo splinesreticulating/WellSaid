@@ -1,5 +1,5 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import { getMessages } from '$lib/getMessages';
+import { queryMessagesDb } from '$lib/queryMessagesDb';
 
 export const GET: RequestHandler = async ({ url }) => {
     const start = url.searchParams.get('start');
@@ -9,7 +9,7 @@ export const GET: RequestHandler = async ({ url }) => {
         return new Response(JSON.stringify({ error: 'Missing start or end' }), { status: 400 });
     }
     
-    const { messages } = await getMessages(start, end);
+    const { messages } = await queryMessagesDb(start, end);
     
     return new Response(JSON.stringify({ messages }), {
         headers: { 'Content-Type': 'application/json' }
