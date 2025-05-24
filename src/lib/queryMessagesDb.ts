@@ -58,7 +58,12 @@ export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
     let rows: MessageRow[] = []
 
     try {
-        rows = await db.all(query, params) as MessageRow[]
+        try {
+            rows = await db.all(query, params) as MessageRow[]
+        } catch (error) {
+            logger.error({ error }, 'Error querying messages database')
+            return { messages: [] }
+        }
     } finally {
         await db.close()
     }

@@ -128,9 +128,8 @@ describe('queryMessagesDb', () => {
     }
   });
 
-  // This test is skipped because it's difficult to mock a try/finally pattern in this case
-  // In a real application, we would need to refactor the code to make it more testable
-  it.skip('should handle database errors gracefully', async () => {
+  // Now that we've added proper error handling, we can test this behavior
+  it('should handle database errors gracefully', async () => {
     // The current implementation makes it difficult to test error handling
     // due to the try/finally pattern and direct db.close() call
     // For now, we'll skip this test but note that we should test this behavior
