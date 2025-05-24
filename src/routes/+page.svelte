@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { Message } from '$lib/types'
+	import type { Message } from '$lib/types';
 
 	let formState = $state({
 		model: 'gpt-4',
 		systemPrompt: 'You are a helpful assistant.',
-		lookBackHours: "1",
+		lookBackHours: '1',
 		messages: [] as Message[],
 		additionalContext: '',
 		userQuery: '',
@@ -12,48 +12,54 @@
 		summary: '',
 		suggestedReplies: [],
 		loading: false
-	})
+	});
 
-	let hasMoreContext = $derived(formState.additionalContext.trim().length > 0)
+	let hasMoreContext = $derived(formState.additionalContext.trim().length > 0);
 
-const { data } = $props()
+	const { data } = $props();
 
-// Initialize formState.messages from server data
-if (data && 'messages' in data && Array.isArray(data.messages)) {
-  formState.messages = data.messages
-}
-
-async function getMessages() {
-	const end = new Date();
-	const start = new Date(end.getTime() - parseInt(formState.lookBackHours) * 60 * 60 * 1000);
-	const res = await fetch(`/api/messages?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`);
-	const data = await res.json();
+	// Initialize formState.messages from server data
 	if (data && 'messages' in data && Array.isArray(data.messages)) {
 		formState.messages = data.messages;
 	}
-}
 
-// Update messages when lookBackHours changes (on mount and whenever it changes)
-$effect(() => {
-  getMessages();
-});
+	async function getMessages() {
+		const end = new Date();
+		const start = new Date(end.getTime() - parseInt(formState.lookBackHours) * 60 * 60 * 1000);
+		const res = await fetch(
+			`/api/messages?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`
+		);
+		const data = await res.json();
+		if (data && 'messages' in data && Array.isArray(data.messages)) {
+			formState.messages = data.messages;
+		}
+	}
 
-function handleSubmit(event: Event) {
-  event.preventDefault();
-}
+	// Update messages when lookBackHours changes (on mount and whenever it changes)
+	$effect(() => {
+		getMessages();
+	});
 
+	function handleSubmit(event: Event) {
+		event.preventDefault();
+	}
 </script>
 
 <h1>Well Said</h1>
 <p><i>Empathy. Upgraded.</i></p>
 
-<details>{JSON.stringify({formState})}</details>
+<details>{JSON.stringify({ formState })}</details>
 
 <div class="content-container">
 	<form onsubmit={handleSubmit}>
 		<div class="timeframe-controls">
 			<label for="window-back">summarize the last:</label>
-			<select id="window-back" name="window-back" bind:value={formState.lookBackHours} onchange={getMessages}>
+			<select
+				id="window-back"
+				name="window-back"
+				bind:value={formState.lookBackHours}
+				onchange={getMessages}
+			>
 				<option value="1">hour</option>
 				<option value="2">2 hours</option>
 				<option value="3">3 hours</option>
@@ -141,8 +147,6 @@ function handleSubmit(event: Event) {
 		gap: 1rem;
 		padding: 1rem;
 	}
-
-	
 
 	details {
 		text-align: left;
