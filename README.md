@@ -68,7 +68,7 @@ PARTNER_PHONE=+1234567890  # Your partner's phone number in the Messages app
 yarn dev
 ```
 
-## 💻 Usage
+## Usage
 
 1. Select a time frame to analyze (1-24 hours)
 2. Click the "go" button to generate a conversation summary
