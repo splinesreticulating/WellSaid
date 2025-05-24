@@ -1,7 +1,7 @@
 <h1 align="center">WellSaid</h1>
 <p align="center"><b>Empathy. Upgraded.</b></p>
 
-WellSaid is an empathy-focused communication tool built with Svelte 5 that helps you craft better responses by providing conversation summaries and tone-based reply suggestions.
+WellSaid is an empathy-focused communication tool built with Svelte 5 that helps you craft better responses by providing conversation summaries and tone-based reply suggestions. With a clean, modern UI and straightforward experience, WellSaid helps improve your communication with meaningful, contextually appropriate responses.
 
 ## Features
 
@@ -81,6 +81,7 @@ WellSaid connects to your macOS Messages database to fetch your conversations wi
 - **Styling**: Custom CSS with variables for theming
 - **Database**: SQLite (connecting to macOS Messages database)
 - **AI Integration**: OpenAI API (GPT-4 or other models)
+- **Logging**: Pino for structured logging
 
 ## Development and Local Usage
 
@@ -99,9 +100,31 @@ yarn build
 
 # Run the optimized build locally
 yarn preview
+
+# Run tests
+yarn test
+
+# Run tests with watch mode
+yarn test:watch
+
+# Run tests with coverage report
+yarn test:coverage
 ```
 
 **Note**: Since this application only runs on macOS and accesses local system resources, there is no traditional "production deployment" - the built version is simply run locally on your macbook. The `yarn build` and `yarn preview` commands create and run an optimized version that may provide better performance than development mode.
+
+## Privacy and Security Considerations
+
+- All conversation analysis happens through OpenAI's API, so your data is subject to their privacy policy
+
+## Troubleshooting
+
+### Common Issues
+
+- **Messages Not Loading**: Ensure you've set the correct `PARTNER_PHONE` in your `.env` file
+- **Permission Issues**: WellSaid needs access to your Messages database. Make sure Terminal/your editor has Full Disk Access in System Preferences > Security & Privacy
+- **OpenAI API Errors**: Check that your API key is valid and you have sufficient credits
+- **No Partner Messages**: The app will only show conversations where your partner has responded
 
 ## License
 
