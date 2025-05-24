@@ -133,11 +133,6 @@
 					{/each}
 				</div>
 			</section>
-			<!-- Debug info (collapsible) -->
-			<details class="debug-info">
-				<summary>Debug Info</summary>
-				<pre>{JSON.stringify({ formState }, null, 2)}</pre>
-			</details>
 		</form>
 	</div>
 </main>
@@ -331,18 +326,5 @@
 		font-style: italic;
 		text-align: center;
 		padding: 1rem;
-	}
-
-	/* Debug info */
-	.debug-info {
-		margin-bottom: 1rem;
-		font-size: 0.75rem;
-	}
-
-	.debug-info pre {
-		overflow: auto;
-		background-color: #f5f5f5;
-		padding: 0.5rem;
-		border-radius: var(--border-radius);
 	}
 </style>
