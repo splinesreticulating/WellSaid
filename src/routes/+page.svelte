@@ -210,6 +210,8 @@ async function generateSummaryAndReplies() {
 		--gray: #555b6e;
 		--white: #faf9f9;
 		--border-radius: 8px;
+		--summary-font: 'Georgia', serif;
+		--reply-font: 'Palatino', 'Garamond', serif;
 	}
 
 	/* Layout */
@@ -346,6 +348,14 @@ async function generateSummaryAndReplies() {
 		transition: opacity 0.3s;
 	}
 
+	.summary {
+		font-family: 'Georgia', serif;
+		font-size: 1.05rem;
+		line-height: 1.6;
+		color: var(--primary);
+		letter-spacing: 0.02em;
+	}
+
 	.message-count {
 		font-size: 0.95rem;
 		color: var(--gray);
@@ -408,6 +418,11 @@ async function generateSummaryAndReplies() {
 		border: 1px solid var(--light);
 		border-radius: var(--border-radius);
 		background-color: var(--white);
+		font-family: 'Palatino', 'Garamond', serif;
+		font-size: 1.02rem;
+		line-height: 1.5;
+		letter-spacing: 0.03em;
+		color: var(--primary);
 	}
 
 	.empty-state {
