@@ -12,21 +12,21 @@ WellSaid is an empathy-focused communication tool built with Svelte 5 that helps
 
 ![WellSaid - Empathy. Upgraded.](https://i.imgur.com/placeholder.png)
 
-## 🌟 Features
+## Features
 
 - **Conversation Summaries**: Analyze your Messages app conversations with a partner from the last 1-24 hours
 - **Smart Reply Suggestions**: Get AI-generated reply options based on conversation context
 - **Tone Selection**: Choose from five different tones for your replies:
-  - Gentle 🍃
-  - Honest 💯
-  - Funny 😂
-  - Reassuring 🤗
-  - Concise ✓
+  - Gentle 
+  - Honest 
+  - Funny 
+  - Reassuring 
+  - Concise 
 - **Context Addition**: Add additional context to help generate more relevant replies
 - **Message Database Integration**: Connects to your macOS Messages app database
 - **Real-time Updates**: Dynamic UI with loading indicators and real-time feedback
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -76,14 +76,14 @@ yarn dev
 4. Choose a tone for suggested replies
 5. View and copy suggested replies to use in your conversation
 
-## 🧠 How It Works
+## How It Works
 
 WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses OpenAI's API to analyze the conversation and generate:
 
 1. A summary of the conversation, including emotional tone and key topics
 2. Three suggested replies in your chosen tone
 
-## 🔧 Technical Details
+## Technical Details
 
 - **Frontend**: Svelte 5 with SvelteKit
 - **State Management**: Svelte's built-in $state system
@@ -91,7 +91,7 @@ WellSaid connects to your macOS Messages database to fetch your conversations wi
 - **Database**: SQLite (connecting to macOS Messages database)
 - **AI Integration**: OpenAI API (GPT-4 or other models)
 
-## 🛠️ Development and Local Usage
+## Development and Local Usage
 
 ```bash
 # Run in development mode with hot-reloading
@@ -112,11 +112,11 @@ yarn preview
 
 **Note**: Since this application only runs on macOS and accesses local system resources, there is no traditional "production deployment" - the built version is simply run locally on your macbook. The `yarn build` and `yarn preview` commands create and run an optimized version that may provide better performance than development mode.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🙏 Acknowledgements
+## Acknowledgements
 
 - [Svelte](https://svelte.dev/) - The web framework used
 - [OpenAI](https://openai.com/) - AI model provider
