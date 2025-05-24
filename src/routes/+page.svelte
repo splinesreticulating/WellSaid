@@ -429,26 +429,24 @@ async function generateSummaryAndReplies() {
 	.tone-selector {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.5rem;
-		margin: 0.75rem 0 1.25rem;
-		justify-content: center;
+		gap: 0.25rem;
 	}
 
 	.tone-selector label {
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		padding: 0.75rem 1rem;
+		padding: 0.05rem 0.75rem;
 		border: 1px solid var(--primary-light);
 		border-radius: var(--border-radius);
 		cursor: pointer;
-		font-size: 1rem;
+		font-size: 0.85rem;
 		transition:
 			background-color 0.2s,
 			color 0.2s,
 			box-shadow 0.2s;
-		min-height: 44px;
-		min-width: 70px;
+		min-height: 28px;
+		min-width: 60px;
 	}
 
 	.tone-selector label.active {
@@ -464,6 +462,13 @@ async function generateSummaryAndReplies() {
 		.tone-selector {
 			gap: 0.75rem;
 			justify-content: flex-start;
+		}
+		
+		.tone-selector label {
+			padding: 0.75rem 1rem;
+			font-size: 1rem;
+			min-height: 44px;
+			min-width: 70px;
 		}
 	}
 
