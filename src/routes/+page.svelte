@@ -344,6 +344,20 @@ async function generateSummaryAndReplies() {
 		font-weight: 500;
 		display: flex;
 		align-items: center;
+		list-style: none; /* Removes default arrow */
+	}
+	
+	/* Add custom arrow for the summary */
+	details summary::before {
+		content: '▶';
+		display: inline-block;
+		margin-right: 0.5rem;
+		font-size: 0.7rem;
+		transition: transform 0.2s;
+	}
+	
+	details[open] summary::before {
+		transform: rotate(90deg);
 	}
 
 	textarea.context-input {
