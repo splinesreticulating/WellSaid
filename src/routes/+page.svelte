@@ -1,51 +1,51 @@
 <script lang="ts">
-	import type { Message, PageData } from "$lib/types";
+	import type { Message, PageData } from '$lib/types'
 
-	const TONES = ["gentle", "honest", "funny", "reassuring", "concise"];
-	const { data } = $props<{ data: PageData }>();
+	const TONES = ['gentle', 'honest', 'funny', 'reassuring', 'concise']
+	const { data } = $props<{ data: PageData }>()
 	let formState = $state({
-		model: "gpt-4",
-		systemPrompt: "You are a helpful assistant.",
-		lookBackHours: "1",
+		model: 'gpt-4',
+		systemPrompt: 'You are a helpful assistant.',
+		lookBackHours: '1',
 		messages: [] as Message[],
-		additionalContext: "",
-		userQuery: "",
-		tone: "gentle",
-		summary: "",
+		additionalContext: '',
+		userQuery: '',
+		tone: 'gentle',
+		summary: '',
 		suggestedReplies: [],
 		loading: false,
-	});
+	})
 
 	if (data?.messages && Array.isArray(data.messages)) {
-		formState.messages = data.messages;
+		formState.messages = data.messages
 	}
 
 	async function getMessages() {
-		const end = new Date();
+		const end = new Date()
 		const start = new Date(
 			end.getTime() - parseInt(formState.lookBackHours) * 60 * 60 * 1000,
-		);
+		)
 
 		const res = await fetch(
 			`/api/messages?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`,
-		);
-		const data = await res.json();
+		)
+		const data = await res.json()
 
 		if (data?.messages && Array.isArray(data.messages)) {
-			formState.messages = data.messages;
+			formState.messages = data.messages
 		}
 	}
 
 	$effect(() => {
-		getMessages();
-	});
+		getMessages()
+	})
 
 	function handleSubmit(event: Event) {
-		event.preventDefault();
+		event.preventDefault()
 	}
 
 	function selectTone(tone: string) {
-		formState.tone = tone;
+		formState.tone = tone
 	}
 </script>
 

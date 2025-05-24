@@ -36,5 +36,15 @@
             "indentWidth": 4,
             "semicolons": "asNeeded"
         }
-    }
+    },
+    "overrides": [
+        {
+            "include": ["**/*.svelte"],
+            "javascript": {
+                "formatter": {
+                    "semicolons": "asNeeded"
+                }
+            }
+        }
+    ]
 }
