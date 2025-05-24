@@ -11,3 +11,7 @@ export interface MessageRow {
     contact_id?: string
     timestamp: string
 }
+
+export interface PageData {
+    messages?: Message[];
+}

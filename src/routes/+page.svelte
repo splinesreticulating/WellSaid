@@ -1,16 +1,8 @@
 <script lang="ts">
-	// Import types
-	import type { Message } from "$lib/types";
+	import type { Message, PageData } from "$lib/types";
 
-	// Define interface for page data
-	interface PageData {
-		messages?: Message[];
-	}
-
-	// Available tone options
 	const TONES = ["gentle", "honest", "funny", "reassuring", "concise"];
-
-	// Things that can change
+	const { data } = $props<{ data: PageData }>();
 	let formState = $state({
 		model: "gpt-4",
 		systemPrompt: "You are a helpful assistant.",
@@ -24,15 +16,10 @@
 		loading: false,
 	});
 
-	// Properly type the data prop
-	const { data } = $props<{ data: PageData }>();
-
-	// Initialize messages from server data if available
 	if (data?.messages && Array.isArray(data.messages)) {
 		formState.messages = data.messages;
 	}
 
-	// Fetch messages for the selected time period
 	async function getMessages() {
 		const end = new Date();
 		const start = new Date(
@@ -49,18 +36,14 @@
 		}
 	}
 
-	// Reactive effect to update messages when lookBackHours changes
 	$effect(() => {
 		getMessages();
 	});
 
-	// Form submission handler
 	function handleSubmit(event: Event) {
 		event.preventDefault();
-		// Additional submission logic would go here
 	}
 
-	// Update tone selection
 	function selectTone(tone: string) {
 		formState.tone = tone;
 	}
