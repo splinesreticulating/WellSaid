@@ -8,5 +8,8 @@
     "editor.defaultFormatter": "biomejs.biome"
   },
   "biome.javascript.formatter.semicolons": "asNeeded",
-  "biome.typescript.formatter.semicolons": "asNeeded"
+  "biome.typescript.formatter.semicolons": "asNeeded",
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  }
 }
