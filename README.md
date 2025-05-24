@@ -26,6 +26,8 @@ Well Said is an empathy-focused communication tool built with Svelte 5 that help
 - Node.js 18+ and Yarn
 - OpenAI API key for generating suggestions
 
+**Note**: This application is designed to run exclusively on macOS as it requires direct access to the Messages app database.
+
 ### Installation
 
 1. Clone the repository
@@ -81,21 +83,26 @@ Well Said connects to your macOS Messages database to fetch your conversations w
 - **Database**: SQLite (connecting to macOS Messages database)
 - **AI Integration**: OpenAI API (GPT-4 or other models)
 
-## 🛠️ Development
+## 🛠️ Development and Local Usage
 
 ```bash
+# Run in development mode with hot-reloading
+yarn dev
+
 # Lint code
 yarn lint
 
 # Format code
 yarn format
 
-# Build for production
+# Build optimized version
 yarn build
 
-# Preview production build
+# Run the optimized build locally
 yarn preview
 ```
+
+**Note**: Since this application only runs on macOS and accesses local system resources, there is no traditional "production deployment" - the built version is simply run locally on your macbook. The `yarn build` and `yarn preview` commands create and run an optimized version that may provide better performance than development mode.
 
 ## 📄 License
 
