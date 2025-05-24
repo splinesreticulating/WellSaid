@@ -4,6 +4,7 @@ import { open } from 'sqlite'
 import path from 'path'
 import os from 'os'
 import dotenv from 'dotenv'
+import { logger } from './logger'
 
 dotenv.config()
 
@@ -12,7 +13,7 @@ const PARTNER_HANDLE_ID = process.env.PARTNER_PHONE
 
 export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
     if (!PARTNER_HANDLE_ID) {
-        console.warn('PARTNER_PHONE env var not set cannot fetch messages.')
+        logger.warn('PARTNER_PHONE env var not set cannot fetch messages.')
         
         return { messages: [] }
     }
@@ -62,7 +63,7 @@ export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
         await db.close()
     }
 
-    console.info(`📨 Fetched ${rows.length} messages for handle ID ${PARTNER_HANDLE_ID}`)
+    logger.info({ count: rows.length, handleId: PARTNER_HANDLE_ID }, '📨 Fetched messages')
 
     const formattedRows = rows
         .map((row: MessageRow) => ({
