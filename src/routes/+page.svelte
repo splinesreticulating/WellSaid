@@ -199,7 +199,7 @@ async function generateSummaryAndReplies() {
 				<!-- Tone selector -->
 				<div class="tone-selector">
 					{#each TONES as tone}
-						<label class={formState.tone === tone ? "active" : ""}>
+						<label class={formState.tone === tone ? 'active' : ''}>
 							<input
 								type="radio"
 								name="tone"
