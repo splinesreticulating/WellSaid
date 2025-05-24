@@ -1,15 +1,15 @@
-import { getSuggestedReplies } from '$lib/ai';
-import type { Message } from '$lib/types';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { getSuggestedReplies } from '$lib/ai'
+import type { Message } from '$lib/types'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock the utils.parseSummaryToHumanReadable function
 vi.mock('$lib/utils', () => ({
   parseSummaryToHumanReadable: vi.fn((text) => text.split('Reply 1:')[0].trim())
-}));
+}))
 
 describe('getSuggestedReplies', () => {
   beforeEach(() => {
-    vi.resetAllMocks();
+    vi.resetAllMocks()
     // Mock the fetch function
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
@@ -28,24 +28,24 @@ Reply 3: "I'm looking forward to our hiking adventure! Do we need to get any new
           }
         ]
       })
-    });
-  });
+    })
+  })
 
   it('should return summary and replies when API call is successful', async () => {
     const messages: Message[] = [
       { sender: 'partner', text: 'Let\'s go hiking this weekend!', timestamp: '2025-05-23T12:00:00Z' },
       { sender: 'me', text: 'That sounds fun!', timestamp: '2025-05-23T12:01:00Z' }
-    ];
+    ]
 
-    const result = await getSuggestedReplies(messages, 'gentle', '');
+    const result = await getSuggestedReplies(messages, 'gentle', '')
 
-    expect(result.summary).toBeTruthy();
-    expect(result.replies.length).toBe(3);
-    expect(result.replies[0]).toContain('excited about the hiking trip');
-    expect(result.messageCount).toBe(2);
+    expect(result.summary).toBeTruthy()
+    expect(result.replies.length).toBe(3)
+    expect(result.replies[0]).toContain('excited about the hiking trip')
+    expect(result.messageCount).toBe(2)
 
     // Verify fetch was called with correct parameters
-    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch).toHaveBeenCalledTimes(1)
     expect(global.fetch).toHaveBeenCalledWith(
       'https://api.openai.com/v1/chat/completions',
       expect.objectContaining({
@@ -56,8 +56,8 @@ Reply 3: "I'm looking forward to our hiking adventure! Do we need to get any new
         }),
         body: expect.any(String)
       })
-    );
-  });
+    )
+  })
 
   it('should handle API errors gracefully', async () => {
     // Mock fetch to return an error
@@ -65,36 +65,36 @@ Reply 3: "I'm looking forward to our hiking adventure! Do we need to get any new
       ok: false,
       status: 500,
       text: vi.fn().mockResolvedValue('Internal Server Error')
-    });
+    })
 
     const messages: Message[] = [
       { sender: 'partner', text: 'How are you today?', timestamp: '2025-05-23T12:00:00Z' }
-    ];
+    ]
 
-    const result = await getSuggestedReplies(messages, 'gentle', '');
+    const result = await getSuggestedReplies(messages, 'gentle', '')
 
-    expect(result.summary).toBe('');
-    expect(result.replies).toEqual(['(Sorry, I had trouble generating a response.)']);
-    expect(result.messageCount).toBe(1);
-  });
+    expect(result.summary).toBe('')
+    expect(result.replies).toEqual(['(Sorry, I had trouble generating a response.)'])
+    expect(result.messageCount).toBe(1)
+  })
 
   it('should handle case when OPENAI_API_KEY is not set', async () => {
     // Temporarily unset the API key
-    const originalKey = process.env.OPENAI_API_KEY;
-    process.env.OPENAI_API_KEY = '';
+    const originalKey = process.env.OPENAI_API_KEY
+    process.env.OPENAI_API_KEY = ''
 
     const messages: Message[] = [
       { sender: 'partner', text: 'Hello!', timestamp: '2025-05-23T12:00:00Z' }
-    ];
+    ]
 
-    const result = await getSuggestedReplies(messages, 'gentle', '');
+    const result = await getSuggestedReplies(messages, 'gentle', '')
 
-    expect(result.summary).toBe('OpenAI API key is not configured.');
-    expect(result.replies).toEqual(['Please set up your OpenAI API key in the .env file.']);
+    expect(result.summary).toBe('OpenAI API key is not configured.')
+    expect(result.replies).toEqual(['Please set up your OpenAI API key in the .env file.'])
 
     // Restore the API key
-    process.env.OPENAI_API_KEY = originalKey;
-  });
+    process.env.OPENAI_API_KEY = originalKey
+  })
 
   it('should correctly clean replies by removing asterisks and quotes', async () => {
     // We need to mock the response to exactly match what the cleanReply function expects
@@ -114,18 +114,18 @@ Reply 3: *This one has just asterisks*`
           }
         ]
       })
-    });
+    })
 
     const messages: Message[] = [
       { sender: 'partner', text: 'Test message', timestamp: '2025-05-23T12:00:00Z' }
-    ];
+    ]
 
-    const result = await getSuggestedReplies(messages, 'gentle', '');
+    const result = await getSuggestedReplies(messages, 'gentle', '')
 
-    expect(result.replies.length).toBe(3);
+    expect(result.replies.length).toBe(3)
     // Verify that our matcher can correctly extract the replies
-    expect(result.replies[0]).toContain('This reply has asterisks and quotes');
-    expect(result.replies[1]).toContain('This one has just quotes');
-    expect(result.replies[2]).toContain('This one has just asterisks');
-  });
-});
+    expect(result.replies[0]).toContain('This reply has asterisks and quotes')
+    expect(result.replies[1]).toContain('This one has just quotes')
+    expect(result.replies[2]).toContain('This one has just asterisks')
+  })
+})
