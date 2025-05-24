@@ -52,7 +52,7 @@
 <main class="app">
 	<header>
 		<h1>Well Said</h1>
-		<p><i>Empathy. Upgraded.</i></p>
+		<i>Empathy. Upgraded.</i>
 	</header>
 
 	<div class="content-container">
@@ -77,9 +77,10 @@
 					</select>
 				</div>
 				<div class="message-count">
+					messages:&nbsp;
 					<span class="message-count-value"
 						>{formState.messages.length}</span
-					> messages
+					>
 				</div>
 			</section>
 
@@ -127,7 +128,7 @@
 						<div class="suggestion-item">{reply}</div>
 					{:else}
 						<div class="empty-state">
-							No suggestions available yet
+							<strong>¯\_(ツ)_/¯</strong>
 						</div>
 					{/each}
 				</div>
