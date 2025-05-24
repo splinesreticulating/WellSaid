@@ -90,7 +90,7 @@ async function generateSummaryAndReplies() {
 
 <main class="app">
 	<header>
-		<h1>Well Said</h1>
+		<h1>WellSaid</h1>
 		<i>Empathy. Upgraded.</i>
 	</header>
 

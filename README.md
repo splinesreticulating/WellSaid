@@ -8,9 +8,9 @@
 
 ---
 
-Well Said is an empathy-focused communication tool built with Svelte 5 that helps you craft better responses by providing conversation summaries and tone-based reply suggestions.
+WellSaid is an empathy-focused communication tool built with Svelte 5 that helps you craft better responses by providing conversation summaries and tone-based reply suggestions.
 
-![Well Said - Empathy. Upgraded.](https://i.imgur.com/placeholder.png)
+![WellSaid - Empathy. Upgraded.](https://i.imgur.com/placeholder.png)
 
 ## 🌟 Features
 
@@ -78,7 +78,7 @@ yarn dev
 
 ## 🧠 How It Works
 
-Well Said connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses OpenAI's API to analyze the conversation and generate:
+WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses OpenAI's API to analyze the conversation and generate:
 
 1. A summary of the conversation, including emotional tone and key topics
 2. Three suggested replies in your chosen tone
