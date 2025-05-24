@@ -63,19 +63,30 @@
 
 	<div class="content-container">
 		<form onsubmit={handleSubmit}>
-			<!-- Time frame selector -->
-			<section class="timeframe-controls">
-				<label for="window-back">Summarize the last:</label>
-				<select id="window-back" bind:value={formState.lookBackHours}>
-					<option value="1">hour</option>
-					<option value="2">2 hours</option>
-					<option value="3">3 hours</option>
-					<option value="4">4 hours</option>
-					<option value="5">5 hours</option>
-					<option value="6">6 hours</option>
-					<option value="12">12 hours</option>
-					<option value="24">24 hours</option>
-				</select>
+			<!-- Time frame selector and message count -->
+			<section class="control-bar">
+				<div class="timeframe-controls">
+					<label for="window-back">Summarize the last:</label>
+					<select
+						id="window-back"
+						class="hours-dropdown"
+						bind:value={formState.lookBackHours}
+					>
+						<option value="1">hour</option>
+						<option value="2">2 hours</option>
+						<option value="3">3 hours</option>
+						<option value="4">4 hours</option>
+						<option value="5">5 hours</option>
+						<option value="6">6 hours</option>
+						<option value="12">12 hours</option>
+						<option value="24">24 hours</option>
+					</select>
+				</div>
+				<div class="message-count">
+					<span class="message-count-value"
+						>{formState.messages.length}</span
+					> messages
+				</div>
 			</section>
 
 			<!-- Additional context (collapsible) -->
@@ -92,9 +103,6 @@
 			<!-- Conversation summary -->
 			<section class="conversation">
 				<div class="summary">{formState.summary}</div>
-				<div class="message-count">
-					{formState.messages.length} messages
-				</div>
 			</section>
 
 			<hr />
@@ -152,7 +160,18 @@
 	main.app {
 		max-width: 800px;
 		margin: 0 auto;
-		font-family: system-ui, sans-serif;
+		font-family:
+			system-ui,
+			-apple-system,
+			BlinkMacSystemFont,
+			"Segoe UI",
+			Roboto,
+			Oxygen,
+			Ubuntu,
+			Cantarell,
+			sans-serif;
+		color: var(--primary);
+		line-height: 1.5;
 	}
 
 	header {
@@ -178,16 +197,48 @@
 		margin-bottom: 1rem;
 	}
 
+	.control-bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0.75rem 1rem;
+		background-color: var(--white);
+		border: 1px solid var(--light);
+		border-radius: var(--border-radius);
+		margin-bottom: 1rem;
+	}
+
 	.timeframe-controls {
 		display: flex;
 		align-items: center;
-		gap: 0.5rem;
+		gap: 0.75rem;
+		line-height: 1;
 	}
 
-	.timeframe-controls select {
-		padding: 0.25rem 0.5rem;
-		border-radius: var(--border-radius);
-		border: 1px solid var(--primary-light);
+	.timeframe-controls label {
+		font-weight: 500;
+		white-space: nowrap;
+		min-width: max-content;
+		display: inline-flex;
+		align-items: center;
+		margin: 0;
+	}
+
+	.timeframe-controls select.hours-dropdown {
+		height: 35px;
+		font-size: 0.9rem;
+		padding-top: 0.25rem;
+		padding-bottom: 0.25rem;
+		vertical-align: middle;
+		margin: 0;
+		display: inline-flex;
+		align-items: center;
+	}
+
+	.timeframe-controls select.hours-dropdown:focus {
+		outline: none;
+		border-color: var(--primary);
+		box-shadow: 0 0 0 2px rgba(85, 91, 110, 0.2);
 	}
 
 	/* Details and context */
@@ -195,7 +246,9 @@
 		text-align: left;
 		border: 1px solid var(--light);
 		border-radius: var(--border-radius);
-		padding: 0.5rem;
+		padding: 0.75rem 1rem;
+		background-color: var(--white);
+		margin-bottom: 1rem;
 	}
 
 	details summary {
@@ -216,13 +269,23 @@
 	.conversation {
 		background-color: var(--light);
 		border-radius: var(--border-radius);
-		padding: 1rem;
+		padding: 1.25rem;
+		min-height: 100px;
+		margin-bottom: 1rem;
 	}
 
 	.message-count {
-		font-size: 0.875rem;
+		font-size: 0.95rem;
 		color: var(--gray);
-		margin-top: 0.5rem;
+		display: flex;
+		align-items: center;
+		padding: 0.5rem 0;
+	}
+
+	.message-count-value {
+		font-weight: 600;
+		color: var(--primary);
+		margin-right: 0.25rem;
 	}
 
 	hr {
@@ -235,21 +298,22 @@
 	.tone-selector {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.5rem;
-		margin: 0.5rem 0 1rem;
+		gap: 0.75rem;
+		margin: 0.75rem 0 1.25rem;
 	}
 
 	.tone-selector label {
 		display: inline-flex;
 		align-items: center;
-		padding: 0.25rem 0.75rem;
+		padding: 0.5rem 0.875rem;
 		border: 1px solid var(--primary-light);
 		border-radius: var(--border-radius);
 		cursor: pointer;
-		font-size: 0.875rem;
+		font-size: 0.95rem;
 		transition:
 			background-color 0.2s,
-			color 0.2s;
+			color 0.2s,
+			box-shadow 0.2s;
 	}
 
 	.tone-selector label.active {
