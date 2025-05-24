@@ -99,7 +99,7 @@ async function generateSummaryAndReplies() {
 			<!-- Time frame selector and message count -->
 			<section class="control-bar">
 				<div class="timeframe-controls">
-					<label for="window-back">Summarize the last:</label>
+					<label for="window-back">summarize last:</label>
 					<select
 						id="window-back"
 						class="hours-dropdown"
@@ -230,43 +230,36 @@ async function generateSummaryAndReplies() {
 		font-family: "Great Vibes", cursive;
 		font-size: 3rem;
 		color: var(--primary);
-		margin-bottom: 0.25rem;
+		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
 	}
 
+	header i {
+		font-style: italic;
+		color: var(--primary-light);
+		font-size: 1rem;
+	}
+
+	/* Content layout */
 	.content-container {
-		border: 1px solid var(--light);
-		border-radius: var(--border-radius);
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		width: 100%;
 	}
 
-	form {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-		padding: 1rem;
-	}
-
-	/* Sections */
-	section {
-		margin-bottom: 1rem;
-	}
-
+	/* Controls */
 	.control-bar {
 		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 0.75rem 1rem;
-		background-color: var(--white);
-		border: 1px solid var(--light);
-		border-radius: var(--border-radius);
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: 0.75rem;
 		margin-bottom: 1rem;
+		justify-content: space-between;
 	}
 
 	.timeframe-controls {
 		display: flex;
 		align-items: center;
-		gap: 0.75rem;
+		gap: 0.25rem;
 		line-height: 1;
+		flex-wrap: nowrap;
 	}
 
 	.timeframe-controls label {
@@ -281,9 +274,9 @@ async function generateSummaryAndReplies() {
 	.timeframe-controls select.hours-dropdown {
 		margin: 0;
 	}
-	
+
 	.go-button {
-		padding: 0.4rem 0.875rem;
+		padding: 0.5rem 1rem;
 		background-color: var(--primary-light);
 		color: var(--white);
 		border: 1px solid var(--primary-light);
@@ -291,7 +284,12 @@ async function generateSummaryAndReplies() {
 		font-weight: 500;
 		cursor: pointer;
 		transition: background-color 0.2s, transform 0.1s;
-		margin-left: 0.5rem;
+		margin-left: 0.25rem;
+		min-height: 44px; /* Minimum touch target size */
+		min-width: 44px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 	
 	.go-button:hover {
@@ -321,30 +319,61 @@ async function generateSummaryAndReplies() {
 		padding: 0.75rem 1rem;
 		background-color: var(--white);
 		margin-bottom: 1rem;
+		width: 100%;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 	}
 
 	details summary {
 		cursor: pointer;
 		font-weight: 500;
+		padding: 0.5rem 0;
+		min-height: 44px;
+		display: flex;
+		align-items: center;
 	}
 
 	textarea.context-input {
 		width: 100%;
-		margin-top: 0.5rem;
-		padding: 0.5rem;
+		margin-top: 0.75rem;
+		padding: 0.75rem;
 		border: 1px solid var(--light);
 		border-radius: var(--border-radius);
 		resize: vertical;
+		font-size: 16px; /* Prevents iOS zoom on focus */
+		min-height: 80px;
+	}
+	
+	/* Make select elements bigger and easier to tap on mobile */
+	select {
+		font-size: 16px;
+		padding: 0.5rem;
+		height: 44px;
+		border-radius: var(--border-radius);
+		border: 1px solid var(--light);
+		background-color: var(--white);
+		appearance: none;
+		background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23555B6E%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+		background-repeat: no-repeat;
+		background-position: right 0.7rem top 50%;
+		background-size: 0.65rem auto;
+		padding-right: 1.75rem;
 	}
 
 	/* Conversation */
 	.conversation {
 		background-color: var(--light);
 		border-radius: var(--border-radius);
-		padding: 1.25rem;
-		min-height: 100px;
+		padding: 1rem;
+		min-height: 120px;
 		margin-bottom: 1rem;
 		transition: opacity 0.3s;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+	}
+	
+	@media (min-width: 768px) {
+		.conversation {
+			padding: 1.25rem;
+		}
 	}
 
 	.summary {
@@ -379,22 +408,26 @@ async function generateSummaryAndReplies() {
 	.tone-selector {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.75rem;
+		gap: 0.5rem;
 		margin: 0.75rem 0 1.25rem;
+		justify-content: center;
 	}
 
 	.tone-selector label {
 		display: inline-flex;
 		align-items: center;
-		padding: 0.5rem 0.875rem;
+		justify-content: center;
+		padding: 0.75rem 1rem;
 		border: 1px solid var(--primary-light);
 		border-radius: var(--border-radius);
 		cursor: pointer;
-		font-size: 0.95rem;
+		font-size: 1rem;
 		transition:
 			background-color 0.2s,
 			color 0.2s,
 			box-shadow 0.2s;
+		min-height: 44px;
+		min-width: 70px;
 	}
 
 	.tone-selector label.active {
@@ -403,7 +436,14 @@ async function generateSummaryAndReplies() {
 	}
 
 	.tone-selector input[type="radio"] {
-		margin-right: 0.25rem;
+		margin-right: 0.5rem;
+	}
+	
+	@media (min-width: 768px) {
+		.tone-selector {
+			gap: 0.75rem;
+			justify-content: flex-start;
+		}
 	}
 
 	/* Suggestions */
@@ -412,16 +452,25 @@ async function generateSummaryAndReplies() {
 	}
 
 	.suggestion-item {
-		padding: 0.75rem;
-		margin-bottom: 0.5rem;
+		padding: 1rem;
+		margin-bottom: 0.75rem;
 		border: 1px solid var(--light);
 		border-radius: var(--border-radius);
 		background-color: var(--white);
 		font-family: 'Palatino', 'Garamond', serif;
-		font-size: 1.02rem;
+		font-size: 1.05rem;
 		line-height: 1.5;
 		letter-spacing: 0.03em;
 		color: var(--primary);
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+	}
+	
+	@media (min-width: 768px) {
+		.suggestion-item {
+			padding: 0.75rem;
+			margin-bottom: 0.5rem;
+			font-size: 1.02rem;
+		}
 	}
 
 	.empty-state {
