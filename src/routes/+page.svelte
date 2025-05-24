@@ -231,17 +231,37 @@ async function generateSummaryAndReplies() {
 		font-size: 3rem;
 		color: var(--primary);
 		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+		margin-bottom: 0; /* Remove space below h1 */
 	}
 
 	header i {
 		font-style: italic;
-		color: var(--primary-light);
+		/* color: var(--primary-light); */
 		font-size: 1rem;
+		display: block;
+		margin-bottom: 2rem;
 	}
 
 	/* Content layout */
 	.content-container {
 		width: 100%;
+		max-width: 100%;
+		display: flex;
+		flex-direction: column;
+		padding-right: 2.5rem;
+	}
+	
+	@media (min-width: 768px) {
+		.app {
+			padding: 0 1.5rem 0 0;
+			max-width: 800px;
+		}
+	}
+
+	form {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
 	}
 
 	/* Controls */
@@ -312,15 +332,11 @@ async function generateSummaryAndReplies() {
 		border-color: var(--primary);
 		box-shadow: 0 0 0 2px rgba(85, 91, 110, 0.2);
 	}
-	details {
+	details.context-details {
 		text-align: left;
 		border: 1px solid var(--light);
-		border-radius: var(--border-radius);
-		padding: 0.75rem 1rem;
 		background-color: var(--white);
-		margin-bottom: 1rem;
-		width: 100%;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+		margin-right: 1rem;
 	}
 
 	details summary {
@@ -359,19 +375,24 @@ async function generateSummaryAndReplies() {
 		padding-right: 1.75rem;
 	}
 
-	/* Conversation */
-	.conversation {
-		background-color: var(--light);
+	/* Common styles for boxes */
+	.conversation, details.context-details {
 		border-radius: var(--border-radius);
 		padding: 1rem;
-		min-height: 120px;
 		margin-bottom: 1rem;
-		transition: opacity 0.3s;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 	}
 	
+	/* Conversation */
+	.conversation {
+		background-color: var(--light);
+		min-height: 120px;
+		transition: opacity 0.3s;
+		margin-right: 1rem;
+	}
+	
 	@media (min-width: 768px) {
-		.conversation {
+		.conversation, details.context-details {
 			padding: 1.25rem;
 		}
 	}
