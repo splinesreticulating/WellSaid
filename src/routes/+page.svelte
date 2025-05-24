@@ -159,16 +159,7 @@
 	main.app {
 		max-width: 800px;
 		margin: 0 auto;
-		font-family:
-			system-ui,
-			-apple-system,
-			BlinkMacSystemFont,
-			"Segoe UI",
-			Roboto,
-			Oxygen,
-			Ubuntu,
-			Cantarell,
-			sans-serif;
+		font-family: "Space Mono", Georgia, "Times New Roman", Times, serif;
 		color: var(--primary);
 		line-height: 1.5;
 	}
@@ -179,7 +170,7 @@
 	}
 
 	header h1 {
-		font-family: 'Great Vibes', cursive;
+		font-family: "Great Vibes", cursive;
 		font-size: 3rem;
 		color: var(--primary);
 		margin-bottom: 0.25rem;
@@ -231,14 +222,7 @@
 	}
 
 	.timeframe-controls select.hours-dropdown {
-		height: 35px;
-		font-size: 0.9rem;
-		padding-top: 0.25rem;
-		padding-bottom: 0.25rem;
-		vertical-align: middle;
 		margin: 0;
-		display: inline-flex;
-		align-items: center;
 	}
 
 	.timeframe-controls select.hours-dropdown:focus {
@@ -246,8 +230,6 @@
 		border-color: var(--primary);
 		box-shadow: 0 0 0 2px rgba(85, 91, 110, 0.2);
 	}
-
-	/* Details and context */
 	details {
 		text-align: left;
 		border: 1px solid var(--light);
