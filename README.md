@@ -10,8 +10,6 @@
 
 WellSaid is an empathy-focused communication tool built with Svelte 5 that helps you craft better responses by providing conversation summaries and tone-based reply suggestions.
 
-![WellSaid - Empathy. Upgraded.](https://i.imgur.com/placeholder.png)
-
 ## Features
 
 - **Conversation Summaries**: Analyze your Messages app conversations with a partner from the last 1-24 hours
