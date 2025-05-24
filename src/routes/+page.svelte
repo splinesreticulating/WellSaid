@@ -178,6 +178,13 @@
 		margin-bottom: 1rem;
 	}
 
+	header h1 {
+		font-family: 'Great Vibes', cursive;
+		font-size: 3rem;
+		color: var(--primary);
+		margin-bottom: 0.25rem;
+	}
+
 	.content-container {
 		border: 1px solid var(--light);
 		border-radius: var(--border-radius);
