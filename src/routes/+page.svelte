@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { Message, PageData } from '$lib/types'
 
-	const TONES = ['gentle', 'honest', 'funny', 'reassuring', 'concise']
+	type ToneType = 'gentle' | 'honest' | 'funny' | 'reassuring' | 'concise'
+	const TONES: ToneType[] = ['gentle', 'honest', 'funny', 'reassuring', 'concise']
 	const { data } = $props<{ data: PageData }>()
 	let formState = $state({
 		model: 'gpt-4',
@@ -10,9 +11,9 @@
 		messages: [] as Message[],
 		additionalContext: '',
 		userQuery: '',
-		tone: 'gentle',
+		tone: 'gentle' as ToneType,
 		summary: '',
-		suggestedReplies: [],
+		suggestedReplies: [] as string[],
 		loading: false,
 	})
 
@@ -44,8 +45,46 @@
 		event.preventDefault()
 	}
 
-	function selectTone(tone: string) {
+	function selectTone(tone: ToneType) {
 		formState.tone = tone
+	}
+
+	function generateSummaryAndReplies() {
+		// Mock function to simulate sending to LLM
+		formState.loading = true
+		
+		// Simulate a delay to mimic API call
+		setTimeout(() => {
+			// Mock data
+			formState.summary = `Summary of ${formState.messages.length} messages from the last ${formState.lookBackHours} hour(s): The conversation covered several topics including project updates, meeting schedules, and feedback on recent presentations.`
+			
+			// Generate mock replies based on selected tone
+			const toneReplies: Record<ToneType, string[]> = {
+				gentle: [
+					"I appreciate your perspective on this matter. Perhaps we could consider an alternative approach?",
+					"Thank you for sharing your thoughts. I understand your concerns and I'm happy to discuss them further."
+				],
+				honest: [
+					"I have to be direct - this approach isn't working. Let's try something completely different.",
+					"To be frank, I think we need to reconsider our timeline and priorities here."
+				],
+				funny: [
+					"Well, that meeting was about as productive as trying to herd cats... on roller skates!",
+					"If our project timeline was any more ambitious, it would need its own superhero cape!"
+				],
+				reassuring: [
+					"Don't worry, we've faced challenges like this before and always found a solution together.",
+					"I'm confident we'll work through this. Our team has the expertise to handle these obstacles."
+				],
+				concise: [
+					"Understood. Will follow up by EOD.",
+					"Noted. Let's regroup tomorrow."
+				]
+			}
+			
+			formState.suggestedReplies = toneReplies[formState.tone]
+			formState.loading = false
+		}, 1500)
 	}
 </script>
 
@@ -75,6 +114,13 @@
 						<option value="12">12 hours</option>
 						<option value="24">24 hours</option>
 					</select>
+					<button type="button" class="go-button" onclick={generateSummaryAndReplies} disabled={formState.loading}>
+						{#if formState.loading}
+							loading...
+						{:else}
+							go
+						{/if}
+					</button>
 				</div>
 				<div class="message-count">
 					messages:&nbsp;
@@ -115,7 +161,7 @@
 								name="tone"
 								value={tone}
 								checked={formState.tone === tone}
-								onchange={() => selectTone(tone)}
+								onchange={() => selectTone(tone as ToneType)}
 							/>
 							{tone}
 						</label>
@@ -219,6 +265,33 @@
 	.timeframe-controls select.hours-dropdown {
 		margin: 0;
 	}
+	
+	.go-button {
+		padding: 0.4rem 0.875rem;
+		background-color: var(--primary-light);
+		color: var(--white);
+		border: 1px solid var(--primary-light);
+		border-radius: var(--border-radius);
+		font-weight: 500;
+		cursor: pointer;
+		transition: background-color 0.2s, transform 0.1s;
+		margin-left: 0.5rem;
+	}
+	
+	.go-button:hover {
+		background-color: var(--primary);
+	}
+	
+	.go-button:active {
+		transform: scale(0.98);
+	}
+	
+	.go-button:disabled {
+		background-color: var(--light);
+		color: var(--gray);
+		cursor: not-allowed;
+		border-color: var(--light);
+	}
 
 	.timeframe-controls select.hours-dropdown:focus {
 		outline: none;
@@ -255,6 +328,7 @@
 		padding: 1.25rem;
 		min-height: 100px;
 		margin-bottom: 1rem;
+		transition: opacity 0.3s;
 	}
 
 	.message-count {
