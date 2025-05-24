@@ -1,10 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import * as serverModule from './+server';
+import * as serverModule from '../../../../src/routes/api/messages/+server';
 // Use relative paths for tests instead of SvelteKit aliases
-import * as queryDb from '../../../lib/queryMessagesDb';
+import * as queryDb from '../../../../src/lib/queryMessagesDb';
+
+// Define a minimal type for GET params to avoid using 'any'
+type MinimalRequestParams = { url: URL };
 
 // Mock the queryMessagesDb module
-vi.mock('../../../lib/queryMessagesDb', () => ({
+vi.mock('../../../../src/lib/queryMessagesDb', () => ({
   queryMessagesDb: vi.fn()
 }));
 
@@ -24,7 +27,7 @@ describe('GET handler for messages endpoint', () => {
     // Create mock request with URL parameters
     const mockUrl = new URL('https://example.com/api/messages?start=2025-05-23T00:00:00Z&end=2025-05-24T00:00:00Z');
     
-    const response = await serverModule.GET({ url: mockUrl } as any);
+    const response = await serverModule.GET({ url: mockUrl } as MinimalRequestParams);
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -39,7 +42,7 @@ describe('GET handler for messages endpoint', () => {
     // Create mock request with missing start parameter
     const mockUrl = new URL('https://example.com/api/messages?end=2025-05-24T00:00:00Z');
     
-    const response = await serverModule.GET({ url: mockUrl } as any);
+    const response = await serverModule.GET({ url: mockUrl } as MinimalRequestParams);
     const data = await response.json();
 
     expect(response.status).toBe(400);
@@ -51,7 +54,7 @@ describe('GET handler for messages endpoint', () => {
     // Create mock request with missing end parameter
     const mockUrl = new URL('https://example.com/api/messages?start=2025-05-23T00:00:00Z');
     
-    const response = await serverModule.GET({ url: mockUrl } as any);
+    const response = await serverModule.GET({ url: mockUrl } as MinimalRequestParams);
     const data = await response.json();
 
     expect(response.status).toBe(400);

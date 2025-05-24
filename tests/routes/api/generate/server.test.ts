@@ -1,15 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import * as serverModule from './+server';
+import * as serverModule from '../../../../src/routes/api/generate/+server';
 // Use relative paths for tests instead of SvelteKit aliases
-import * as ai from '../../../lib/ai';
+import * as ai from '../../../../src/lib/ai';
+import type { RequestEvent } from '../../../types/RequestEvent';
 
 // Mock the AI module
-vi.mock('../../../lib/ai', () => ({
+vi.mock('../../../../src/lib/ai', () => ({
   getSuggestedReplies: vi.fn()
 }));
 
 // Mock logger to prevent test output pollution
-vi.mock('../../../lib/logger', () => ({
+vi.mock('../../../../src/lib/logger', () => ({
   logger: {
     error: vi.fn(),
     debug: vi.fn(),
@@ -17,6 +18,49 @@ vi.mock('../../../lib/logger', () => ({
     warn: vi.fn()
   }
 }));
+
+// Define types for our mock request objects
+interface MessageData {
+  sender: string;
+  text: string;
+  timestamp: string;
+}
+
+interface RequestData {
+  messages?: MessageData[];
+  tone?: string;
+  context?: string;
+}
+
+interface MockRequest {
+  json: () => Promise<RequestData>;
+}
+
+// Helper function to create a mock RequestEvent
+function createMockRequestEvent(mockRequest: MockRequest): RequestEvent<Record<string, string>, "/api/generate"> {
+  return {
+    request: mockRequest as unknown as Request,
+    cookies: {
+      get: vi.fn().mockReturnValue(undefined),
+      getAll: vi.fn().mockReturnValue([]),
+      set: vi.fn(),
+      delete: vi.fn(),
+      serialize: vi.fn()
+    },
+    fetch: vi.fn(),
+    getClientAddress: vi.fn(),
+    locals: {},
+    params: {},
+    platform: undefined,
+    route: {
+      id: "/api/generate"
+    },
+    setHeaders: vi.fn(),
+    url: new URL('http://localhost/api/generate'),
+    isDataRequest: false,
+    isSubRequest: false
+  };
+}
 
 describe('POST handler for generate endpoint', () => {
   beforeEach(() => {
@@ -43,7 +87,10 @@ describe('POST handler for generate endpoint', () => {
       })
     };
 
-    const response = await serverModule.POST({ request: mockRequest as unknown as Request } as any);
+    // Create a proper mock RequestEvent object
+    const mockRequestEvent = createMockRequestEvent(mockRequest);
+    
+    const response = await serverModule.POST(mockRequestEvent);
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -64,7 +111,10 @@ describe('POST handler for generate endpoint', () => {
       })
     };
 
-    const response = await serverModule.POST({ request: mockRequest as unknown as Request } as any);
+    // Create a proper mock RequestEvent object
+    const mockRequestEvent = createMockRequestEvent(mockRequest);
+    
+    const response = await serverModule.POST(mockRequestEvent);
     const data = await response.json();
 
     expect(response.status).toBe(400);
@@ -87,7 +137,10 @@ describe('POST handler for generate endpoint', () => {
       })
     };
 
-    const response = await serverModule.POST({ request: mockRequest as unknown as Request } as any);
+    // Create a proper mock RequestEvent object
+    const mockRequestEvent = createMockRequestEvent(mockRequest);
+    
+    const response = await serverModule.POST(mockRequestEvent);
     const data = await response.json();
 
     expect(response.status).toBe(500);

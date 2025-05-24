@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { queryMessagesDb } from './queryMessagesDb';
+import { queryMessagesDb } from '../../src/lib/queryMessagesDb';
 import { open } from 'sqlite';
 import type { Database } from 'sqlite';
 
@@ -9,7 +9,7 @@ vi.mock('sqlite', () => ({
 }));
 
 // Mock the logger to prevent console output during tests
-vi.mock('./logger', () => ({
+vi.mock('../../src/lib/logger', () => ({
   logger: {
     info: vi.fn(),
     warn: vi.fn(),

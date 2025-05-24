@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getSuggestedReplies } from './ai';
-import type { Message } from './types';
-import * as utils from './utils';
+import { getSuggestedReplies } from '../../src/lib/ai';
+import type { Message } from '../../src/lib/types';
+import * as utils from '../../src/lib/utils';
 
 // Mock the utils.parseSummaryToHumanReadable function
-vi.mock('./utils', () => ({
+vi.mock('../../src/lib/utils', () => ({
   parseSummaryToHumanReadable: vi.fn((text) => text.split('Reply 1:')[0].trim())
 }));
 
