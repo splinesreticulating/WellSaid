@@ -20,15 +20,18 @@ export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
     const isoToAppleNs = (iso: string): number => {
         const appleEpoch = new Date('2001-01-01T00:00:00Z').getTime()
         const target = new Date(iso).getTime()
+
         return (target - appleEpoch) * 1000000
     }
 
     let dateWhere = ''
     const params: (string | number)[] = [PARTNER_HANDLE_ID]
+    
     if (startDate) {
         dateWhere += " AND message.date >= ?"
         params.push(isoToAppleNs(startDate))
     }
+    
     if (endDate) {
         dateWhere += " AND message.date <= ?"
         params.push(isoToAppleNs(endDate))
@@ -51,6 +54,7 @@ export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
         ORDER BY message.date DESC`
 
     let rows: MessageRow[] = []
+    
     try {
         rows = await db.all(query, params) as MessageRow[]
     } finally {
@@ -73,5 +77,6 @@ export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
 
     // Return empty array if all messages are from 'me'
     const hasPartnerMessages = formattedRows.some(msg => msg.sender !== 'me')
+
     return { messages: hasPartnerMessages ? formattedRows : [] }
 }
