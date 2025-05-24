@@ -8,9 +8,9 @@
 	}
 
 	// Available tone options
-	const TONES = ['gentle', 'honest', 'funny', 'reassuring', 'concise'];
-	
-	// State management using Svelte 5 $state
+	const TONES = ["gentle", "honest", "funny", "reassuring", "concise"];
+
+	// Things that can change
 	let formState = $state({
 		model: "gpt-4",
 		systemPrompt: "You are a helpful assistant.",
@@ -21,7 +21,7 @@
 		tone: "gentle",
 		summary: "",
 		suggestedReplies: [],
-		loading: false
+		loading: false,
 	});
 
 	// Properly type the data prop
@@ -35,10 +35,12 @@
 	// Fetch messages for the selected time period
 	async function getMessages() {
 		const end = new Date();
-		const start = new Date(end.getTime() - parseInt(formState.lookBackHours) * 60 * 60 * 1000);
-		
+		const start = new Date(
+			end.getTime() - parseInt(formState.lookBackHours) * 60 * 60 * 1000,
+		);
+
 		const res = await fetch(
-			`/api/messages?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`
+			`/api/messages?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`,
 		);
 		const data = await res.json();
 
@@ -92,52 +94,56 @@
 					<option value="24">24 hours</option>
 				</select>
 			</section>
-			
+
 			<!-- Additional context (collapsible) -->
 			<details class="context-details">
 				<summary>Add more context</summary>
-				<textarea 
-					class="context-input" 
-					rows="4" 
-					bind:value={formState.additionalContext} 
+				<textarea
+					class="context-input"
+					rows="4"
+					bind:value={formState.additionalContext}
 					placeholder="Anything else we should know about?"
 				></textarea>
 			</details>
-			
+
 			<!-- Conversation summary -->
 			<section class="conversation">
 				<div class="summary">{formState.summary}</div>
-				<div class="message-count">{formState.messages.length} messages</div>
+				<div class="message-count">
+					{formState.messages.length} messages
+				</div>
 			</section>
-			
+
 			<hr />
-			
+
 			<!-- Reply suggestions section -->
 			<section class="reply-section">
 				<h2>Suggested replies</h2>
-				
+
 				<!-- Tone selector -->
 				<div class="tone-selector">
 					{#each TONES as tone}
-						<label class={formState.tone === tone ? 'active' : ''}>
-							<input 
-								type="radio" 
-								name="tone" 
-								value={tone} 
-								checked={formState.tone === tone} 
-								onchange={() => selectTone(tone)} 
+						<label class={formState.tone === tone ? "active" : ""}>
+							<input
+								type="radio"
+								name="tone"
+								value={tone}
+								checked={formState.tone === tone}
+								onchange={() => selectTone(tone)}
 							/>
 							{tone}
 						</label>
 					{/each}
 				</div>
-				
+
 				<!-- Where suggested replies will appear -->
 				<div class="suggestions">
 					{#each formState.suggestedReplies as reply}
 						<div class="suggestion-item">{reply}</div>
 					{:else}
-						<div class="empty-state">No suggestions available yet</div>
+						<div class="empty-state">
+							No suggestions available yet
+						</div>
 					{/each}
 				</div>
 			</section>
@@ -258,7 +264,9 @@
 		border-radius: var(--border-radius);
 		cursor: pointer;
 		font-size: 0.875rem;
-		transition: background-color 0.2s, color 0.2s;
+		transition:
+			background-color 0.2s,
+			color 0.2s;
 	}
 
 	.tone-selector label.active {
