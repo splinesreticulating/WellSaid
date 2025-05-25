@@ -113,11 +113,11 @@ yarn test:coverage
 
 **Note**: Since this application only runs on macOS and accesses local system resources, there is no traditional "production deployment" - the built version is simply run locally on your macbook. The `yarn build` and `yarn preview` commands create and run an optimized version that may provide better performance than development mode.
 
-## Accessing WellSaid from Anywhere
+## Accessing from Anywhere
 
-If you'd like to securely access **WellSaid** remotely, consider using [Tailscale](https://tailscale.com). Tailscale sets up a secure private network (a mesh VPN) that connects your devices, making it simple and safe to access your app.
+If you'd like to securely access WellSaid remotely, consider using a service like [Tailscale](https://tailscale.com). Tailscale sets up a secure private network (a mesh VPN) that connects your devices, making it simple and safe to access your app.
 
-To enable this, set the `ALLOWED_HOST` variable in your `.env` file to the domain provided by Tailscale (e.g., `yourhost.tailabe386.ts.net`).
+All that's required in the app is that you set the `ALLOWED_HOST` variable in your `.env` file to the address provided by Tailscale.
 
 For more details, visit [Tailscale's documentation](https://tailscale.com/kb/).
 
