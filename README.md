@@ -1,7 +1,7 @@
 <h1 align="center">WellSaid</h1>
 <p align="center"><b>Empathy. Upgraded.</b></p>
 
-WellSaid is an empathy-focused communication tool built with Svelte 5 that helps you craft better responses by providing conversation summaries and tone-based reply suggestions. With a clean, modern UI and straightforward experience, WellSaid helps improve your communication with meaningful, contextually appropriate responses.
+WellSaid is an empathy-focused communication tool that helps you craft better responses by providing conversation summaries and tone-based reply suggestions. With a clean, modern UI and straightforward experience, WellSaid helps improve your communication with meaningful, contextually appropriate responses.
 
 ## Features
 
