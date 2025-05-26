@@ -1,76 +1,83 @@
 <script lang="ts">
 import { browser } from '$app/environment'
-import { onMount } from 'svelte'
-import { page } from '$app/stores' // ADDED: Import page store to access URL
+import { page } from '$app/stores' // SvelteKit's page store
+import { goto } from '$app/navigation' // SvelteKit's navigation utility
 
-let authenticated = false
-let loading = true
-let error: string | null = null
+let { children } = $props(); // Svelte 5: Layouts receive content as 'children' prop
 
-async function checkAuth() {
-    if (!browser) return
+let authenticated = $state(false) // Svelte 5 state
+let initialCheckLoading = $state(true) // Svelte 5 state for initial auth check status
 
+// Performs the authentication check against the API
+async function performAuthCheck() {
+    if (!browser) return;
     try {
         const response = await fetch('/api/auth/check')
         authenticated = response.ok
     } catch (err) {
         console.error('Auth check failed:', err)
-        error = 'Failed to check authentication status'
         authenticated = false
-    } finally {
-        loading = false
     }
 }
 
+// Handles the user logout process
 async function handleLogout() {
     try {
-        // Clear basic auth credentials
         await fetch('/api/auth/logout', { method: 'POST' })
-        // Force reload to clear any cached credentials
-        window.location.reload()
+        authenticated = false // Update state, $effect will handle redirect
+        if (browser) {
+            // Explicit redirect on logout can be good for immediate feedback
+            goto('/login'); 
+        }
     } catch (err) {
         console.error('Logout failed:', err)
-        error = 'Logout failed. Please try again.'
     }
 }
 
-onMount(() => {
-    checkAuth()
-})
+// Svelte 5 effect for initial data loading and reactive redirection
+$effect(() => {
+    if (browser) {
+        // Function to run the initial check and update loading state
+        const runInitialCheck = async () => {
+            await performAuthCheck();
+            initialCheckLoading = false; // Mark initial check as complete
+        };
+
+        // If initial check hasn't run, run it
+        if (initialCheckLoading) {
+            runInitialCheck();
+        }
+
+        // Reactive redirection: if not loading, not authenticated, and not on login page, redirect
+        if (!initialCheckLoading && !authenticated && $page.url.pathname !== '/login') {
+            goto('/login');
+        }
+    }
+});
 </script>
 
 {#if $page.url.pathname === '/login'}
-    <slot /> <!-- Always render the login page content if on /login -->
-{:else if loading}
-    <div class="auth-required" style="text-align:center; margin-top: 5rem;">
-        <p>Loading application...</p> <!-- Show loading for other pages -->
+    {@render children()} <!-- Call the children snippet function -->
+{:else if initialCheckLoading}
+    <div style="text-align:center; margin-top: 5rem; padding: 1rem;">
+        <p>Loading application...</p>
     </div>
-{:else if !authenticated}
-    <div class="auth-required">
-        <h1>Authentication Required</h1>
-        <p>Please sign in to access this application.</p>
-        {#if error}
-            <p class="error">{error}</p>
-        {/if}
-    </div>
-{:else} <!-- Authenticated and not on the login page -->
+{:else if authenticated}
     <nav>
         <div class="user-info">
             <span>Welcome, {import.meta.env.VITE_BASIC_AUTH_USERNAME || 'User'}</span>
-            <button on:click={handleLogout}>Sign Out</button>
+            <button onclick={handleLogout}>Sign Out</button> <!-- Svelte 5 event handling -->
         </div>
     </nav>
-    <slot />
+    {@render children()} <!-- Call the children snippet function -->
+{:else}
+    <!-- This state should be brief due to the redirect effect. -->
+    <div style="text-align:center; margin-top: 5rem; padding: 1rem;">
+        <p>Please wait...</p> 
+    </div>
 {/if}
 
 <style>
-    .auth-required {
-        max-width: 600px;
-        margin: 5rem auto;
-        padding: 2rem;
-        text-align: center;
-    }
-    
     nav {
         background: #f5f5f5;
         padding: 1rem;
@@ -97,14 +104,5 @@ onMount(() => {
     
     button:hover {
         background: #555;
-    }
-    
-    .error {
-        color: #d32f2f;
-        margin-top: 1rem;
-        padding: 0.5rem;
-        background-color: #ffebee;
-        border-radius: 4px;
-        display: inline-block;
     }
 </style>
