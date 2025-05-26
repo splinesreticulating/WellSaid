@@ -1,0 +1,45 @@
+:root {
+    /* Colors from +page.svelte */
+    --primary: #555b6e;
+    --primary-light: #89b0ae;
+    --light: #bee3db;
+    --success: #00c853;
+    --warning: #df8950;
+    --error: #ff5252;
+    --gray: #555b6e;
+    --white: #faf9f9;
+
+    /* Spacing & Sizing from +page.svelte */
+    --border-radius: 8px;
+    --min-touch-size: 44px;
+
+    /* Typography from +page.svelte */
+    --summary-font: "Georgia", serif;
+    --reply-font: "Palatino", "Garamond", serif;
+    --heading-font: "Great Vibes", cursive;
+    --body-font: "Space Mono", Georgia, "Times New Roman", Times, serif;
+    --text-secondary: #555b6e;
+}
+
+body {
+    font-family: var(--body-font);
+    margin: 0;
+    padding: 1rem;
+    min-height: 100vh;
+    background-color: var(--light);
+    color: var(--text-secondary);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+a {
+    color: var(--primary-light);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

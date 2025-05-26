@@ -97,6 +97,10 @@ async function generateSummaryAndReplies() {
 }
 </script>
 
+<svelte:head>
+    <title>WellSaid</title>
+</svelte:head>
+
 <main class="app">
 	<header>
 		<h1>WellSaid</h1>
@@ -177,29 +181,6 @@ async function generateSummaryAndReplies() {
 </main>
 
 <style>
-	/* ===== Variables ===== */
-	:root {
-		/* Colors */
-		--primary: #555b6e;
-		--primary-light: #89b0ae;
-		--light: #bee3db;
-		--success: #00c853;
-		--warning: #df8950;
-		--error: #ff5252;
-		--gray: #555b6e;
-		--white: #faf9f9;
-		
-		/* Spacing & Sizing */
-		--border-radius: 8px;
-		--min-touch-size: 44px;
-		
-		/* Typography */
-		--summary-font: 'Georgia', serif;
-		--reply-font: 'Palatino', 'Garamond', serif;
-		--heading-font: 'Great Vibes', cursive;
-		--body-font: 'Space Mono', Georgia, 'Times New Roman', Times, serif;
-	}
-
 	/* ===== Layout & Structure ===== */
 	main.app {
 		max-width: 800px;
