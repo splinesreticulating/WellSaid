@@ -11,7 +11,7 @@ $effect(() => {
 <div class="error-container">
     <h1>{status}</h1>
     <p>{message}</p>
-    <a href="/">Go to Home</a>
+    <a href="/">(go back)</a>
 </div>
 
 <style>
