@@ -5,7 +5,7 @@ import { type RequestHandler, json } from '@sveltejs/kit'
 // 30-day cookie expiration by default
 const AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 30
 
-export const POST: RequestHandler = async ({ request, cookies, url }) => { // Added url for logging
+export const POST: RequestHandler = async ({ request, cookies, url }) => {
     try {
         logger.debug('[LOGIN API] Received POST request. URL:', JSON.stringify(url));
         logger.debug('[LOGIN API] Request Headers:', JSON.stringify(Object.fromEntries(request.headers.entries())));
