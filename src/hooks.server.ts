@@ -4,14 +4,14 @@ import type { Handle } from '@sveltejs/kit'
 import { redirect } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 
+const MAX_LOGIN_ATTEMPTS = 5
+const LOGIN_ATTEMPT_WINDOW_MS = 15 * 60 * 1000 // 15 minutes
+
 // Validate environment variables
 if (!BASIC_AUTH_USERNAME || !BASIC_AUTH_PASSWORD) {
     console.error('FATAL: BASIC_AUTH_USERNAME and BASIC_AUTH_PASSWORD must be set')
     process.exit(1)
 }
-
-const MAX_LOGIN_ATTEMPTS = 5
-const LOGIN_ATTEMPT_WINDOW_MS = 15 * 60 * 1000 // 15 minutes
 
 // Simple in-memory rate limiting
 const loginAttempts = new Map<string, { count: number; lastAttempt: number }>()
@@ -60,12 +60,15 @@ const authMiddleware: Handle = async ({ event, resolve }) => {
         PUBLIC_PATHS.has(pathname)
     ) {
         logger.debug('[AUTH] Allowed public path:', pathname)
+
         return resolve(event)
     }
 
     // Check if user is authenticated via cookie
     const authToken = event.cookies.get('auth_token')
+
     logger.debug('[AUTH] Checked auth_token:', authToken)
+
     if (authToken === 'authenticated') {
         // User is authenticated - add security headers to response
         const response = await resolve(event)
@@ -76,21 +79,23 @@ const authMiddleware: Handle = async ({ event, resolve }) => {
         }
 
         logger.debug('[AUTH] Authenticated, returning response')
+
         return response
     }
 
     // Check rate limiting
-    const now = Date.now()
     const attemptInfo = loginAttempts.get(clientIP) || { count: 0, lastAttempt: 0 }
 
     // Reset counter if window has passed
-    if (now - attemptInfo.lastAttempt > LOGIN_ATTEMPT_WINDOW_MS) {
+    if (Date.now() - attemptInfo.lastAttempt > LOGIN_ATTEMPT_WINDOW_MS) {
         loginAttempts.delete(clientIP)
     }
     // Block if too many attempts
     else if (attemptInfo.count >= MAX_LOGIN_ATTEMPTS) {
         logSecurityEvent('rate_limit_exceeded', { ip: clientIP, path: pathname })
+
         logger.debug('[AUTH] Too many attempts for IP:', clientIP)
+
         // We still redirect to login page, but with an error parameter
         throw redirect(303, '/login?error=too_many_attempts')
     }
@@ -98,6 +103,7 @@ const authMiddleware: Handle = async ({ event, resolve }) => {
     // Not authenticated - redirect to login page
     logSecurityEvent('auth_required', { ip: clientIP, path: pathname })
     logger.debug('[AUTH] Not authenticated, redirecting to /login for', pathname)
+
     throw redirect(303, '/login')
 }
 
