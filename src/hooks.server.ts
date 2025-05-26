@@ -7,6 +7,14 @@ import { sequence } from '@sveltejs/kit/hooks'
 const MAX_LOGIN_ATTEMPTS = 5
 const LOGIN_ATTEMPT_WINDOW_MS = 15 * 60 * 1000 // 15 minutes
 
+const PUBLIC_PATHS = new Set([
+    '/api/auth/check',
+    '/api/auth/login',
+    '/favicon.ico',
+    '/robots.txt',
+    '/health'
+])
+
 // Validate environment variables
 if (!BASIC_AUTH_USERNAME || !BASIC_AUTH_PASSWORD) {
     console.error('FATAL: BASIC_AUTH_USERNAME and BASIC_AUTH_PASSWORD must be set')
@@ -24,14 +32,6 @@ const securityHeaders = {
     'Referrer-Policy': 'strict-origin-when-cross-origin',
     'Permissions-Policy': 'geolocation=(), microphone=(), camera=()'
 }
-
-const PUBLIC_PATHS = new Set([
-    '/api/auth/check',
-    '/api/auth/login',
-    '/favicon.ico',
-    '/robots.txt',
-    '/health'
-])
 
 const logSecurityEvent = (event: string, details: Record<string, unknown> = {}) => {
     logger.debug(JSON.stringify({
