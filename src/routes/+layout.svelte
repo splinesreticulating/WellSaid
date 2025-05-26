@@ -1,7 +1,7 @@
 <script lang="ts">
 import { browser } from '$app/environment'
 import { goto } from '$app/navigation' // SvelteKit's navigation utility
-import { page } from '$app/stores' // SvelteKit's page store
+import { page } from '$app/state' // SvelteKit's state-based page store (Svelte 5)
 
 // biome-ignore lint/style/useConst: Svelte 5 $props pattern for layout children
 let { children } = $props() // Svelte 5: Layouts receive content as 'children' prop
@@ -24,7 +24,7 @@ async function performAuthCheck() {
 // Svelte 5 effect for initial data loading and reactive redirection
 $effect(() => {
     if (browser) {
-        const currentPath = $page.url.pathname
+        const currentPath = page.url.pathname
 
         // If on login page or already authenticated, ensure loading is false and do nothing else.
         if (currentPath === '/login' || authenticated) {
@@ -41,8 +41,8 @@ $effect(() => {
             initialCheckLoading = false
 
             // After the check, if still not authenticated and not on login page, redirect.
-            // Re-check $page.url.pathname as navigation might have occurred during await.
-            if (!authenticated && $page.url.pathname !== '/login') {
+            // Re-check page.url.pathname as navigation might have occurred during await.
+            if (!authenticated && page.url.pathname !== '/login') {
                 goto('/login')
             }
         }
@@ -52,7 +52,7 @@ $effect(() => {
 })
 </script>
 
-{#if $page.url.pathname === '/login'}
+{#if page.url.pathname === '/login'}
     {@render children()} <!-- Call the children snippet function -->
 {:else if initialCheckLoading}
     <div style="text-align:center; margin-top: 5rem; padding: 1rem;">
