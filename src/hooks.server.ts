@@ -6,7 +6,6 @@ import { sequence } from '@sveltejs/kit/hooks'
 
 const MAX_LOGIN_ATTEMPTS = 5
 const LOGIN_ATTEMPT_WINDOW_MS = 15 * 60 * 1000 // 15 minutes
-
 const PUBLIC_PATHS = new Set([
     '/api/auth/check',
     '/api/auth/login',
