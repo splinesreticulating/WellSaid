@@ -1,4 +1,5 @@
 import { BASIC_AUTH_PASSWORD, BASIC_AUTH_USERNAME } from '$env/static/private'
+import { logger } from '$lib/logger'
 import type { Handle } from '@sveltejs/kit'
 import { redirect } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
@@ -33,7 +34,7 @@ const PUBLIC_PATHS = new Set([
 ])
 
 const logSecurityEvent = (event: string, details: Record<string, unknown> = {}) => {
-    console.log(JSON.stringify({
+    logger.debug(JSON.stringify({
         timestamp: new Date().toISOString(),
         type: 'security',
         event,
@@ -45,7 +46,7 @@ const authMiddleware: Handle = async ({ event, resolve }) => {
     const { pathname } = event.url
     const clientIP = event.getClientAddress()
     const cookies = event.request.headers.get('cookie') || ''
-    console.log('[AUTH] Incoming request:', {
+    logger.debug('[AUTH] Incoming request:', {
         pathname,
         clientIP,
         cookies
@@ -58,26 +59,26 @@ const authMiddleware: Handle = async ({ event, resolve }) => {
         pathname.startsWith('/_app/') ||
         PUBLIC_PATHS.has(pathname)
     ) {
-        console.log('[AUTH] Allowed public path:', pathname)
+        logger.debug('[AUTH] Allowed public path:', pathname)
         return resolve(event)
     }
 
     // Check if user is authenticated via cookie
     const authToken = event.cookies.get('auth_token')
-    console.log('[AUTH] Checked auth_token:', authToken)
+    logger.debug('[AUTH] Checked auth_token:', authToken)
     if (authToken === 'authenticated') {
         // User is authenticated - add security headers to response
         const response = await resolve(event)
-        
+
         // Add security headers
         for (const [key, value] of Object.entries(securityHeaders)) {
             response.headers.set(key, value)
         }
-        
-        console.log('[AUTH] Authenticated, returning response')
+
+        logger.debug('[AUTH] Authenticated, returning response')
         return response
     }
-    
+
     // Check rate limiting
     const now = Date.now()
     const attemptInfo = loginAttempts.get(clientIP) || { count: 0, lastAttempt: 0 }
@@ -89,14 +90,14 @@ const authMiddleware: Handle = async ({ event, resolve }) => {
     // Block if too many attempts
     else if (attemptInfo.count >= MAX_LOGIN_ATTEMPTS) {
         logSecurityEvent('rate_limit_exceeded', { ip: clientIP, path: pathname })
-        console.log('[AUTH] Too many attempts for IP:', clientIP)
+        logger.debug('[AUTH] Too many attempts for IP:', clientIP)
         // We still redirect to login page, but with an error parameter
         throw redirect(303, '/login?error=too_many_attempts')
     }
 
     // Not authenticated - redirect to login page
     logSecurityEvent('auth_required', { ip: clientIP, path: pathname })
-    console.log('[AUTH] Not authenticated, redirecting to /login for', pathname)
+    logger.debug('[AUTH] Not authenticated, redirecting to /login for', pathname)
     throw redirect(303, '/login')
 }
 
