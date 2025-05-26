@@ -37,21 +37,30 @@ async function handleLogout() {
 // Svelte 5 effect for initial data loading and reactive redirection
 $effect(() => {
     if (browser) {
-        // Function to run the initial check and update loading state
-        const runInitialCheck = async () => {
-            await performAuthCheck();
-            initialCheckLoading = false; // Mark initial check as complete
+        const currentPath = $page.url.pathname;
+
+        // If on login page or already authenticated, ensure loading is false and do nothing else.
+        if (currentPath === '/login' || authenticated) {
+            if (initialCheckLoading) {
+                initialCheckLoading = false;
+            }
+            return;
+        }
+
+        // If not on /login and not authenticated, perform the full check.
+        const performFullCheck = async () => {
+            initialCheckLoading = true;
+            await performAuthCheck(); // This updates 'authenticated' state
+            initialCheckLoading = false;
+
+            // After the check, if still not authenticated and not on login page, redirect.
+            // Re-check $page.url.pathname as navigation might have occurred during await.
+            if (!authenticated && $page.url.pathname !== '/login') {
+                goto('/login');
+            }
         };
 
-        // If initial check hasn't run, run it
-        if (initialCheckLoading) {
-            runInitialCheck();
-        }
-
-        // Reactive redirection: if not loading, not authenticated, and not on login page, redirect
-        if (!initialCheckLoading && !authenticated && $page.url.pathname !== '/login') {
-            goto('/login');
-        }
+        performFullCheck();
     }
 });
 </script>
