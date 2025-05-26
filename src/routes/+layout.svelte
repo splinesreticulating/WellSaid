@@ -1,6 +1,7 @@
 <script lang="ts">
 import { browser } from '$app/environment'
 import { onMount } from 'svelte'
+import { page } from '$app/stores' // ADDED: Import page store to access URL
 
 let authenticated = false
 let loading = true
@@ -38,7 +39,13 @@ onMount(() => {
 })
 </script>
 
-{#if !loading && !authenticated}
+{#if $page.url.pathname === '/login'}
+    <slot /> <!-- Always render the login page content if on /login -->
+{:else if loading}
+    <div class="auth-required" style="text-align:center; margin-top: 5rem;">
+        <p>Loading application...</p> <!-- Show loading for other pages -->
+    </div>
+{:else if !authenticated}
     <div class="auth-required">
         <h1>Authentication Required</h1>
         <p>Please sign in to access this application.</p>
@@ -46,7 +53,7 @@ onMount(() => {
             <p class="error">{error}</p>
         {/if}
     </div>
-{:else if !loading}
+{:else} <!-- Authenticated and not on the login page -->
     <nav>
         <div class="user-info">
             <span>Welcome, {import.meta.env.VITE_BASIC_AUTH_USERNAME || 'User'}</span>
