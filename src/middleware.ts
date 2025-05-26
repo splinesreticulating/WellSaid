@@ -46,7 +46,12 @@ const authMiddleware: Handle = async ({ event, resolve }) => {
     const clientIP = event.getClientAddress()
 
     // Skip auth for public paths
-    if (PUBLIC_PATHS.has(pathname) || pathname.startsWith('/_app/') || pathname === '/login') {
+    if (
+        pathname.startsWith('/login') ||
+        pathname.startsWith('/api/auth/') ||
+        pathname.startsWith('/_app/') ||
+        PUBLIC_PATHS.has(pathname)
+    ) {
         return resolve(event)
     }
 
