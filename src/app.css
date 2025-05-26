@@ -1,0 +1,48 @@
+:root {
+    /* Colors from +page.svelte */
+    --primary: #555b6e;
+    --primary-light: #89b0ae;
+    --light: #bee3db;
+    --success: #00c853;
+    --warning: #df8950;
+    --error: #ff5252;
+    --gray: #555b6e;
+    --white: #faf9f9;
+    
+    /* Spacing & Sizing from +page.svelte */
+    --border-radius: 8px;
+    --min-touch-size: 44px;
+    
+    /* Typography from +page.svelte */
+    --summary-font: 'Georgia', serif;
+    --reply-font: 'Palatino', 'Garamond', serif;
+    --heading-font: 'Great Vibes', cursive;
+    --body-font: 'Space Mono', Georgia, 'Times New Roman', Times, serif;
+
+    /* Other variables that might be useful globally */
+    --text-primary: #333333; /* General main text color, if different from --primary or --gray */
+    --text-secondary: #555b6e; /* This was --gray and --primary in your list */
+}
+
+body {
+    font-family: var(--body-font); /* Using your body-font variable */
+    margin: 0;
+    padding: 1rem;
+    min-height: 100vh;
+    background-color: var(--light); 
+    color: var(--text-secondary); /* or var(--primary) / var(--gray) as they are the same */
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+a {
+    color: var(--primary-light); /* Example, choose a link color from your palette */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

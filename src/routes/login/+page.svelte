@@ -130,7 +130,7 @@ async function handleSubmit(event: Event) {
     }
     
     input {
-        width: 90%;
+        width: 94%;
         padding: 0.75rem;
         border: 1px solid var(--light);
         border-radius: var(--border-radius);
