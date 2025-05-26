@@ -25,20 +25,15 @@ $effect(() => {
     h1 {
         font-size: 4rem;
         margin-bottom: 1rem;
-        color: #333;
+        color: var(--primary);
     }
     
     p {
-        color: #666;
+        color: var(--text-secondary);
         margin-bottom: 2rem;
     }
     
     a {
-        color: #4a6cf7;
-        text-decoration: none;
-    }
-    
-    a:hover {
-        text-decoration: underline;
+        color: var(--primary-light); /* text-decoration is handled globally by app.css */
     }
 </style>
