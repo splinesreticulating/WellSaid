@@ -129,8 +129,6 @@ async function handleSubmit(event: Event) {
         text-align: left;
     }
     
-    /* label CSS removed as labels are now placeholders */
-    
     input {
         width: 90%;
         padding: 0.75rem;
