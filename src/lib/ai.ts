@@ -6,9 +6,9 @@ import { parseSummaryToHumanReadable } from './utils'
 
 dotenv.config()
 
-const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
 const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gpt-4'
 const OPENAI_TEMPERATURE = Number.parseFloat(process.env.OPENAI_TEMPERATURE || '0.5')
+const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
 
 if (!process.env.OPENAI_API_KEY) {
     logger.warn('⚠️ OPENAI_API_KEY is not set. OpenAI integration will not work.')
