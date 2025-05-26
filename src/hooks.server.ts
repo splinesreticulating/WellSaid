@@ -46,11 +46,8 @@ const authMiddleware: Handle = async ({ event, resolve }) => {
     const { pathname } = event.url
     const clientIP = event.getClientAddress()
     const cookies = event.request.headers.get('cookie') || ''
-    logger.debug('[AUTH] Incoming request:', {
-        pathname,
-        clientIP,
-        cookies
-    })
+
+    logger.debug('[AUTH] Incoming request:', { pathname, clientIP, cookies })
 
     // Skip auth for public paths
     if (
