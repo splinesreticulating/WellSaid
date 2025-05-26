@@ -97,6 +97,10 @@ async function generateSummaryAndReplies() {
 }
 </script>
 
+<svelte:head>
+    <title>WellSaid</title>
+</svelte:head>
+
 <main class="app">
 	<header>
 		<h1>WellSaid</h1>
