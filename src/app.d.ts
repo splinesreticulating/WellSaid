@@ -10,6 +10,7 @@ declare global {
     // Add type declarations for environment variables
     interface ImportMetaEnv {
         VITE_BASIC_AUTH_USERNAME: string;
+        VITE_BASIC_AUTH_PASSWORD: string;
         // Add other environment variables as needed
     }
 }
