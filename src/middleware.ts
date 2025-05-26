@@ -1,8 +1,7 @@
 import { BASIC_AUTH_PASSWORD, BASIC_AUTH_USERNAME } from '$env/static/private'
 import type { Handle } from '@sveltejs/kit'
-import { error } from '@sveltejs/kit'
+import { redirect } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
-import auth from 'basic-auth'
 
 // Validate environment variables
 if (!BASIC_AUTH_USERNAME || !BASIC_AUTH_PASSWORD) {
@@ -10,7 +9,6 @@ if (!BASIC_AUTH_USERNAME || !BASIC_AUTH_PASSWORD) {
     process.exit(1)
 }
 
-const REALM = 'WellSaid'
 const MAX_LOGIN_ATTEMPTS = 5
 const LOGIN_ATTEMPT_WINDOW_MS = 15 * 60 * 1000 // 15 minutes
 
@@ -28,6 +26,7 @@ const securityHeaders = {
 
 const PUBLIC_PATHS = new Set([
     '/api/auth/check',
+    '/api/auth/login',
     '/favicon.ico',
     '/robots.txt',
     '/health'
@@ -42,15 +41,29 @@ const logSecurityEvent = (event: string, details: Record<string, unknown> = {}) 
     }))
 }
 
-const basicAuth: Handle = async ({ event, resolve }) => {
+const authMiddleware: Handle = async ({ event, resolve }) => {
     const { pathname } = event.url
     const clientIP = event.getClientAddress()
 
     // Skip auth for public paths
-    if (PUBLIC_PATHS.has(pathname) || pathname.startsWith('/_app/')) {
+    if (PUBLIC_PATHS.has(pathname) || pathname.startsWith('/_app/') || pathname === '/login') {
         return resolve(event)
     }
 
+    // Check if user is authenticated via cookie
+    const authToken = event.cookies.get('auth_token')
+    if (authToken === 'authenticated') {
+        // User is authenticated - add security headers to response
+        const response = await resolve(event)
+        
+        // Add security headers
+        for (const [key, value] of Object.entries(securityHeaders)) {
+            response.headers.set(key, value)
+        }
+        
+        return response
+    }
+    
     // Check rate limiting
     const now = Date.now()
     const attemptInfo = loginAttempts.get(clientIP) || { count: 0, lastAttempt: 0 }
@@ -62,54 +75,13 @@ const basicAuth: Handle = async ({ event, resolve }) => {
     // Block if too many attempts
     else if (attemptInfo.count >= MAX_LOGIN_ATTEMPTS) {
         logSecurityEvent('rate_limit_exceeded', { ip: clientIP, path: pathname })
-        throw error(429, 'Too many login attempts. Please try again later.')
+        // We still redirect to login page, but with an error parameter
+        throw redirect(303, '/login?error=too_many_attempts')
     }
 
-    // Check credentials
-    const authHeader = event.request.headers.get('authorization')
-    if (authHeader) {
-        const credentials = auth.parse(authHeader)
-
-        if (credentials &&
-            credentials.name === BASIC_AUTH_USERNAME &&
-            credentials.pass === BASIC_AUTH_PASSWORD) {
-
-            // Reset attempt counter on successful login
-            loginAttempts.delete(clientIP)
-
-            const response = await resolve(event)
-
-            // Add security headers
-            for (const [key, value] of Object.entries(securityHeaders)) {
-                response.headers.set(key, value)
-            }
-
-            return response
-        }
-
-        // Increment failed attempt counter
-        const attempts = (loginAttempts.get(clientIP)?.count || 0) + 1
-        loginAttempts.set(clientIP, { count: attempts, lastAttempt: now })
-
-        logSecurityEvent('login_failed', {
-            ip: clientIP,
-            attempt: attempts,
-            maxAttempts: MAX_LOGIN_ATTEMPTS
-        })
-    }
-
-    // Return 401 Unauthorized if no/invalid credentials
+    // Not authenticated - redirect to login page
     logSecurityEvent('auth_required', { ip: clientIP, path: pathname })
-    return new Response('Authentication required', {
-        status: 401,
-        headers: {
-            'WWW-Authenticate': `Basic realm="${REALM}", charset="UTF-8"`,
-            'Cache-Control': 'no-store, no-cache, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0',
-            ...securityHeaders
-        }
-    })
+    throw redirect(303, '/login')
 }
 
-export const handle = sequence(basicAuth)
+export const handle = sequence(authMiddleware)
