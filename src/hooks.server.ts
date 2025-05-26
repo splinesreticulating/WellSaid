@@ -16,7 +16,7 @@ const PUBLIC_PATHS = new Set([
 
 // Validate environment variables
 if (!BASIC_AUTH_USERNAME || !BASIC_AUTH_PASSWORD) {
-    console.error('FATAL: BASIC_AUTH_USERNAME and BASIC_AUTH_PASSWORD must be set')
+    logger.error('FATAL: BASIC_AUTH_USERNAME and BASIC_AUTH_PASSWORD must be set')
     process.exit(1)
 }
 

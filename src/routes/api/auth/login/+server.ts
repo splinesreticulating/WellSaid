@@ -1,4 +1,5 @@
 import { BASIC_AUTH_PASSWORD, BASIC_AUTH_USERNAME } from '$env/static/private'
+import { logger } from '$lib/logger';
 import { type RequestHandler, json } from '@sveltejs/kit'
 
 // 30-day cookie expiration by default
@@ -6,8 +7,8 @@ const AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 30
 
 export const POST: RequestHandler = async ({ request, cookies, url }) => { // Added url for logging
     try {
-        console.log('[LOGIN API] Received POST request. URL:', JSON.stringify(url));
-        console.log('[LOGIN API] Request Headers:', JSON.stringify(Object.fromEntries(request.headers.entries())));
+        logger.debug('[LOGIN API] Received POST request. URL:', JSON.stringify(url));
+        logger.debug('[LOGIN API] Request Headers:', JSON.stringify(Object.fromEntries(request.headers.entries())));
         const { username, password } = await request.json()
 
         // Validate credentials against environment variables
@@ -20,9 +21,9 @@ export const POST: RequestHandler = async ({ request, cookies, url }) => { // Ad
                 sameSite: 'strict' as const,
                 maxAge: AUTH_COOKIE_MAX_AGE
             };
-            console.log('[LOGIN API] Attempting to set auth_token cookie with options:', JSON.stringify(cookieOptions));
+            logger.debug('[LOGIN API] Attempting to set auth_token cookie with options:', JSON.stringify(cookieOptions));
             cookies.set('auth_token', 'authenticated', cookieOptions);
-            console.log('[LOGIN API] Successfully called cookies.set for auth_token.');
+            logger.debug('[LOGIN API] Successfully called cookies.set for auth_token.');
 
             return json({ success: true })
         }
@@ -38,13 +39,13 @@ export const POST: RequestHandler = async ({ request, cookies, url }) => { // Ad
             }
         )
     } catch (error) {
-        console.error('[LOGIN API] Login error:', error);
+        logger.error('[LOGIN API] Login error:', error);
         // Log the request body if possible, in case of parsing errors
         try {
             const rawBody = await request.text(); // Try to get raw body if json parsing failed
-            console.error('[LOGIN API] Raw request body on error (first 500 chars):', rawBody.substring(0, 500));
+            logger.error('[LOGIN API] Raw request body on error (first 500 chars):', rawBody.substring(0, 500));
         } catch (bodyError) {
-            console.error('[LOGIN API] Could not retrieve raw request body on error:', bodyError);
+            logger.error('[LOGIN API] Could not retrieve raw request body on error:', bodyError);
         }
         return new Response(
             JSON.stringify({ error: 'Internal server error' }),
