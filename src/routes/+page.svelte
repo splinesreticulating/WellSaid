@@ -84,7 +84,8 @@ function handleSubmit(event: Event) {
     event.preventDefault()
 }
 
-async function generateSummaryAndReplies() {
+// generate summary and replies
+async function onclick() {
     formState.loading = true
     formState.summary = ''
     formState.suggestedReplies = []
@@ -154,13 +155,13 @@ async function generateSummaryAndReplies() {
 						<option value="12">12 hours</option>
 						<option value="24">24 hours</option>
 					</select>
-					<button type="button" class="go-button" onclick={generateSummaryAndReplies} disabled={!canGenerateReplies}>
-				{#if showLoadingIndicators}
-					<span class="loading-spinner"></span>
-				{:else}
-					go
-				{/if}
-			</button>
+					<button type="button" class="go-button" { onclick } disabled={!canGenerateReplies}>
+					{#if showLoadingIndicators}
+						<span class="loading-spinner"></span>
+					{:else}
+						go
+					{/if}
+				</button>
 				</div>
 				<div class="message-count">
 					messages:&nbsp;
