@@ -1,7 +1,6 @@
 <script lang="ts">
 import { goto } from '$app/navigation'
 import { page } from '$app/stores'
-import { onMount } from 'svelte'
 
 const formState = $state({
     username: '',
@@ -18,7 +17,7 @@ $effect(() => {
     }
 })
 
-onMount(() => {
+$effect(() => {
     // Check if we're already logged in
     checkAuthStatus()
 })
