@@ -1,6 +1,5 @@
 <script lang="ts">
 import { goto } from '$app/navigation'
-import { page } from '$app/stores'
 
 const formState = $state({
     username: '',
@@ -11,7 +10,8 @@ const formState = $state({
 
 // Check for error query parameter
 $effect(() => {
-    const errorParam = $page.url.searchParams.get('error')
+    const params = new URLSearchParams(window.location.search);
+    const errorParam = params.get('error')
     if (errorParam === 'too_many_attempts') {
         formState.error = 'Too many login attempts. Please try again later.'
     }
