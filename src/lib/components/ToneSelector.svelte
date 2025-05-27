@@ -1,10 +1,8 @@
 <script lang="ts">
-    import type { ToneType } from '$lib/types';
-    
-    export let selectedTone: ToneType;
-    export let tones: ToneType[];
-    
-    // No need for selectTone function when using bind:group
+import type { ToneType } from '$lib/types'
+
+export let selectedTone: ToneType
+export let tones: ToneType[]
 </script>
 
 <div class="tone-selector">
