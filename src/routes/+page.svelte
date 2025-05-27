@@ -206,7 +206,7 @@ async function generateSummaryAndReplies() {
 </main>
 
 <style>
-/* ===== Layout & Structure ===== */
+	/* ===== Layout & Structure ===== */
 	main.app {
 		max-width: 800px;
 		margin: 0 auto;
