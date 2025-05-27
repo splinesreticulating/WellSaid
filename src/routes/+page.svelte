@@ -3,7 +3,6 @@ import AdditionalContext from '$lib/components/AdditionalContext.svelte'
 import ReplySuggestions from '$lib/components/ReplySuggestions.svelte'
 import ToneSelector from '$lib/components/ToneSelector.svelte'
 import type { Message, PageData, ToneType } from '$lib/types'
-import { onMount } from 'svelte'
 
 const TONES: ToneType[] = ['gentle', 'honest', 'funny', 'reassuring', 'concise']
 const { data } = $props<{ data: PageData }>()
@@ -45,7 +44,7 @@ if (data?.messages && Array.isArray(data.messages)) {
     formState.form.messages = data.messages
 }
 
-onMount(() => {
+$effect(() => {
     const storedContext = localStorage.getItem(LOCAL_STORAGE_CONTEXT_KEY)
     if (storedContext) {
         formState.form.additionalContext = storedContext
