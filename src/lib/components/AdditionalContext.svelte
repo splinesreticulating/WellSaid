@@ -1,9 +1,11 @@
 <script lang="ts">
 // biome-ignore lint/style/useConst: Svelte 5 pattern
 export let additionalContext = ''
+// biome-ignore lint/style/useConst: Svelte 5 pattern
+export let expanded = false
 </script>
 
-<details class="context-details">
+<details class="context-details" bind:open={expanded}>
     <summary>Add more context</summary>
     <textarea
         class="context-input"

@@ -3,6 +3,7 @@ import AdditionalContext from '$lib/components/AdditionalContext.svelte'
 import ReplySuggestions from '$lib/components/ReplySuggestions.svelte'
 import ToneSelector from '$lib/components/ToneSelector.svelte'
 import type { Message, PageData, ToneType } from '$lib/types'
+import { onMount } from 'svelte'
 
 const TONES: ToneType[] = ['gentle', 'honest', 'funny', 'reassuring', 'concise']
 const { data } = $props<{ data: PageData }>()
@@ -19,6 +20,9 @@ const formState = $state({
     loading: false,
 })
 
+const LOCAL_STORAGE_CONTEXT_KEY = 'wellsaid_additional_context'
+let additionalContextExpanded = $state(false)
+
 // Derived values
 const hasMessages = $derived(formState.messages.length > 0)
 const canGenerateReplies = $derived(hasMessages && !formState.loading)
@@ -32,6 +36,27 @@ const summaryContent = $derived(
 if (data?.messages && Array.isArray(data.messages)) {
     formState.messages = data.messages
 }
+
+onMount(() => {
+    const storedContext = localStorage.getItem(LOCAL_STORAGE_CONTEXT_KEY)
+    if (storedContext) {
+        formState.additionalContext = storedContext
+        if (storedContext.trim() !== '') {
+            additionalContextExpanded = true
+        }
+    }
+})
+
+$effect(() => {
+    if (formState.additionalContext) {
+        localStorage.setItem(
+            LOCAL_STORAGE_CONTEXT_KEY,
+            formState.additionalContext,
+        )
+    } else {
+        localStorage.removeItem(LOCAL_STORAGE_CONTEXT_KEY)
+    }
+})
 
 async function getMessages() {
     const end = new Date()
@@ -145,7 +170,7 @@ async function generateSummaryAndReplies() {
 			</section>
 
 			<!-- Additional context (collapsible) -->
-			<AdditionalContext bind:additionalContext={formState.additionalContext} />
+			<AdditionalContext bind:additionalContext={formState.additionalContext} bind:expanded={additionalContextExpanded} />
 
 			<!-- Conversation summary -->
 			<section class="conversation">
@@ -181,7 +206,13 @@ async function generateSummaryAndReplies() {
 </main>
 
 <style>
-	/* ===== Layout & Structure ===== */
+/* ===== Layout & Structure ===== */
+	main.app {
+		max-width: 800px;
+		margin: 0 auto;
+	}
+
+/* ===== Layout & Structure ===== */
 	.content-container {
 		width: 100%;
 		max-width: 100%;
