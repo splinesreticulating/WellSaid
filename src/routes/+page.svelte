@@ -182,23 +182,14 @@ async function generateSummaryAndReplies() {
 
 <style>
 	/* ===== Layout & Structure ===== */
-	main.app {
-		max-width: 800px;
-		margin: 0 auto;
-		font-family: var(--body-font);
-		color: var(--primary);
-	}
-
 	.content-container {
 		width: 100%;
 		max-width: 100%;
 		display: flex;
 		flex-direction: column;
-		padding-right: 2.5rem;
 	}
 
 	form {
-		width: 100%;
 		display: flex;
 		flex-direction: column;
 	}
@@ -219,6 +210,7 @@ async function generateSummaryAndReplies() {
 		font-size: 3rem;
 		color: var(--primary);
 		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+		margin-top: 1rem;
 		margin-bottom: 0;
 	}
 
@@ -229,20 +221,11 @@ async function generateSummaryAndReplies() {
 		margin-bottom: 2rem;
 	}
 
-	/* ===== Responsive Adjustments ===== */
-	@media (min-width: 768px) {
-		.app {
-			padding: 0 1.5rem 0 0;
-			max-width: 800px;
-		}
-	}
-
 	/* ===== Controls & Inputs ===== */
 	.control-bar {
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
-		gap: 0.75rem;
 		margin-bottom: 1rem;
 		justify-content: space-between;
 	}
@@ -251,7 +234,7 @@ async function generateSummaryAndReplies() {
 	.timeframe-controls {
 		display: flex;
 		align-items: center;
-		gap: 0.25rem;
+		gap: 0.75rem;
 		line-height: 1;
 		flex-wrap: nowrap;
 	}
@@ -263,16 +246,6 @@ async function generateSummaryAndReplies() {
 		display: inline-flex;
 		align-items: center;
 		margin: 0;
-	}
-
-	.timeframe-controls select.hours-dropdown {
-		margin: 0;
-	}
-
-	.timeframe-controls select.hours-dropdown:focus {
-		outline: none;
-		border-color: var(--primary);
-		box-shadow: 0 0 0 2px rgba(85, 91, 110, 0.2);
 	}
 
 	/* Buttons */
@@ -307,8 +280,8 @@ async function generateSummaryAndReplies() {
 		cursor: not-allowed;
 		border-color: var(--light);
 	}
+
 	/* ===== Form Inputs ===== */
-	
 	select {
 		font-size: 16px;
 		padding: 0.5rem;
@@ -368,8 +341,6 @@ async function generateSummaryAndReplies() {
 			padding: 1.25rem;
 		}
 	}
-
-	
 
 	/* ===== Loading Indicators ===== */
 	.loading-indicator {
