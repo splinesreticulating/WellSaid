@@ -20,7 +20,6 @@ export let expanded = false
         text-align: left;
         border: 1px solid var(--light);
         background-color: var(--white);
-        margin-right: 1rem;
         border-radius: var(--border-radius);
         padding: 1rem;
         margin-bottom: 1rem;
@@ -30,7 +29,6 @@ export let expanded = false
     details summary {
         cursor: pointer;
         font-weight: 500;
-        /* Using the browser's default disclosure triangle */
     }
 
     textarea.context-input {

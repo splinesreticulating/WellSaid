@@ -138,7 +138,7 @@ async function generateSummaryAndReplies() {
 			<!-- Time frame selector and message count -->
 			<section class="control-bar">
 				<div class="timeframe-controls">
-					<label for="window-back">summarize last:</label>
+					<label for="window-back">summarize the last:</label>
 					<select
 						id="window-back"
 						class="hours-dropdown"
@@ -265,7 +265,7 @@ async function generateSummaryAndReplies() {
 	.timeframe-controls {
 		display: flex;
 		align-items: center;
-		gap: 0.75rem;
+		gap: 0.1rem;
 		line-height: 1;
 		flex-wrap: nowrap;
 	}
@@ -333,7 +333,6 @@ async function generateSummaryAndReplies() {
 		background-color: var(--light);
 		min-height: 120px;
 		transition: opacity 0.3s;
-		margin-right: 1rem;
 		border-radius: var(--border-radius);
 		padding: 1rem;
 		margin-bottom: 1rem;
@@ -352,13 +351,11 @@ async function generateSummaryAndReplies() {
 		font-size: 0.95rem;
 		display: flex;
 		align-items: center;
-		margin-right: 1rem;
 	}
 
 	.message-count-value {
 		font-weight: 600;
 		color: var(--primary);
-		margin-right: 0.25rem;
 	}
 
 	hr {
