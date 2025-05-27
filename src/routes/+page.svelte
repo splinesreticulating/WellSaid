@@ -203,6 +203,11 @@ async function generateSummaryAndReplies() {
 		flex-direction: column;
 	}
 
+	/* ===== Form Controls ===== */
+	.hours-dropdown {
+		color: var(--primary);
+	}
+
 	/* ===== Header ===== */
 	header {
 		text-align: center;
@@ -273,7 +278,7 @@ async function generateSummaryAndReplies() {
 	/* Buttons */
 	.go-button {
 		padding: 0.5rem 1rem;
-		background-color: var(--primary-light);
+		background-color: var(--primary);
 		color: var(--white);
 		border: 1px solid var(--primary-light);
 		border-radius: var(--border-radius);
