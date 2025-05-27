@@ -64,7 +64,7 @@ async function generateSummaryAndReplies() {
     formState.suggestedReplies = []
 
     try {
-        const response = await fetch('/api/openAi', {
+        const response = await fetch('/api/suggestions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

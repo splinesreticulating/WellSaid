@@ -1,9 +1,9 @@
 import * as ai from '$lib/openAi'
 import type { RequestEvent } from '@sveltejs/kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import * as serverModule from '../../../../src/routes/api/openAi/+server'
+import * as serverModule from '../../../../src/routes/api/suggestions/+server'
 
-const ROUTE_ID = '/api/openAi'
+const ROUTE_ID = '/api/suggestions'
 
 // Mock the AI module
 vi.mock('$lib/openAi', () => ({
@@ -38,7 +38,7 @@ interface MockRequest {
 }
 
 // Helper function to create a mock RequestEvent
-function createMockRequestEvent(mockRequest: MockRequest): RequestEvent<Record<string, string>, '/api/openAi'> {
+function createMockRequestEvent(mockRequest: MockRequest): RequestEvent<Record<string, string>, '/api/suggestions'> {
   return {
     request: mockRequest as unknown as Request,
     cookies: {
