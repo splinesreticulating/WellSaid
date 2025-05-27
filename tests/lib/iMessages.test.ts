@@ -1,4 +1,4 @@
-import { queryMessagesDb } from '$lib/queryMessagesDb'
+import { queryMessagesDb } from '$lib/iMessages'
 import { open } from 'sqlite'
 import type { Database } from 'sqlite'
 import { beforeEach, describe, expect, it, vi } from 'vitest'

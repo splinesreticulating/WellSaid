@@ -1,4 +1,4 @@
-import * as ai from '$lib/ai'
+import * as ai from '$lib/openAi'
 import type { RequestEvent } from '@sveltejs/kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import * as serverModule from '../../../../src/routes/api/openAi/+server'
@@ -6,7 +6,7 @@ import * as serverModule from '../../../../src/routes/api/openAi/+server'
 const ROUTE_ID = '/api/openAi'
 
 // Mock the AI module
-vi.mock('$lib/ai', () => ({
+vi.mock('$lib/openAi', () => ({
   getSuggestedReplies: vi.fn()
 }))
 

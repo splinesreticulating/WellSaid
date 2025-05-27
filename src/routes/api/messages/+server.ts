@@ -1,5 +1,5 @@
+import { queryMessagesDb } from '$lib/iMessages'
 import type { RequestHandler } from '@sveltejs/kit'
-import { queryMessagesDb } from '$lib/queryMessagesDb'
 
 export const GET: RequestHandler = async ({ url }) => {
     const start = url.searchParams.get('start')
@@ -8,9 +8,9 @@ export const GET: RequestHandler = async ({ url }) => {
     if (!start || !end) {
         return new Response(JSON.stringify({ error: 'Missing start or end' }), { status: 400 })
     }
-    
+
     const { messages } = await queryMessagesDb(start, end)
-    
+
     return new Response(JSON.stringify({ messages }), {
         headers: { 'Content-Type': 'application/json' }
     })

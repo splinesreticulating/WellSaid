@@ -1,4 +1,4 @@
-import { getSuggestedReplies } from '$lib/ai'
+import { getSuggestedReplies } from '$lib/openAi'
 import type { Message } from '$lib/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 

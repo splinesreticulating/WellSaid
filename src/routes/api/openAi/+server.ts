@@ -1,7 +1,7 @@
+import { logger } from '$lib/logger'
+import { getSuggestedReplies } from '$lib/openAi'
 import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import { getSuggestedReplies } from '$lib/ai'
-import { logger } from '$lib/logger'
 
 export const POST: RequestHandler = async ({ request }) => {
     try {

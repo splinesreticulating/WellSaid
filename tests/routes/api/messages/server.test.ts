@@ -1,10 +1,10 @@
-import * as queryDb from '$lib/queryMessagesDb'
+import * as queryDb from '$lib/iMessages'
 import type { RequestEvent } from '@sveltejs/kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import * as serverModule from '../../../../src/routes/api/messages/+server'
 
 // Mock the queryMessagesDb module
-vi.mock('$lib/queryMessagesDb', () => ({
+vi.mock('$lib/iMessages', () => ({
   queryMessagesDb: vi.fn()
 }))
 
