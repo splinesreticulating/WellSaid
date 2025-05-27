@@ -187,7 +187,7 @@ async function generateSummaryAndReplies() {
 
 			<!-- Reply suggestions section -->
 			<section class="reply-section">
-				<h2>Suggested replies</h2>
+				<h2>suggested replies</h2>
 
 				<!-- Tone selector -->
 				<ToneSelector 
