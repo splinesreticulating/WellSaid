@@ -30,7 +30,7 @@ const showLoadingIndicators = $derived(formState.loading)
 const summaryContent = $derived(
     formState.loading
         ? 'Generating summary and replies...'
-        : formState.summary || 'Click "go" to generate a conversation summary',
+        : formState.summary || '<em>Click "go" to generate a conversation summary</em>',
 )
 
 if (data?.messages && Array.isArray(data.messages)) {
@@ -176,9 +176,9 @@ async function generateSummaryAndReplies() {
 			<section class="conversation">
 				<div class="summary">
 					{#if showLoadingIndicators}
-						<div class="loading-indicator">{summaryContent}</div>
+						<div class="loading-indicator">{@html summaryContent}</div>
 					{:else}
-						{summaryContent}
+						{@html summaryContent}
 					{/if}
 				</div>
 			</section>
