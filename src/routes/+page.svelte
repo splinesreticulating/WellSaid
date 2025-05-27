@@ -1,5 +1,5 @@
 <script lang="ts">
-import ContextInput from '$lib/components/ContextInput.svelte'
+import AdditionalContext from '$lib/components/AdditionalContext.svelte'
 import ReplySuggestions from '$lib/components/ReplySuggestions.svelte'
 import ToneSelector from '$lib/components/ToneSelector.svelte'
 import type { Message, PageData, ToneType } from '$lib/types'
@@ -145,7 +145,7 @@ async function generateSummaryAndReplies() {
 			</section>
 
 			<!-- Additional context (collapsible) -->
-			<ContextInput bind:additionalContext={formState.additionalContext} />
+			<AdditionalContext bind:additionalContext={formState.additionalContext} />
 
 			<!-- Conversation summary -->
 			<section class="conversation">

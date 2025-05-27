@@ -1,4 +1,5 @@
 <script lang="ts">
+// biome-ignore lint/style/useConst: Svelte 5 pattern
 export let additionalContext = ''
 </script>
 
