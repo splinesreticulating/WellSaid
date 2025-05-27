@@ -210,6 +210,7 @@ async function generateSummaryAndReplies() {
 	main.app {
 		max-width: 800px;
 		margin: 0 auto;
+		padding-bottom: 4rem;
 	}
 
 	.content-container {
