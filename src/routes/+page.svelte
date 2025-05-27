@@ -212,7 +212,6 @@ async function generateSummaryAndReplies() {
 		margin: 0 auto;
 	}
 
-/* ===== Layout & Structure ===== */
 	.content-container {
 		width: 100%;
 		max-width: 100%;
