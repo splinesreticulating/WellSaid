@@ -1,6 +1,6 @@
 <script lang="ts">
 import ContextInput from '$lib/components/ContextInput.svelte'
-import SuggestionsList from '$lib/components/SuggestionsList.svelte'
+import ReplySuggestions from '$lib/components/ReplySuggestions.svelte'
 import ToneSelector from '$lib/components/ToneSelector.svelte'
 import type { Message, PageData, ToneType } from '$lib/types'
 
@@ -64,7 +64,7 @@ async function generateSummaryAndReplies() {
     formState.suggestedReplies = []
 
     try {
-        const response = await fetch('/api/generate', {
+        const response = await fetch('/api/openAi', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -171,8 +171,8 @@ async function generateSummaryAndReplies() {
 				/>
 
 				<!-- Where suggested replies will appear -->
-				<SuggestionsList 
-					suggestions={formState.suggestedReplies} 
+				<ReplySuggestions 
+					replies={formState.suggestedReplies} 
 					loading={showLoadingIndicators}
 				/>
 			</section>

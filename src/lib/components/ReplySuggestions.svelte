@@ -1,5 +1,5 @@
 <script lang="ts">
-export let suggestions: string[] = []
+export let replies: string[] = []
 export let loading = false
 export let copiedIndex = -1
 
@@ -48,8 +48,8 @@ async function copyToClipboard(text: string, index: number) {
             <div class="pulse-loader"></div>
             <div class="pulse-loader"></div>
         </div>
-    {:else if suggestions.length > 0}
-        {#each suggestions as reply, i}
+    {:else if replies.length > 0}
+        {#each replies as reply, i}
             <div class="suggestion-item">
                 <div class="suggestion-content">{reply}</div>
                 <button 
