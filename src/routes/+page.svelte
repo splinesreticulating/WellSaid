@@ -7,41 +7,48 @@ import { onMount } from 'svelte'
 
 const TONES: ToneType[] = ['gentle', 'honest', 'funny', 'reassuring', 'concise']
 const { data } = $props<{ data: PageData }>()
+
 const formState = $state({
-    model: 'gpt-4',
-    systemPrompt: 'You are a helpful assistant.',
-    lookBackHours: '1',
-    messages: [] as Message[],
-    additionalContext: '',
-    userQuery: '',
-    tone: 'gentle' as ToneType,
-    summary: '',
-    suggestedReplies: [] as string[],
-    loading: false,
+    ai: {
+        model: 'gpt-4',
+        systemPrompt: 'You are a helpful assistant.',
+    },
+    ui: {
+        loading: false,
+        copiedIndex: -1,
+    },
+    form: {
+        lookBackHours: '1',
+        additionalContext: '',
+        tone: 'gentle' as ToneType,
+        messages: [] as Message[],
+        summary: '',
+        suggestedReplies: [] as string[],
+    },
 })
 
 const LOCAL_STORAGE_CONTEXT_KEY = 'wellsaid_additional_context'
 let additionalContextExpanded = $state(false)
 
 // Derived values
-const hasMessages = $derived(formState.messages.length > 0)
-const canGenerateReplies = $derived(hasMessages && !formState.loading)
-const showLoadingIndicators = $derived(formState.loading)
+const hasMessages = $derived(formState.form.messages.length > 0)
+const canGenerateReplies = $derived(hasMessages && !formState.ui.loading)
+const showLoadingIndicators = $derived(formState.ui.loading)
 const summaryContent = $derived(
-    formState.loading
+    formState.ui.loading
         ? 'Generating summary and replies...'
-        : formState.summary ||
+        : formState.form.summary ||
               '<em>Click "go" to generate a conversation summary</em>',
 )
 
 if (data?.messages && Array.isArray(data.messages)) {
-    formState.messages = data.messages
+    formState.form.messages = data.messages
 }
 
 onMount(() => {
     const storedContext = localStorage.getItem(LOCAL_STORAGE_CONTEXT_KEY)
     if (storedContext) {
-        formState.additionalContext = storedContext
+        formState.form.additionalContext = storedContext
         if (storedContext.trim() !== '') {
             additionalContextExpanded = true
         }
@@ -49,10 +56,10 @@ onMount(() => {
 })
 
 $effect(() => {
-    if (formState.additionalContext) {
+    if (formState.form.additionalContext) {
         localStorage.setItem(
             LOCAL_STORAGE_CONTEXT_KEY,
-            formState.additionalContext,
+            formState.form.additionalContext,
         )
     } else {
         localStorage.removeItem(LOCAL_STORAGE_CONTEXT_KEY)
@@ -63,7 +70,7 @@ async function getMessages() {
     const end = new Date()
     const start = new Date(
         end.getTime() -
-            Number.parseInt(formState.lookBackHours) * 60 * 60 * 1000,
+            Number.parseInt(formState.form.lookBackHours) * 60 * 60 * 1000,
     )
 
     const res = await fetch(
@@ -72,7 +79,7 @@ async function getMessages() {
     const data = await res.json()
 
     if (data?.messages && Array.isArray(data.messages)) {
-        formState.messages = data.messages
+        formState.form.messages = data.messages
     }
 }
 
@@ -86,9 +93,9 @@ function handleSubmit(event: Event) {
 
 // generate summary and replies
 async function onclick() {
-    formState.loading = true
-    formState.summary = ''
-    formState.suggestedReplies = []
+    formState.ui.loading = true
+    formState.form.summary = ''
+    formState.form.suggestedReplies = []
 
     try {
         const response = await fetch('/api/suggestions', {
@@ -97,9 +104,9 @@ async function onclick() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                messages: formState.messages,
-                tone: formState.tone,
-                context: formState.additionalContext,
+                messages: formState.form.messages,
+                tone: formState.form.tone,
+                context: formState.form.additionalContext,
             }),
         })
 
@@ -113,13 +120,13 @@ async function onclick() {
             throw new Error(result.error)
         }
 
-        formState.summary = result.summary
-        formState.suggestedReplies = result.replies
+        formState.form.summary = result.summary
+        formState.form.suggestedReplies = result.replies
     } catch (error) {
         console.error('Error generating replies:', error)
-        formState.summary = 'Error generating summary. Please try again.'
+        formState.form.summary = 'Error generating summary. Please try again.'
     } finally {
-        formState.loading = false
+        formState.ui.loading = false
     }
 }
 </script>
@@ -144,7 +151,7 @@ async function onclick() {
 					<select
 						id="window-back"
 						class="hours-dropdown"
-						bind:value={formState.lookBackHours}
+						bind:value={formState.form.lookBackHours}
 					>
 						<option value="1">hour</option>
 						<option value="2">2 hours</option>
@@ -166,13 +173,13 @@ async function onclick() {
 				<div class="message-count">
 					messages:&nbsp;
 					<span class="message-count-value"
-						>{formState.messages.length}</span
+						>{formState.form.messages.length}</span
 					>
 				</div>
 			</section>
 
 			<!-- Additional context (collapsible) -->
-			<AdditionalContext bind:additionalContext={formState.additionalContext} bind:expanded={additionalContextExpanded} />
+			<AdditionalContext bind:additionalContext={formState.form.additionalContext} bind:expanded={additionalContextExpanded} />
 
 			<!-- Conversation summary -->
 			<section class="conversation">
@@ -193,13 +200,13 @@ async function onclick() {
 
 				<!-- Tone selector -->
 				<ToneSelector 
-					bind:selectedTone={formState.tone} 
+					bind:selectedTone={formState.form.tone} 
 					tones={TONES} 
 				/>
 
 				<!-- Where suggested replies will appear -->
 				<ReplySuggestions 
-					replies={formState.suggestedReplies} 
+					replies={formState.form.suggestedReplies} 
 					loading={showLoadingIndicators}
 				/>
 			</section>
