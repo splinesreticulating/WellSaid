@@ -30,7 +30,8 @@ const showLoadingIndicators = $derived(formState.loading)
 const summaryContent = $derived(
     formState.loading
         ? 'Generating summary and replies...'
-        : formState.summary || '<em>Click "go" to generate a conversation summary</em>',
+        : formState.summary ||
+              '<em>Click "go" to generate a conversation summary</em>',
 )
 
 if (data?.messages && Array.isArray(data.messages)) {
@@ -310,6 +311,10 @@ async function generateSummaryAndReplies() {
 		color: var(--gray);
 		cursor: not-allowed;
 		border-color: var(--light);
+	}
+
+	h2 {
+		margin-top: 0.1rem;
 	}
 
 	/* ===== Form Inputs ===== */
