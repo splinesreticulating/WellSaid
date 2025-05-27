@@ -1,5 +1,7 @@
 <script lang="ts">
+// biome-ignore lint/style/useConst: Svelte 5 pattern
 export let replies: string[] = []
+// biome-ignore lint/style/useConst: Svelte 5 pattern
 export let loading = false
 export let copiedIndex = -1
 
