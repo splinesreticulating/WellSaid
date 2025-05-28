@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 type LookBackOption = { value: string; label: string };
 
@@ -35,7 +35,7 @@ class ControlBarModel {
     const defaultMessageCount = 0;
     const defaultCanGenerate = true;
     const defaultIsLoading = false;
-    const defaultOnGoClick = () => {};
+    const defaultOnGoClick = () => { };
     const defaultOptions = props?.lookBackOptions ? [...props.lookBackOptions] : [...DEFAULT_LOOK_BACK_OPTIONS];
 
     this.lookBackHours = props?.lookBackHours ?? defaultLookBackHours;
@@ -106,7 +106,8 @@ describe('ControlBarModel', () => {
     expect(model.canGenerate).toBe(false);
     expect(model.isLoading).toBe(true);
     expect(model.lookBackOptions).toEqual(customOptions);
-    model['goClickCallback']();
+    // @ts-expect-error Accessing private for test
+    model.goClickCallback();
     expect(mockGo).toHaveBeenCalledTimes(1);
   });
 

@@ -1,11 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 // Model class simulating AiModelSelector logic
 class AiModelSelectorModel {
   value: string;
   readonly options: string[];
 
-  constructor(initialValue: string = 'openai', options: string[] = ['openai', 'khoj']) {
+  constructor(initialValue = 'openai', options: string[] = ['openai', 'khoj']) {
     this.options = options;
     if (!this.options.includes(initialValue)) {
       throw new Error(`Initial value '${initialValue}' is not a valid option.`);
