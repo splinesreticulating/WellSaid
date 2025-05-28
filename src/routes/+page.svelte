@@ -10,7 +10,6 @@ const { data } = $props<{ data: PageData }>()
 const formState = $state({
     ai: {
         model: 'openai', // soon to be selectable in the UI
-        systemPrompt: 'You are a helpful assistant.',
     },
     ui: {
         loading: false,
