@@ -6,5 +6,6 @@ export const parseSummaryToHumanReadable = (rawOutput: string): string => {
         return rawOutput
     }
 
-    return match[2].trim()
+    // Get the trimmed summary and remove any trailing '###'
+    return match[2].trim().replace(/\s*###\s*$/, '')
 }
