@@ -21,7 +21,7 @@ class AiProviderSelectorModel {
   }
 }
 
-describe('AiModelSelectorModel', () => {
+describe('AiProviderSelectorModel', () => {
   it('should initialize with default value', () => {
     const model = new AiProviderSelectorModel();
     expect(model.value).toBe('openai');
