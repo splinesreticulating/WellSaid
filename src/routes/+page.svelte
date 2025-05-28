@@ -1,17 +1,18 @@
 <script lang="ts">
 import AdditionalContext from '$lib/components/AdditionalContext.svelte'
-import AiModelSelector from '$lib/components/AiModelSelector.svelte'
+import AiProviderSelector from '$lib/components/AiProviderSelector.svelte'
 import ControlBar from '$lib/components/ControlBar.svelte'
 import ReplySuggestions from '$lib/components/ReplySuggestions.svelte'
 import ToneSelector from '$lib/components/ToneSelector.svelte'
 import type { Message, PageData, ToneType } from '$lib/types'
 
 const TONES: ToneType[] = ['gentle', 'honest', 'funny', 'reassuring', 'concise']
+const DEFAULT_PROVIDER = 'openai'
 const { data } = $props<{ data: PageData }>()
 
 const formState = $state({
     ai: {
-        model: 'openai', // soon to be selectable in the UI
+        provider: DEFAULT_PROVIDER,
     },
     ui: {
         loading: false,
@@ -107,7 +108,7 @@ async function onclick() {
                 messages: formState.form.messages,
                 tone: formState.form.tone,
                 context: formState.form.additionalContext,
-                model: formState.ai.model,
+                provider: formState.ai.provider,
             }),
         })
 
@@ -183,7 +184,7 @@ async function onclick() {
 					loading={showLoadingIndicators}
 				/>
 			</section>
-			<AiModelSelector bind:value={formState.ai.model} />
+			<AiProviderSelector bind:value={formState.ai.provider} />
 		</form>
 	</div>
 </main>

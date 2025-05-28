@@ -6,7 +6,7 @@ import type { RequestHandler } from './$types'
 
 export const POST: RequestHandler = async ({ request }) => {
     try {
-        const { messages, tone, context, model } = await request.json()
+        const { messages, tone, context, provider } = await request.json()
 
         if (!Array.isArray(messages) || !tone) {
             return json({
@@ -14,7 +14,7 @@ export const POST: RequestHandler = async ({ request }) => {
             }, { status: 400 })
         }
 
-        const getSuggestedReplies = model === 'khoj' ? khojGetSuggestedReplies : openAiGetSuggestedReplies
+        const getSuggestedReplies = provider === 'khoj' ? khojGetSuggestedReplies : openAiGetSuggestedReplies
         const result = await getSuggestedReplies(
             messages,
             tone,

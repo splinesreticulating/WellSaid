@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 // Model class simulating AiModelSelector logic
-class AiModelSelectorModel {
+class AiProviderSelectorModel {
   value: string;
   readonly options: string[];
 
@@ -23,28 +23,28 @@ class AiModelSelectorModel {
 
 describe('AiModelSelectorModel', () => {
   it('should initialize with default value', () => {
-    const model = new AiModelSelectorModel();
+    const model = new AiProviderSelectorModel();
     expect(model.value).toBe('openai');
     expect(model.options).toEqual(['openai', 'khoj']);
   });
 
   it('should initialize with a custom valid value', () => {
-    const model = new AiModelSelectorModel('khoj');
+    const model = new AiProviderSelectorModel('khoj');
     expect(model.value).toBe('khoj');
   });
 
   it('should throw if initialized with an invalid value', () => {
-    expect(() => new AiModelSelectorModel('invalid')).toThrow("Initial value 'invalid' is not a valid option.");
+    expect(() => new AiProviderSelectorModel('invalid')).toThrow("Initial value 'invalid' is not a valid option.");
   });
 
   it('should change value when selectModel is called with a valid option', () => {
-    const model = new AiModelSelectorModel();
+    const model = new AiProviderSelectorModel();
     model.selectModel('khoj');
     expect(model.value).toBe('khoj');
   });
 
   it('should throw if selectModel is called with an invalid option', () => {
-    const model = new AiModelSelectorModel();
+    const model = new AiProviderSelectorModel();
     expect(() => model.selectModel('other')).toThrow("Model 'other' is not a valid option.");
   });
 });
