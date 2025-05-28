@@ -19,7 +19,7 @@ const lookBackOptions = [
 
 <section class="control-bar">
 	<div class="timeframe-controls">
-		<label for="window-back">summarize the last:</label>
+		<label for="window-back">summarize last:</label>
 		<select id="window-back" bind:value={lookBackHours}>
 			{#each lookBackOptions as option (option.value)}
 				<option value={option.value}>{option.label}</option>
@@ -44,26 +44,22 @@ const lookBackOptions = [
 		flex-direction: row;
 		flex-wrap: wrap;
 		margin-bottom: 1rem;
-		justify-content: space-between;
-		align-items: center; /* Ensure vertical alignment if items wrap */
 	}
 
 	.timeframe-controls {
+		justify-content: space-between;
 		display: flex;
 		align-items: center;
-		gap: 0.5rem;
 		line-height: 1;
-		flex-wrap: nowrap;
+		flex-wrap: wrap;
 	}
 
 	.timeframe-controls label {
 		font-weight: 500;
 		white-space: nowrap;
-		margin-right: 0.25rem;
 	}
 
 	.go-button {
-		padding: 0.5rem 1rem;
 		background-color: var(--primary);
 		color: var(--white);
 		border: 1px solid var(--primary-light);
@@ -76,7 +72,6 @@ const lookBackOptions = [
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		margin-left: 0.25rem;
 	}
 
 	.go-button:hover {

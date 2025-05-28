@@ -194,6 +194,7 @@ async function onclick() {
 		max-width: 800px;
 		margin: 0 auto;
 		padding-bottom: 4rem;
+		width: 100%; /* Ensure it respects parent's padding */
 	}
 
 	.content-container {
@@ -251,6 +252,7 @@ async function onclick() {
 		line-height: 1.6;
 		color: var(--primary);
 		letter-spacing: 0.02em;
+		overflow-wrap: break-word; /* Prevent long words from overflowing */
 	}
 
 	hr {

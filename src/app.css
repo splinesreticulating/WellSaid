@@ -1,3 +1,9 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 :root {
     /* Colors from +page.svelte */
     --primary: #555b6e;
@@ -11,7 +17,7 @@
 
     /* Spacing & Sizing from +page.svelte */
     --border-radius: 8px;
-    --min-touch-size: 44px;
+    --min-touch-size: 40px;
 
     /* Typography from +page.svelte */
     --summary-font: "Georgia", serif;
