@@ -1,7 +1,7 @@
 <script lang="ts">
 import AdditionalContext from '$lib/components/AdditionalContext.svelte'
-import AiModelSelector from '$lib/components/AiModelSelector.svelte';
-import ControlBar from '$lib/components/ControlBar.svelte';
+import AiModelSelector from '$lib/components/AiModelSelector.svelte'
+import ControlBar from '$lib/components/ControlBar.svelte'
 import ReplySuggestions from '$lib/components/ReplySuggestions.svelte'
 import ToneSelector from '$lib/components/ToneSelector.svelte'
 import type { Message, PageData, ToneType } from '$lib/types'
@@ -262,8 +262,9 @@ async function onclick() {
 	}
 	
 	@media (min-width: 768px) {
-		.conversation {
-			padding: 1.25rem;
+		.content-container > form {
+			max-width: 600px;
+			margin: 0 auto;
 		}
 	}
 
@@ -278,8 +279,6 @@ async function onclick() {
 	}
 
 	/* ===== Animations ===== */
-	/* @keyframes spin moved to ControlBar.svelte */
-
 	@keyframes pulse {
 		0% { transform: scale(0.8); opacity: 0.5; }
 		50% { transform: scale(1.2); opacity: 1; }
