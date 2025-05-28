@@ -19,7 +19,7 @@ const lookBackOptions = [
 
 <section class="control-bar">
 	<div class="timeframe-controls">
-		<label for="window-back">summarize last:</label>
+		<label for="window-back">summarize the last:</label>
 		<select id="window-back" bind:value={lookBackHours}>
 			{#each lookBackOptions as option (option.value)}
 				<option value={option.value}>{option.label}</option>

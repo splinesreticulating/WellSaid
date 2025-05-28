@@ -8,6 +8,8 @@ import type { Message, PageData, ToneType } from '$lib/types'
 
 const DEFAULT_PROVIDER = 'openai'
 const TONES: ToneType[] = ['gentle', 'honest', 'funny', 'reassuring', 'concise']
+const LOCAL_STORAGE_CONTEXT_KEY = 'wellsaid_additional_context'
+
 const { data } = $props<{ data: PageData }>()
 
 const formState = $state({
@@ -28,7 +30,6 @@ const formState = $state({
     },
 })
 
-const LOCAL_STORAGE_CONTEXT_KEY = 'wellsaid_additional_context'
 let additionalContextExpanded = $state(false)
 
 // Derived values
@@ -92,7 +93,7 @@ function handleSubmit(event: Event) {
     event.preventDefault()
 }
 
-// generate summary and replies
+// Generate summary and replies
 async function onclick() {
     formState.ui.loading = true
     formState.form.summary = ''
@@ -184,6 +185,7 @@ async function onclick() {
 					loading={showLoadingIndicators}
 				/>
 			</section>
+			<hr />
 			<AiProviderSelector bind:value={formState.ai.provider} />
 		</form>
 	</div>
@@ -192,17 +194,14 @@ async function onclick() {
 <style>
 	/* ===== Layout & Structure ===== */
 	main.app {
-		max-width: 800px;
-		margin: 0 auto;
 		padding-bottom: 4rem;
-		width: 100%; /* Ensure it respects parent's padding */
 	}
 
-	.content-container {
-		width: 100%;
-		max-width: 100%;
-		display: flex;
-		flex-direction: column;
+	@media (min-width: 768px) {
+		.content-container > form {
+			max-width: 600px;
+			margin: 0 auto;
+		}
 	}
 
 	form {
@@ -262,13 +261,6 @@ async function onclick() {
 		margin: 1rem 0;
 	}
 	
-	@media (min-width: 768px) {
-		.content-container > form {
-			max-width: 600px;
-			margin: 0 auto;
-		}
-	}
-
 	/* ===== Loading Indicators ===== */
 	.loading-indicator {
 		display: flex;
