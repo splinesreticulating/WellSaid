@@ -1,5 +1,5 @@
 <script lang="ts">
-import '../app.css';
+import '../app.css'
 import { browser } from '$app/environment'
 import { goto } from '$app/navigation'
 import { page } from '$app/state'
@@ -48,18 +48,17 @@ $effect(() => {
     }
 })
 </script>
-    
-    {#if page.url.pathname === '/login'}
-        {@render children()}
-    {:else if initialCheckLoading}
-        <div style="text-align:center; margin-top: 5rem; padding: 1rem;">
-            <p>Loading application...</p>
-        </div>
-    {:else if authenticated}
-        {@render children()}
-    {:else}
-        <div style="text-align:center; margin-top: 5rem; padding: 1rem;">
-            <p>Please wait...</p>
-        </div>
-    {/if}
-    
+
+{#if page.url.pathname === '/login'}
+    {@render children()}
+{:else if initialCheckLoading}
+    <div style="text-align:center; margin-top: 5rem; padding: 1rem;">
+        <p>Loading application...</p>
+    </div>
+{:else if authenticated}
+    {@render children()}
+{:else}
+    <div style="text-align:center; margin-top: 5rem; padding: 1rem;">
+        <p>Please wait...</p>
+    </div>
+{/if}
