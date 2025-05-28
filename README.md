@@ -1,5 +1,6 @@
-<h1 align="center">WellSaid</h1>
-<p align="center"><b>Empathy. Upgraded.</b></p>
+
+# WellSaid
+**Empathy. Upgraded.**
 
 WellSaid is an empathy-focused communication tool that helps you craft better responses by providing conversation summaries and tone-based reply suggestions. With a clean, modern UI and straightforward experience, WellSaid helps improve your communication with meaningful, contextually appropriate responses.
 
@@ -121,6 +122,38 @@ All that's required in the app is that you set the `ALLOWED_HOST` variable in yo
 
 For more details, visit [Tailscale's documentation](https://tailscale.com/kb/).
 
+### iOS Home Screen Icons (and HTTPS Gotchas)
+
+To make your WellSaid app look great when saved to your iPhone's Home Screen, iOS requires a **valid HTTPS certificate**:
+
+1. **Install mkcert (if not already installed)**
+
+```bash
+brew install mkcert
+mkcert -install
+```
+
+2. **Generate a local trusted cert and run your app with HTTPS**
+
+```bash
+mkcert <your-tailscale-hostname>.<tailscale-subdomain>.ts.net localhost
+```
+This will create a cert/key pair like `rootCA.pem` and `rootCA-key.pem`.
+
+3. **Trust the cert on your iPhone**
+
+- Convert the root CA to iOS-compatible format:
+```bash
+openssl x509 -inform PEM -in "$(mkcert -CAROOT)/rootCA.pem" -outform DER -out mkcert-rootCA.cer
+```
+
+- AirDrop or email the `mkcert-rootCA.cer` file to your iPhone
+- Open it, then go to:
+  - **Settings → General → VPN & Device Management → Install Profile**
+  - **Settings → General → About → Certificate Trust Settings → Enable full trust** for mkcert root
+
+Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, and your manifest and icon will load properly — giving your app a real custom icon when added to the Home Screen.
+
 ## Privacy and Security Considerations
 
 - All conversation analysis happens through OpenAI's API, so your data is subject to their privacy policy
@@ -144,12 +177,9 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [OpenAI](https://openai.com/) - AI model provider
 - [SQLite](https://sqlite.org/) - Database engine
 
-
 ## Box Art
 
 <p align="center" style="display: flex; gap: 20px; justify-content: center;">
   <img src="./assets/box-art-front.png" alt="WellSaid Front Cover" width="45%" style="box-shadow: 0 4px 8px rgba(0,0,0,0.3); border-radius: 8px;"/>
   <img src="./assets/box-art-back.png" alt="WellSaid Back Cover" width="45%" style="box-shadow: 0 4px 8px rgba(0,0,0,0.3); border-radius: 8px;"/>
 </p>
-
----
