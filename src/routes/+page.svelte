@@ -6,8 +6,8 @@ import ReplySuggestions from '$lib/components/ReplySuggestions.svelte'
 import ToneSelector from '$lib/components/ToneSelector.svelte'
 import type { Message, PageData, ToneType } from '$lib/types'
 
-const TONES: ToneType[] = ['gentle', 'honest', 'funny', 'reassuring', 'concise']
 const DEFAULT_PROVIDER = 'openai'
+const TONES: ToneType[] = ['gentle', 'honest', 'funny', 'reassuring', 'concise']
 const { data } = $props<{ data: PageData }>()
 
 const formState = $state({
