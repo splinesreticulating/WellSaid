@@ -1,11 +1,12 @@
+import { getSuggestedReplies as khojGetSuggestedReplies } from '$lib/khoj'
 import { logger } from '$lib/logger'
-import { getSuggestedReplies } from '$lib/openAi'
+import { getSuggestedReplies as openAiGetSuggestedReplies } from '$lib/openAi'
 import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 
 export const POST: RequestHandler = async ({ request }) => {
     try {
-        const { messages, tone, context } = await request.json()
+        const { messages, tone, context, model } = await request.json()
 
         if (!Array.isArray(messages) || !tone) {
             return json({
@@ -13,6 +14,7 @@ export const POST: RequestHandler = async ({ request }) => {
             }, { status: 400 })
         }
 
+        const getSuggestedReplies = model === 'khoj' ? khojGetSuggestedReplies : openAiGetSuggestedReplies
         const result = await getSuggestedReplies(
             messages,
             tone,
