@@ -72,8 +72,7 @@ describe('POST handler for generate endpoint', () => {
     // Setup mock response from getSuggestedReplies
     const mockResult = {
       summary: 'This is a summary',
-      replies: ['Reply 1', 'Reply 2'],
-      messageCount: 2
+      replies: ['Reply 1', 'Reply 2']
     }
     vi.mocked(ai.getSuggestedReplies).mockResolvedValue(mockResult)
 

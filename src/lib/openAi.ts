@@ -20,12 +20,11 @@ export const getSuggestedReplies = async (
     messages: Message[],
     tone: string,
     context: string,
-): Promise<{ summary: string; replies: string[]; messageCount: number }> => {
+): Promise<{ summary: string, replies: string[] }> => {
     if (!process.env.OPENAI_API_KEY) {
         return {
             summary: 'OpenAI API key is not configured.',
             replies: ['Please set up your OpenAI API key in the .env file.'],
-            messageCount: messages.length,
         }
     }
 
@@ -89,23 +88,21 @@ export const getSuggestedReplies = async (
                 .trim()
         }
 
-        // Match both '**Reply 1:**' and 'Reply 1:' in one regex
+        // Match both '**Reply 1:**' and 'Reply 1:'
         const replyPattern = /\*\*Reply\s*\d:\*\*\s*(.*)|Reply\s*\d:\s*(.*)/g
         const replies = Array.from(rawOutput.matchAll(replyPattern))
             .map((m) => {
-                // Type assertion: matchAll returns IterableIterator<RegExpMatchArray | undefined>
                 const match = m as RegExpMatchArray
                 return cleanReply(match[1] || match[2] || '')
             })
             .filter(Boolean)
 
-        return { summary, replies, messageCount: messages.length }
+        return { summary, replies }
     } catch (err) {
         logger.error({ err }, 'Error generating replies')
         return {
             summary: '',
-            replies: ['(Sorry, I had trouble generating a response.)'],
-            messageCount: messages.length,
+            replies: ['(Sorry, I had trouble generating a response.)']
         }
     }
 }

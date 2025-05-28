@@ -42,7 +42,6 @@ Reply 3: "I'm looking forward to our hiking adventure! Do we need to get any new
     expect(result.summary).toBeTruthy()
     expect(result.replies.length).toBe(3)
     expect(result.replies[0]).toContain('excited about the hiking trip')
-    expect(result.messageCount).toBe(2)
 
     // Verify fetch was called with correct parameters
     expect(global.fetch).toHaveBeenCalledTimes(1)
@@ -75,7 +74,6 @@ Reply 3: "I'm looking forward to our hiking adventure! Do we need to get any new
 
     expect(result.summary).toBe('')
     expect(result.replies).toEqual(['(Sorry, I had trouble generating a response.)'])
-    expect(result.messageCount).toBe(1)
   })
 
   it('should handle case when OPENAI_API_KEY is not set', async () => {
