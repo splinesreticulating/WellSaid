@@ -1,6 +1,7 @@
 <script lang="ts">
 import AdditionalContext from '$lib/components/AdditionalContext.svelte'
-import AiModelSelector from '$lib/components/AiModelSelector.svelte'
+import AiModelSelector from '$lib/components/AiModelSelector.svelte';
+import ControlBar from '$lib/components/ControlBar.svelte';
 import ReplySuggestions from '$lib/components/ReplySuggestions.svelte'
 import ToneSelector from '$lib/components/ToneSelector.svelte'
 import type { Message, PageData, ToneType } from '$lib/types'
@@ -144,39 +145,13 @@ async function onclick() {
 	<div class="content-container">
 		<form onsubmit={handleSubmit}>
 
-			<!-- Time frame selector and message count -->
-			<section class="control-bar">
-				<div class="timeframe-controls">
-					<label for="window-back">summarize the last:</label>
-					<select
-						id="window-back"
-						class="hours-dropdown"
-						bind:value={formState.form.lookBackHours}
-					>
-						<option value="1">hour</option>
-						<option value="2">2 hours</option>
-						<option value="3">3 hours</option>
-						<option value="4">4 hours</option>
-						<option value="5">5 hours</option>
-						<option value="6">6 hours</option>
-						<option value="12">12 hours</option>
-						<option value="24">24 hours</option>
-					</select>
-					<button type="button" class="go-button" { onclick } disabled={!canGenerateReplies}>
-					{#if showLoadingIndicators}
-						<span class="loading-spinner"></span>
-					{:else}
-						go
-					{/if}
-				</button>
-				</div>
-				<div class="message-count">
-					messages:&nbsp;
-					<span class="message-count-value"
-						>{formState.form.messages.length}</span
-					>
-				</div>
-			</section>
+			<ControlBar 
+				bind:lookBackHours={formState.form.lookBackHours}
+				messageCount={formState.form.messages.length}
+				onGoClick={onclick} 
+				canGenerate={canGenerateReplies}
+				isLoading={showLoadingIndicators}
+			/>
 
 			<!-- Additional context (collapsible) -->
 			<AdditionalContext bind:additionalContext={formState.form.additionalContext} bind:expanded={additionalContextExpanded} />
@@ -255,66 +230,6 @@ async function onclick() {
 		margin-bottom: 2rem;
 	}
 
-	/* ===== Controls & Inputs ===== */
-	.control-bar {
-		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
-		margin-bottom: 1rem;
-		justify-content: space-between;
-	}
-
-	/* Timeframe Controls */
-	.timeframe-controls {
-		display: flex;
-		align-items: center;
-		gap: 0.1rem;
-		line-height: 1;
-		flex-wrap: nowrap;
-	}
-
-	.timeframe-controls label {
-		font-weight: 500;
-		white-space: nowrap;
-		min-width: max-content;
-		display: inline-flex;
-		align-items: center;
-		margin: 0;
-	}
-
-	/* Buttons */
-	.go-button {
-		padding: 0.5rem 1rem;
-		background-color: var(--primary);
-		color: var(--white);
-		border: 1px solid var(--primary-light);
-		border-radius: var(--border-radius);
-		font-weight: 500;
-		cursor: pointer;
-		transition: background-color 0.2s, transform 0.1s;
-		margin-left: 0.25rem;
-		min-height: var(--min-touch-size);
-		min-width: var(--min-touch-size);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-	
-	.go-button:hover {
-		background-color: var(--primary);
-	}
-	
-	.go-button:active {
-		transform: scale(0.98);
-	}
-	
-	.go-button:disabled {
-		background-color: var(--light);
-		color: var(--gray);
-		cursor: not-allowed;
-		border-color: var(--light);
-	}
-
 	h2 {
 		margin-top: 0.1rem;
 	}
@@ -336,17 +251,6 @@ async function onclick() {
 		line-height: 1.6;
 		color: var(--primary);
 		letter-spacing: 0.02em;
-	}
-
-	.message-count {
-		font-size: 0.95rem;
-		display: flex;
-		align-items: center;
-	}
-
-	.message-count-value {
-		font-weight: 600;
-		color: var(--primary);
 	}
 
 	hr {
@@ -371,20 +275,8 @@ async function onclick() {
 		padding: 1rem;
 	}
 
-	.loading-spinner {
-		display: inline-block;
-		width: 12px;
-		height: 12px;
-		border: 2px solid var(--white);
-		border-radius: 50%;
-		border-top-color: transparent;
-		animation: spin 1s linear infinite;
-	}
-
 	/* ===== Animations ===== */
-	@keyframes spin {
-		to { transform: rotate(360deg); }
-	}
+	/* @keyframes spin moved to ControlBar.svelte */
 
 	@keyframes pulse {
 		0% { transform: scale(0.8); opacity: 0.5; }
