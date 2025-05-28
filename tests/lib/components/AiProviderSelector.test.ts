@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-// Model class simulating AiModelSelector logic
+// Model class simulating AiProviderSelector logic
 class AiProviderSelectorModel {
   value: string;
   readonly options: string[];
