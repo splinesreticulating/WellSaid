@@ -11,8 +11,7 @@ export let value: string
 </section>
 
 <style>
-.ai-model-selector {
-	margin-top: 1rem;
-}
+	.ai-model-selector {
+		margin-top: 1rem;
+	}
 </style>
-

@@ -51,7 +51,7 @@ const lookBackOptions = [
 	.timeframe-controls {
 		display: flex;
 		align-items: center;
-		gap: 0.5rem; /* Adjusted gap for better spacing */
+		gap: 0.5rem;
 		line-height: 1;
 		flex-wrap: nowrap;
 	}
@@ -59,10 +59,8 @@ const lookBackOptions = [
 	.timeframe-controls label {
 		font-weight: 500;
 		white-space: nowrap;
-		margin-right: 0.25rem; /* Ensure little space before select */
+		margin-right: 0.25rem;
 	}
-
-	/* select styling is now global in app.css */
 
 	.go-button {
 		padding: 0.5rem 1rem;
@@ -74,15 +72,15 @@ const lookBackOptions = [
 		cursor: pointer;
 		transition: background-color 0.2s, transform 0.1s;
 		min-height: var(--min-touch-size);
-		min-width: var(--min-touch-size); /* Ensure button has a decent tap target size */
+		min-width: var(--min-touch-size);
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		margin-left: 0.25rem; /* Space from the select */
+		margin-left: 0.25rem;
 	}
 
 	.go-button:hover {
-		background-color: var(--primary-dark, #005f5f); /* Fallback if --primary-dark is not defined */
+		background-color: var(--primary-dark, #005f5f);
 	}
 
 	.go-button:active {
@@ -110,8 +108,8 @@ const lookBackOptions = [
 		font-size: 0.95rem;
 		display: flex;
 		align-items: center;
-		color: var(--text-color); /* Ensure it uses a standard text color */
-		margin-top: 0.5rem; /* Add some space if it wraps below */
+		color: var(--text-color);
+		margin-top: 0.5rem;
 	}
 
 	.message-count-value {
@@ -132,17 +130,15 @@ const lookBackOptions = [
 		}
 		.timeframe-controls {
 			width: 100%;
-			justify-content: space-between; /* Distribute items in timeframe controls */
 			margin-bottom: 0.75rem;
 		}
 		.go-button {
-			margin-left: 0.5rem; /* Ensure some space from select */
+			margin-left: 0.5rem;
 		}
 		.message-count {
 			text-align: center;
-			justify-content: center;
 			width: 100%;
-			margin-top: 0.5rem;
+			margin-top: 0;
 		}
 	}
 </style>
