@@ -125,10 +125,8 @@ async function copyToClipboard(text: string, index: number) {
     }
     
     .empty-state {
-        color: var(--gray);
-        font-style: italic;
+        color: var(--primary-light);
         text-align: center;
-        padding: 1rem;
     }
     
     @media (min-width: 768px) {

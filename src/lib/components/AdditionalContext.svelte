@@ -6,12 +6,12 @@ export let expanded = false
 </script>
 
 <details class="context-details" bind:open={expanded}>
-    <summary>Add more context</summary>
+    <summary>add more context</summary>
     <textarea
         class="context-input"
         rows="4"
         bind:value={additionalContext}
-        placeholder="Anything else we should know about?"
+        placeholder="anything else we should know about?"
     ></textarea>
 </details>
 
