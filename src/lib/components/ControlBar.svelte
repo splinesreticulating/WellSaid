@@ -113,11 +113,7 @@ const lookBackOptions = [
 		margin: 0 0.25rem;
 	}
 
-	@keyframes spin {
-		to { transform: rotate(360deg); }
-	}
-
-	/* Responsive adjustments if necessary */
+	/* Mobile */
 	@media (max-width: 600px) {
 		.control-bar {
 			flex-direction: column;
@@ -134,6 +130,22 @@ const lookBackOptions = [
 			text-align: center;
 			width: 100%;
 			margin-top: 0;
+		}
+	}
+
+	/* Desktop */
+	@media (min-width: 768px) {
+		.control-bar {
+			align-items: center;
+		}
+		.timeframe-controls {
+			gap: 1rem;
+		}
+		.message-count {
+			margin-left: auto;
+			align-items: center;
+			justify-content: flex-end;
+			text-align: right;
 		}
 	}
 </style>
