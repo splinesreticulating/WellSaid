@@ -9,7 +9,7 @@ const { data } = $props<{ data: PageData }>()
 
 const formState = $state({
     ai: {
-        model: 'khoj', // soon to be selectable in the UI
+        model: 'openai', // soon to be selectable in the UI
         systemPrompt: 'You are a helpful assistant.',
     },
     ui: {
@@ -211,7 +211,6 @@ async function onclick() {
 				/>
 			</section>
 		</form>
-		{JSON.stringify(formState.form.suggestedReplies.length)}
 	</div>
 </main>
 
