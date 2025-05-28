@@ -53,18 +53,26 @@ export const getSuggestedReplies = async (
         const rawOutput = khojData.response || ""
         // Extract summary as everything before the first reply
         const summary = parseSummaryToHumanReadable(rawOutput)
-        // Match both '**Reply 1:**' and 'Reply 1:'
-        const replyMatches = [
-            ...rawOutput.matchAll(/\*\*Reply\s*\d:\*\*\s*(.*)/g),
-            ...rawOutput.matchAll(/Reply\s*\d:\s*(.*)/g),
-        ]
-        const replies = replyMatches.map((m) =>
-            m[1]
+        // Extract replies using a more specific approach to avoid duplicates
+        // First try to find markdown-formatted replies
+        let replyMatches = [...rawOutput.matchAll(/\*\*Reply\s*(\d+):\*\*\s*(.*)/g)]
+            .map(m => ({ index: Number.parseInt(m[1], 10), text: m[2] }));
+            
+        // If no markdown replies were found, try plain text format
+        if (replyMatches.length === 0) {
+            replyMatches = [...rawOutput.matchAll(/Reply\s*(\d+):\s*(.*)/g)]
+                .map(m => ({ index: Number.parseInt(m[1], 10), text: m[2] }));
+        }
+        
+        // Sort by reply number and extract unique replies
+        const replies = replyMatches
+            .sort((a, b) => a.index - b.index)
+            .map(m => m.text
                 .replace(/^\*+\s*/, "") // Remove leading asterisks and spaces
                 .replace(/^"/, "") // Remove leading quote
                 .replace(/"$/, "") // Remove trailing quote
-                .trim(),
-        )
+                .trim()
+            )
         return { summary, replies, messageCount: messages.length }
     } catch (err) {
         console.error('Error generating replies:', err)
