@@ -158,4 +158,68 @@ describe('POST handler for generate endpoint', () => {
       details: 'Test error'
     })
   })
+
+  it('should return suggestions when request is valid (khoj provider)', async () => {
+    // Setup mock response from khoj.getKhojReply
+    const mockResult = {
+      summary: 'This is a Khoj summary',
+      replies: ['Khoj Reply 1', 'Khoj Reply 2'],
+      messageCount: 1
+    };
+    vi.mocked(khoj.getKhojReply).mockResolvedValue(mockResult);
+
+    // Create mock request
+    const mockRequest = {
+      json: vi.fn().mockResolvedValue({
+        messages: [
+          { sender: 'partner', text: 'Hello Khoj', timestamp: '2025-05-23T13:00:00Z' }
+        ],
+        tone: 'direct',
+        context: 'Khoj context',
+        provider: 'khoj'
+      })
+    };
+
+    const mockRequestEvent = createMockRequestEvent(mockRequest);
+    const response = await serverModule.POST(mockRequestEvent);
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data).toEqual(mockResult);
+    expect(khoj.getKhojReply).toHaveBeenCalledWith(
+      [{ sender: 'partner', text: 'Hello Khoj', timestamp: '2025-05-23T13:00:00Z' }],
+      'direct',
+      'Khoj context'
+    );
+    expect(ai.getOpenaiReply).not.toHaveBeenCalled();
+  });
+
+  it('should return 500 error when khoj.getKhojReply throws an error', async () => {
+    // Setup khoj.getKhojReply to throw an error
+    vi.mocked(khoj.getKhojReply).mockRejectedValue(new Error('Khoj test error'));
+
+    // Create mock request
+    const mockRequest = {
+      json: vi.fn().mockResolvedValue({
+        messages: [
+          { sender: 'partner', text: 'Error Khoj', timestamp: '2025-05-23T14:00:00Z' }
+        ],
+        tone: 'critical',
+        context: 'Khoj error context',
+        provider: 'khoj'
+      })
+    };
+
+    const mockRequestEvent = createMockRequestEvent(mockRequest);
+    const response = await serverModule.POST(mockRequestEvent);
+    const data = await response.json();
+
+    expect(response.status).toBe(500);
+    expect(data).toEqual({
+      error: 'Failed to generate suggestions',
+      details: 'Khoj test error'
+    });
+    expect(khoj.getKhojReply).toHaveBeenCalled();
+    expect(ai.getOpenaiReply).not.toHaveBeenCalled();
+  });
 })
