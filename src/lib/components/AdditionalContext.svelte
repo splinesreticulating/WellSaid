@@ -1,8 +1,6 @@
 <script lang="ts">
-// biome-ignore lint/style/useConst: Svelte 5 pattern
-export let additionalContext = ''
-// biome-ignore lint/style/useConst: Svelte 5 pattern
-export let expanded = false
+// biome-ignore lint/style/useConst: Svelte 5 $props() pattern
+let { additionalContext = $bindable(''), expanded = $bindable(false) } = $props();
 </script>
 
 <details class="context-details" bind:open={expanded}>

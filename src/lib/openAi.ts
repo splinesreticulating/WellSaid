@@ -1,22 +1,22 @@
 import dotenv from 'dotenv'
 import { logger } from './logger'
-import { buildReplyPrompt, permanentContext } from './prompts'
+import { buildReplyPrompt, PERMANENT_CONTEXT } from './prompts'
 import type { Message } from './types'
 import { parseSummaryToHumanReadable } from './utils'
 
 dotenv.config()
 
-const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gpt-4'
-const OPENAI_TEMPERATURE = Number.parseFloat(process.env.OPENAI_TEMPERATURE || '0.5')
-const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions'
+const openaiModel = process.env.OPENAI_MODEL || 'gpt-4'
+const openaiTemperature = Number.parseFloat(process.env.OPENAI_TEMPERATURE || '0.5')
+const openaiApiUrl = 'https://api.openai.com/v1/chat/completions'
 
 if (!process.env.OPENAI_API_KEY) {
     logger.warn('⚠️ OPENAI_API_KEY is not set. OpenAI integration will not work.')
 } else {
-    logger.info({ model: OPENAI_MODEL }, '🤖 Using OpenAI API')
+    logger.info({ model: openaiModel }, '🤖 Using OpenAI API')
 }
 
-export const getSuggestedReplies = async (
+export const getOpenaiReply = async (
     messages: Message[],
     tone: string,
     context: string,
@@ -43,19 +43,19 @@ export const getSuggestedReplies = async (
     logger.debug({ prompt }, 'Sending prompt to OpenAI')
 
     try {
-        const response = await fetch(OPENAI_API_URL, {
+        const response = await fetch(openaiApiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
             },
             body: JSON.stringify({
-                model: OPENAI_MODEL,
+                model: openaiModel,
                 messages: [
-                    { role: 'system', content: permanentContext },
+                    { role: 'system', content: PERMANENT_CONTEXT },
                     { role: 'user', content: prompt }
                 ],
-                temperature: OPENAI_TEMPERATURE,
+                temperature: openaiTemperature,
             }),
         })
 
@@ -73,11 +73,11 @@ export const getSuggestedReplies = async (
             throw new Error(`OpenAI API error: ${response.status}`)
         }
 
-        const data = await response.json()
-        const rawOutput = data.choices[0]?.message?.content || ''
+        const data = await response.json();
+        const rawOutput = data.choices[0]?.message?.content || '';
 
         // Extract summary as everything before the first reply
-        const summary = parseSummaryToHumanReadable(rawOutput)
+        const summary = parseSummaryToHumanReadable(rawOutput);
 
         // Extract replies using a combined regex and clean them
         function cleanReply(text: string): string {

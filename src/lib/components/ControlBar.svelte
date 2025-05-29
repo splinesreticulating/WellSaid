@@ -1,9 +1,12 @@
 <script lang="ts">
-export let lookBackHours: string
-export let messageCount: number
-export let onGoClick: () => void
-export let canGenerate: boolean
-export let isLoading: boolean
+// biome-ignore lint/style/useConst: Svelte 5 $props() pattern
+let { lookBackHours = $bindable(''), messageCount, onGoClick, canGenerate, isLoading }: {
+    lookBackHours?: string;
+    messageCount: number;
+    onGoClick: () => void;
+    canGenerate: boolean;
+    isLoading: boolean;
+} = $props();
 
 const lookBackOptions = [
     { value: '1', label: 'hour' },
@@ -25,7 +28,7 @@ const lookBackOptions = [
 				<option value={option.value}>{option.label}</option>
 			{/each}
 		</select>
-		<button type="button" class="go-button" on:click={onGoClick} disabled={!canGenerate}>
+		<button type="button" class="go-button" onclick={onGoClick} disabled={!canGenerate}>
 			{#if isLoading}
 				<span class="loading-spinner"></span>
 			{:else}

@@ -1,5 +1,6 @@
 <script lang="ts">
-export let value: string
+// biome-ignore lint/style/useConst: Svelte 5 $props() pattern
+let { value = $bindable('') }: { value?: string } = $props();
 </script>
 
 <section>

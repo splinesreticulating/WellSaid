@@ -1,9 +1,8 @@
 <script lang="ts">
-// biome-ignore lint/style/useConst: Svelte 5 pattern
-export let replies: string[] = []
-// biome-ignore lint/style/useConst: Svelte 5 pattern
-export let loading = false
-export let copiedIndex = -1
+// biome-ignore lint/style/useConst: Svelte 5 $props() pattern
+let { replies = [], loading = false }: { replies?: string[], loading?: boolean } = $props();
+
+let copiedIndex = $state(-1);
 
 // Copy text to clipboard with iOS compatibility
 async function copyToClipboard(text: string, index: number) {
