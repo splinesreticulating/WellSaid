@@ -2,7 +2,10 @@
 import type { ToneType } from '$lib/types'
 
 // biome-ignore lint/style/useConst: Svelte 5 $props() pattern
-let { selectedTone = $bindable(), tones = [] }: { selectedTone?: ToneType, tones?: ToneType[] } = $props();
+let {
+    selectedTone = $bindable(),
+    tones = [],
+}: { selectedTone?: ToneType; tones?: ToneType[] } = $props()
 </script>
 
 <div class="tone-selector">

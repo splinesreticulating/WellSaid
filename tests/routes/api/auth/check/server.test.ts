@@ -1,6 +1,6 @@
-import { GET } from '$lib/../routes/api/auth/check/+server';
-import type { RequestEvent } from '@sveltejs/kit';
-import { describe, expect, it, vi } from 'vitest';
+import { GET } from '$lib/../routes/api/auth/check/+server'
+import type { RequestEvent } from '@sveltejs/kit'
+import { describe, expect, it, vi } from 'vitest'
 
 describe('/api/auth/check GET', () => {
     it('should return authenticated: true when auth_token is valid', async () => {
@@ -11,9 +11,9 @@ describe('/api/auth/check GET', () => {
             serialize: vi.fn(),
             [Symbol.iterator]: vi.fn(),
             getAll: vi.fn(),
-        };
+        }
 
-        const request = new Request('http://localhost/api/auth/check');
+        const request = new Request('http://localhost/api/auth/check')
         const requestEvent = {
             cookies: mockCookies,
             request,
@@ -26,16 +26,16 @@ describe('/api/auth/check GET', () => {
             isDataRequest: true,
             isSubRequest: true,
             setHeaders: vi.fn(),
-        } as unknown as RequestEvent;
+        } as unknown as RequestEvent
 
-        const response = await GET(requestEvent);
-        const body = await response.json();
+        const response = await GET(requestEvent)
+        const body = await response.json()
 
-        expect(response.status).toBe(200);
-        expect(body.authenticated).toBe(true);
-        expect(body).toHaveProperty('timestamp');
-        expect(mockCookies.get).toHaveBeenCalledWith('auth_token');
-    });
+        expect(response.status).toBe(200)
+        expect(body.authenticated).toBe(true)
+        expect(body).toHaveProperty('timestamp')
+        expect(mockCookies.get).toHaveBeenCalledWith('auth_token')
+    })
 
     it('should return authenticated: false and 401 when auth_token is missing', async () => {
         const mockCookies = {
@@ -45,9 +45,9 @@ describe('/api/auth/check GET', () => {
             serialize: vi.fn(),
             [Symbol.iterator]: vi.fn(),
             getAll: vi.fn(),
-        };
+        }
 
-        const request = new Request('http://localhost/api/auth/check');
+        const request = new Request('http://localhost/api/auth/check')
         const requestEvent = {
             cookies: mockCookies,
             request,
@@ -60,16 +60,16 @@ describe('/api/auth/check GET', () => {
             isDataRequest: true,
             isSubRequest: true,
             setHeaders: vi.fn(),
-        } as unknown as RequestEvent;
+        } as unknown as RequestEvent
 
-        const response = await GET(requestEvent);
-        const body = await response.json();
+        const response = await GET(requestEvent)
+        const body = await response.json()
 
-        expect(response.status).toBe(401);
-        expect(body.authenticated).toBe(false);
-        expect(body).toHaveProperty('timestamp');
-        expect(mockCookies.get).toHaveBeenCalledWith('auth_token');
-    });
+        expect(response.status).toBe(401)
+        expect(body.authenticated).toBe(false)
+        expect(body).toHaveProperty('timestamp')
+        expect(mockCookies.get).toHaveBeenCalledWith('auth_token')
+    })
 
     it('should return authenticated: false and 401 when auth_token is invalid', async () => {
         const mockCookies = {
@@ -79,9 +79,9 @@ describe('/api/auth/check GET', () => {
             serialize: vi.fn(),
             [Symbol.iterator]: vi.fn(),
             getAll: vi.fn(),
-        };
+        }
 
-        const request = new Request('http://localhost/api/auth/check');
+        const request = new Request('http://localhost/api/auth/check')
         const requestEvent = {
             cookies: mockCookies,
             request,
@@ -94,14 +94,14 @@ describe('/api/auth/check GET', () => {
             isDataRequest: true,
             isSubRequest: true,
             setHeaders: vi.fn(),
-        } as unknown as RequestEvent;
+        } as unknown as RequestEvent
 
-        const response = await GET(requestEvent);
-        const body = await response.json();
+        const response = await GET(requestEvent)
+        const body = await response.json()
 
-        expect(response.status).toBe(401);
-        expect(body.authenticated).toBe(false);
-        expect(body).toHaveProperty('timestamp');
-        expect(mockCookies.get).toHaveBeenCalledWith('auth_token');
-    });
-});
+        expect(response.status).toBe(401)
+        expect(body.authenticated).toBe(false)
+        expect(body).toHaveProperty('timestamp')
+        expect(mockCookies.get).toHaveBeenCalledWith('auth_token')
+    })
+})

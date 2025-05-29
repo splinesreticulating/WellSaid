@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 import { logger } from './logger'
-import { buildReplyPrompt, PERMANENT_CONTEXT } from './prompts'
+import { PERMANENT_CONTEXT, buildReplyPrompt } from './prompts'
 import type { Message } from './types'
 import { parseSummaryToHumanReadable } from './utils'
 
@@ -73,11 +73,11 @@ export const getOpenaiReply = async (
             throw new Error(`OpenAI API error: ${response.status}`)
         }
 
-        const data = await response.json();
-        const rawOutput = data.choices[0]?.message?.content || '';
+        const data = await response.json()
+        const rawOutput = data.choices[0]?.message?.content || ''
 
         // Extract summary as everything before the first reply
-        const summary = parseSummaryToHumanReadable(rawOutput);
+        const summary = parseSummaryToHumanReadable(rawOutput)
 
         // Extract replies using a combined regex and clean them
         function cleanReply(text: string): string {
