@@ -1,12 +1,18 @@
 <script lang="ts">
 // biome-ignore lint/style/useConst: Svelte 5 $props() pattern
-let { lookBackHours = $bindable(''), messageCount, onGoClick, canGenerate, isLoading }: {
-    lookBackHours?: string;
-    messageCount: number;
-    onGoClick: () => void;
-    canGenerate: boolean;
-    isLoading: boolean;
-} = $props();
+let {
+    lookBackHours = $bindable(''),
+    messageCount,
+    onGoClick,
+    canGenerate,
+    isLoading,
+}: {
+    lookBackHours?: string
+    messageCount: number
+    onGoClick: () => void
+    canGenerate: boolean
+    isLoading: boolean
+} = $props()
 
 const lookBackOptions = [
     { value: '1', label: 'hour' },
@@ -22,7 +28,7 @@ const lookBackOptions = [
 
 <section class="control-bar">
 	<div class="timeframe-controls">
-		<label for="window-back">summarize the last:</label>
+		<label for="window-back">summarize last:</label>
 		<select id="window-back" bind:value={lookBackHours}>
 			{#each lookBackOptions as option (option.value)}
 				<option value={option.value}>{option.label}</option>
@@ -127,7 +133,7 @@ const lookBackOptions = [
 			margin-bottom: 0.75rem;
 		}
 		.go-button {
-			margin-left: 0.5rem;
+			/* margin-left: 0.5rem; */
 		}
 		.message-count {
 			text-align: center;

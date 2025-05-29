@@ -207,6 +207,11 @@ async function onclick() {
 	form {
 		display: flex;
 		flex-direction: column;
+		border: 1px solid var(--light);
+		border-radius: var(--border-radius);
+		padding: 1rem;
+		margin-bottom: 1rem;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 	}
 
 	/* ===== Header ===== */
