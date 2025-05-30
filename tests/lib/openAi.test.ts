@@ -2,10 +2,15 @@ import { getOpenaiReply } from '$lib/openAi'
 import type { Message } from '$lib/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-// Mock the utils.parseSummaryToHumanReadable function
-vi.mock('$lib/utils', () => ({
-  parseSummaryToHumanReadable: vi.fn((text) => text.split('Reply 1:')[0].trim())
-}))
+// Mock '$lib/utils', providing specific mock for parseSummaryToHumanReadable
+// and using actual implementations for other functions.
+vi.mock('$lib/utils', async (importOriginal) => {
+  const actual = await importOriginal() as typeof import('$lib/utils')
+  return {
+    ...actual, // Use actual implementations for functions like formatMessagesToRecentText, extractReplies
+    parseSummaryToHumanReadable: vi.fn((text: string) => text.split('Reply 1:')[0].trim()), // Keep specific mock for this one
+  }
+})
 
 describe('getOpenaiReply', () => {
   beforeEach(() => {
