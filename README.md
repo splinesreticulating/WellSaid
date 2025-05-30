@@ -45,14 +45,35 @@ yarn
 
 3. Configure environment variables
 
-Create a `.env` file in the root directory with the following variables:
+Create a `.env` file in the root directory by copying the `.env.example` file (`cp .env.example .env`) and then update the values. The following variables are needed:
 
 ```
 OPENAI_API_KEY=your_openai_api_key
 OPENAI_MODEL=gpt-4  # or any other OpenAI model
 OPENAI_TEMPERATURE=0.5
 PARTNER_PHONE=+1234567890  # Your partner's phone number in the Messages app
+
+# Authentication - CRITICAL for security
+BASIC_AUTH_USERNAME=your_username
+BASIC_AUTH_PASSWORD=your_strong_password
+JWT_SECRET=your_super_strong_random_jwt_secret # See note below
+
+# Optional: Logging level (info, debug, warn, error)
+LOG_LEVEL=info
+
+# Optional: For remote access via Tailscale (see 'Accessing from Anywhere' section)
+ALLOWED_HOST=your-tailscale-hostname.your-tailscale-domain.ts.net
 ```
+
+**Important Note on `JWT_SECRET`**: 
+The `JWT_SECRET` is critical for securing your application's authentication. It should be a long, random, and unpredictable string. **Do not use a weak or easily guessable secret.**
+
+You can generate a strong secret using OpenSSL with the following command in your terminal:
+
+```bash
+openssl rand -base64 64
+```
+Copy the output of this command and use it as the value for `JWT_SECRET` in your `.env` file. Ensure it's on a single line.
 
 4. Start the development server
 
