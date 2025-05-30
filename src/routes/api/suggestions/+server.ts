@@ -1,6 +1,6 @@
-import { getSuggestedReplies as khojGetSuggestedReplies } from '$lib/khoj'
+import { getKhojReply as khojGetSuggestedReplies } from '$lib/khoj'
 import { logger } from '$lib/logger'
-import { getSuggestedReplies as openAiGetSuggestedReplies } from '$lib/openAi'
+import { getOpenaiReply as openAiGetSuggestedReplies } from '$lib/openAi'
 import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 

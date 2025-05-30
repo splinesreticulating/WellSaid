@@ -21,9 +21,9 @@ export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
     const db = await open({ filename: CHAT_DB_PATH, driver: sqlite3.Database })
     const isoToAppleNs = (iso: string): number => {
         const appleEpoch = new Date('2001-01-01T00:00:00Z').getTime()
-        const target = new Date(iso).getTime()
+        const targetTime = new Date(iso).getTime()
 
-        return (target - appleEpoch) * 1000000
+        return (targetTime - appleEpoch) * 1000000
     }
 
     let dateWhere = ''
@@ -68,7 +68,7 @@ export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
         await db.close()
     }
 
-    logger.info({ count: rows.length, handleId: PARTNER_HANDLE_ID }, '📨 Fetched messages')
+    logger.info({ count: rows.length, handleId: PARTNER_HANDLE_ID }, 'fetched messages')
 
     const formattedRows = rows
         .map((row: MessageRow) => ({

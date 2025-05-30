@@ -1,4 +1,4 @@
-import { getSuggestedReplies } from '$lib/openAi'
+import { getOpenaiReply } from '$lib/openAi'
 import type { Message } from '$lib/types'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -7,7 +7,7 @@ vi.mock('$lib/utils', () => ({
   parseSummaryToHumanReadable: vi.fn((text) => text.split('Reply 1:')[0].trim())
 }))
 
-describe('getSuggestedReplies', () => {
+describe('getOpenaiReply', () => {
   beforeEach(() => {
     vi.resetAllMocks()
     // Mock the fetch function
@@ -37,7 +37,7 @@ Reply 3: "I'm looking forward to our hiking adventure! Do we need to get any new
       { sender: 'me', text: 'That sounds fun!', timestamp: '2025-05-23T12:01:00Z' }
     ]
 
-    const result = await getSuggestedReplies(messages, 'gentle', '')
+    const result = await getOpenaiReply(messages, 'gentle', '')
 
     expect(result.summary).toBeTruthy()
     expect(result.replies.length).toBe(3)
@@ -70,7 +70,7 @@ Reply 3: "I'm looking forward to our hiking adventure! Do we need to get any new
       { sender: 'partner', text: 'How are you today?', timestamp: '2025-05-23T12:00:00Z' }
     ]
 
-    const result = await getSuggestedReplies(messages, 'gentle', '')
+    const result = await getOpenaiReply(messages, 'gentle', '')
 
     expect(result.summary).toBe('')
     expect(result.replies).toEqual(['(Sorry, I had trouble generating a response.)'])
@@ -85,7 +85,7 @@ Reply 3: "I'm looking forward to our hiking adventure! Do we need to get any new
       { sender: 'partner', text: 'Hello!', timestamp: '2025-05-23T12:00:00Z' }
     ]
 
-    const result = await getSuggestedReplies(messages, 'gentle', '')
+    const result = await getOpenaiReply(messages, 'gentle', '')
 
     expect(result.summary).toBe('OpenAI API key is not configured.')
     expect(result.replies).toEqual(['Please set up your OpenAI API key in the .env file.'])
@@ -118,7 +118,7 @@ Reply 3: *This one has just asterisks*`
       { sender: 'partner', text: 'Test message', timestamp: '2025-05-23T12:00:00Z' }
     ]
 
-    const result = await getSuggestedReplies(messages, 'gentle', '')
+    const result = await getOpenaiReply(messages, 'gentle', '')
 
     expect(result.replies.length).toBe(3)
     // Verify that our matcher can correctly extract the replies

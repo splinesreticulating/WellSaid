@@ -13,7 +13,7 @@ export interface MessageRow {
 }
 
 export interface PageData {
-    messages?: Message[];
+    messages?: Message[]
 }
 
 export type ToneType = 'gentle' | 'honest' | 'funny' | 'reassuring' | 'concise'

@@ -1,14 +1,19 @@
-import * as ai from '$lib/openAi'
+import * as ai from '$lib/openAi';
+import * as khoj from '$lib/khoj';
 import type { RequestEvent } from '@sveltejs/kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import * as serverModule from '../../../../src/routes/api/suggestions/+server'
 
 const ROUTE_ID = '/api/suggestions'
 
-// Mock the AI module
+// Mock the AI modules
 vi.mock('$lib/openAi', () => ({
-  getSuggestedReplies: vi.fn()
-}))
+  getOpenaiReply: vi.fn()
+}));
+
+vi.mock('$lib/khoj', () => ({
+  getKhojReply: vi.fn()
+}));
 
 // Mock logger to prevent test output pollution
 vi.mock('$lib/logger', () => ({
@@ -28,9 +33,10 @@ interface MessageData {
 }
 
 interface RequestData {
-  messages?: MessageData[]
-  tone?: string
-  context?: string
+  messages?: MessageData[];
+  tone?: string;
+  context?: string;
+  provider?: 'openai' | 'khoj';
 }
 
 interface MockRequest {
@@ -74,7 +80,7 @@ describe('POST handler for generate endpoint', () => {
       summary: 'This is a summary',
       replies: ['Reply 1', 'Reply 2']
     }
-    vi.mocked(ai.getSuggestedReplies).mockResolvedValue(mockResult)
+    vi.mocked(ai.getOpenaiReply).mockResolvedValue(mockResult)
 
     // Create mock request
     const mockRequest = {
@@ -83,7 +89,8 @@ describe('POST handler for generate endpoint', () => {
           { sender: 'partner', text: 'Hello', timestamp: '2025-05-23T12:00:00Z' }
         ],
         tone: 'gentle',
-        context: 'Some context'
+        context: 'Some context',
+        provider: 'openai'
       })
     }
 
@@ -95,7 +102,7 @@ describe('POST handler for generate endpoint', () => {
 
     expect(response.status).toBe(200)
     expect(data).toEqual(mockResult)
-    expect(ai.getSuggestedReplies).toHaveBeenCalledWith(
+    expect(ai.getOpenaiReply).toHaveBeenCalledWith(
       [{ sender: 'partner', text: 'Hello', timestamp: '2025-05-23T12:00:00Z' }],
       'gentle',
       'Some context'
@@ -119,12 +126,13 @@ describe('POST handler for generate endpoint', () => {
 
     expect(response.status).toBe(400)
     expect(data).toEqual({ error: 'Invalid request format' })
-    expect(ai.getSuggestedReplies).not.toHaveBeenCalled()
+    expect(ai.getOpenaiReply).not.toHaveBeenCalled();
+    expect(khoj.getKhojReply).not.toHaveBeenCalled();
   })
 
   it('should return 500 error when getSuggestedReplies throws an error', async () => {
-    // Setup getSuggestedReplies to throw an error
-    vi.mocked(ai.getSuggestedReplies).mockRejectedValue(new Error('Test error'))
+    // Setup getOpenaiReply to throw an error
+    vi.mocked(ai.getOpenaiReply).mockRejectedValue(new Error('Test error'))
 
     // Create mock request
     const mockRequest = {
@@ -133,7 +141,8 @@ describe('POST handler for generate endpoint', () => {
           { sender: 'partner', text: 'Hello', timestamp: '2025-05-23T12:00:00Z' }
         ],
         tone: 'gentle',
-        context: ''
+        context: '',
+        provider: 'openai'
       })
     }
 
@@ -149,4 +158,68 @@ describe('POST handler for generate endpoint', () => {
       details: 'Test error'
     })
   })
+
+  it('should return suggestions when request is valid (khoj provider)', async () => {
+    // Setup mock response from khoj.getKhojReply
+    const mockResult = {
+      summary: 'This is a Khoj summary',
+      replies: ['Khoj Reply 1', 'Khoj Reply 2'],
+      messageCount: 1
+    };
+    vi.mocked(khoj.getKhojReply).mockResolvedValue(mockResult);
+
+    // Create mock request
+    const mockRequest = {
+      json: vi.fn().mockResolvedValue({
+        messages: [
+          { sender: 'partner', text: 'Hello Khoj', timestamp: '2025-05-23T13:00:00Z' }
+        ],
+        tone: 'direct',
+        context: 'Khoj context',
+        provider: 'khoj'
+      })
+    };
+
+    const mockRequestEvent = createMockRequestEvent(mockRequest);
+    const response = await serverModule.POST(mockRequestEvent);
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data).toEqual(mockResult);
+    expect(khoj.getKhojReply).toHaveBeenCalledWith(
+      [{ sender: 'partner', text: 'Hello Khoj', timestamp: '2025-05-23T13:00:00Z' }],
+      'direct',
+      'Khoj context'
+    );
+    expect(ai.getOpenaiReply).not.toHaveBeenCalled();
+  });
+
+  it('should return 500 error when khoj.getKhojReply throws an error', async () => {
+    // Setup khoj.getKhojReply to throw an error
+    vi.mocked(khoj.getKhojReply).mockRejectedValue(new Error('Khoj test error'));
+
+    // Create mock request
+    const mockRequest = {
+      json: vi.fn().mockResolvedValue({
+        messages: [
+          { sender: 'partner', text: 'Error Khoj', timestamp: '2025-05-23T14:00:00Z' }
+        ],
+        tone: 'critical',
+        context: 'Khoj error context',
+        provider: 'khoj'
+      })
+    };
+
+    const mockRequestEvent = createMockRequestEvent(mockRequest);
+    const response = await serverModule.POST(mockRequestEvent);
+    const data = await response.json();
+
+    expect(response.status).toBe(500);
+    expect(data).toEqual({
+      error: 'Failed to generate suggestions',
+      details: 'Khoj test error'
+    });
+    expect(khoj.getKhojReply).toHaveBeenCalled();
+    expect(ai.getOpenaiReply).not.toHaveBeenCalled();
+  });
 })
