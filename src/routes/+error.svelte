@@ -34,6 +34,6 @@ $effect(() => {
     }
     
     a {
-        color: var(--primary-light); /* text-decoration is handled globally by app.css */
+        color: var(--primary-light);
     }
 </style>

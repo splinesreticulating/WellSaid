@@ -53,12 +53,12 @@ $effect(() => {
     {@render children()}
 {:else if initialCheckLoading}
     <div style="text-align:center; margin-top: 5rem; padding: 1rem;">
-        <p>Loading application...</p>
+        <p>Reticulating splines...</p>
     </div>
 {:else if authenticated}
     {@render children()}
 {:else}
     <div style="text-align:center; margin-top: 5rem; padding: 1rem;">
-        <p>Please wait...</p>
+        <p>Reticulating splines...</p>
     </div>
 {/if}
