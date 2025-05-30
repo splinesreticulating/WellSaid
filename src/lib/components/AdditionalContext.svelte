@@ -31,7 +31,7 @@ let { additionalContext = $bindable(''), expanded = $bindable(false) } =
     }
 
     textarea.context-input {
-        width: 90%;
+        width: 100%;
         margin-top: 0.75rem;
         padding: 0.75rem;
         border: 1px solid var(--light);
@@ -40,11 +40,5 @@ let { additionalContext = $bindable(''), expanded = $bindable(false) } =
         font-size: 0.75rem;
         min-height: 80px;
         color: var(--primary);
-    }
-    
-    @media (min-width: 768px) {
-        details.context-details {
-            padding: 1.25rem;
-        }
-    }
+    }    
 </style>
