@@ -1,4 +1,5 @@
-import { BASIC_AUTH_PASSWORD, BASIC_AUTH_USERNAME } from '$env/static/private'
+import { BASIC_AUTH_PASSWORD, BASIC_AUTH_USERNAME, JWT_SECRET } from '$env/static/private'
+import jwt from 'jsonwebtoken'
 import { logger } from '$lib/logger'
 import type { Handle } from '@sveltejs/kit'
 import { redirect } from '@sveltejs/kit'
@@ -43,7 +44,17 @@ const logSecurityEvent = (event: string, details: Record<string, unknown> = {}) 
 
 const authMiddleware: Handle = async ({ event, resolve }) => {
     const { pathname } = event.url
-    const clientIP = event.getClientAddress()
+    let clientIP: string;
+    try {
+        clientIP = event.getClientAddress();
+    } catch (e: unknown) { 
+        logger.warn(`[AUTH] Could not determine clientAddress: ${(e instanceof Error ? e.message : String(e))}. Rate limiting may be less accurate for this request if multiple clients fail IP detection.`);
+        // Fallback for rate limiting. In a production environment, you'd want to
+        // investigate why getClientAddress is failing or use a more robust solution.
+        // For development, using a placeholder allows the app to continue.
+        // All requests failing to get an IP will share the same rate limiting bucket.
+        clientIP = 'unknown_client_address_fallback';
+    }
     const cookies = event.request.headers.get('cookie') || ''
 
     logger.debug('[AUTH] Incoming request:', { pathname, clientIP, cookies })
@@ -60,23 +71,46 @@ const authMiddleware: Handle = async ({ event, resolve }) => {
         return resolve(event)
     }
 
-    // Check if user is authenticated via cookie
-    const authToken = event.cookies.get('auth_token')
+    // Check if user is authenticated via JWT
+    const token = event.cookies.get('auth_token');
+    let isAuthenticated = false;
 
-    logger.debug('[AUTH] Checked auth_token:', authToken)
-
-    if (authToken === 'authenticated') {
-        // User is authenticated - add security headers to response
-        const response = await resolve(event)
-
-        // Add security headers
-        for (const [key, value] of Object.entries(securityHeaders)) {
-            response.headers.set(key, value)
+    if (!JWT_SECRET) {
+        logger.error('[AUTH] JWT_SECRET is not defined. Cannot verify JWTs in middleware. Denying access.');
+        // This is a server configuration error, but we still redirect to login to prevent access.
+    } else if (token) {
+        try {
+            jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
+            isAuthenticated = true;
+            logger.debug('[AUTH] JWT verification successful in middleware for path:', pathname);
+        } catch (error: unknown) {
+            let reason = 'Invalid token';
+            let errorName = 'UnknownError';
+            if (error instanceof Error) {
+                errorName = error.name;
+                if (error.name === 'TokenExpiredError') {
+                    reason = 'Token expired';
+                } else if (error.name === 'JsonWebTokenError') {
+                    reason = 'Token malformed or signature invalid';
+                }
+            }
+            logger.warn(`[AUTH] JWT verification failed in middleware: ${errorName} - ${reason} for path: ${pathname}`);
+            logSecurityEvent('jwt_verification_failed_middleware', { ip: clientIP, path: pathname, reason, errorName });
+            // Clear the invalid/expired cookie to prevent redirect loops or issues
+            event.cookies.delete('auth_token', { path: '/' }); 
         }
+    } else {
+        logger.debug('[AUTH] No auth_token cookie found in middleware for path:', pathname);
+    }
 
-        logger.debug('[AUTH] Authenticated, returning response')
-
-        return response
+    if (isAuthenticated) {
+        // User is authenticated - add security headers to response
+        const response = await resolve(event);
+        for (const [key, value] of Object.entries(securityHeaders)) {
+            response.headers.set(key, value);
+        }
+        logger.debug('[AUTH] Authenticated via JWT, returning response for path:', pathname);
+        return response;
     }
 
     // Check rate limiting

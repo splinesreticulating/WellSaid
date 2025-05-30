@@ -26,6 +26,7 @@
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/svelte": "^5.2.8",
 		"@types/basic-auth": "^1.1.8",
+		"@types/jsonwebtoken": "^9.0.9",
 		"@types/node": "^22.15.21",
 		"@vitest/coverage-v8": "^3.1.4",
 		"globals": "^16.0.0",
@@ -39,6 +40,7 @@
 	"dependencies": {
 		"basic-auth": "^2.0.1",
 		"dotenv": "^16.5.0",
+		"jsonwebtoken": "^9.0.2",
 		"pino": "^9.7.0",
 		"pino-pretty": "^13.0.0",
 		"sqlite": "^5.1.1",
