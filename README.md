@@ -25,8 +25,6 @@ WellSaid is an empathy-focused communication tool that helps you craft better re
 - iMessages database access -- designed to run from a Mac logged into your iCloud
 - OpenAI API key (if using OpenAI) or a running local Khoj instance (if using Khoj)
 
-**Note**: This application is designed to run exclusively on macOS as it requires direct access to the Messages app database.
-
 ### Installation
 
 1. Clone the repository
