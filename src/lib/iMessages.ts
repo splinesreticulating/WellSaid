@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import { open } from 'sqlite'
 import sqlite3 from 'sqlite3'
 import { logger } from './logger'
+import { hasPartnerMessages } from './utils'
 
 dotenv.config()
 
@@ -13,7 +14,7 @@ const PARTNER_HANDLE_ID = process.env.PARTNER_PHONE
 
 export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
     if (!PARTNER_HANDLE_ID) {
-        logger.warn('PARTNER_PHONE env var not set cannot fetch messages.')
+        logger.warn('PARTNER_PHONE env var not set -- do you have an .env file? See .env.example')
 
         return { messages: [] }
     }
@@ -82,8 +83,6 @@ export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
         }))
         .reverse()
 
-    // Return empty array if all messages are from 'me'
-    const hasPartnerMessages = formattedRows.some(msg => msg.sender !== 'me')
-
-    return { messages: hasPartnerMessages ? formattedRows : [] }
+    // Return empty array if all messages are mine
+    return { messages: hasPartnerMessages(formattedRows) ? formattedRows : [] }
 }

@@ -1,3 +1,5 @@
+import type { Message } from "./types"
+
 export const parseSummaryToHumanReadable = (rawOutput: string): string => {
     const summaryRegex = /Summary:[ \t]*(\n+)?([\s\S]*?)(?=\s*Suggested replies:|$)/
     const match = rawOutput.match(summaryRegex)
@@ -9,3 +11,5 @@ export const parseSummaryToHumanReadable = (rawOutput: string): string => {
     // Get the trimmed summary and remove any trailing '###'
     return match[2].trim().replace(/\s*###\s*$/, '')
 }
+
+export const hasPartnerMessages = (formattedRows: Message[]) => formattedRows.some(msg => msg.sender !== 'me')
