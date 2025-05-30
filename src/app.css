@@ -43,3 +43,9 @@ select {
     padding-right: 1.75rem;
     color: var(--primary);
 }
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
