@@ -132,9 +132,6 @@ const lookBackOptions = [
 			width: 100%;
 			margin-bottom: 0.75rem;
 		}
-		.go-button {
-			/* margin-left: 0.5rem; */
-		}
 		.message-count {
 			text-align: center;
 			width: 100%;
