@@ -37,8 +37,9 @@ let { additionalContext = $bindable(''), expanded = $bindable(false) } =
         border: 1px solid var(--light);
         border-radius: var(--border-radius);
         resize: vertical;
-        font-size: 16px; /* Prevents iOS zoom on focus */
+        font-size: 0.75rem;
         min-height: 80px;
+        color: var(--primary);
     }
     
     @media (min-width: 768px) {
