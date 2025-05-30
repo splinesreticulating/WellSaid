@@ -3,13 +3,13 @@
 let {
     lookBackHours = $bindable(''),
     messageCount,
-    onGoClick,
+    onclick,
     canGenerate,
     isLoading,
 }: {
     lookBackHours?: string
     messageCount: number
-    onGoClick: () => void
+    onclick: () => void
     canGenerate: boolean
     isLoading: boolean
 } = $props()
@@ -34,7 +34,7 @@ const lookBackOptions = [
 				<option value={option.value}>{option.label}</option>
 			{/each}
 		</select>
-		<button type="button" class="go-button" onclick={onGoClick} disabled={!canGenerate}>
+		<button type="button" class="go-button" { onclick }  disabled={!canGenerate}>
 			{#if isLoading}
 				<span class="loading-spinner"></span>
 			{:else}

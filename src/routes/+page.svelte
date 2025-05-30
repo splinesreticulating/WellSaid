@@ -150,7 +150,7 @@ async function onclick() {
 			<ControlBar 
 				bind:lookBackHours={formState.form.lookBackHours}
 				messageCount={formState.form.messages.length}
-				onGoClick={onclick} 
+				onclick={onclick}
 				canGenerate={canGenerateReplies}
 				isLoading={showLoadingIndicators}
 			/>
