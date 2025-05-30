@@ -31,13 +31,13 @@ let { additionalContext = $bindable(''), expanded = $bindable(false) } =
     }
 
     textarea.context-input {
+        font-family: var(--body-font);
         width: 100%;
         margin-top: 0.75rem;
         padding: 0.75rem;
         border: 1px solid var(--light);
         border-radius: var(--border-radius);
         resize: vertical;
-        font-size: 0.75rem;
         min-height: 80px;
         color: var(--primary);
     }    

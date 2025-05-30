@@ -71,19 +71,10 @@ let copiedIndex = $state(-1)
         border-radius: var(--border-radius);
         background-color: var(--white);
         font-family: var(--reply-font);
-        font-size: 1.05rem;
         line-height: 1.5;
-        letter-spacing: 0.03em;
-        color: var(--primary);
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         display: flex;
-        justify-content: space-between;
         align-items: flex-start;
-        gap: 0.75rem;
-    }
-    
-    .suggestion-content {
-        flex: 1;
     }
     
     .copy-button {
@@ -99,7 +90,7 @@ let copiedIndex = $state(-1)
         justify-content: center;
         min-width: var(--min-touch-size);
         min-height: var(--min-touch-size);
-        font-size: 1.2rem;
+        font-size: 1.5rem;
         margin-top: -0.5rem;
         margin-right: -0.5rem;
     }
@@ -112,14 +103,6 @@ let copiedIndex = $state(-1)
     .empty-state {
         color: var(--primary-light);
         text-align: center;
-    }
-    
-    @media (min-width: 768px) {
-        .suggestion-item {
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            font-size: 1.02rem;
-        }
     }
     
     .loading-suggestions {

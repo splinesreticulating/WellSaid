@@ -1,5 +1,5 @@
 :root {
-    /* Colors from +page.svelte */
+    /* Colors */
     --primary: #555b6e;
     --primary-hsl: 226, 13%, 38%; /* HSL equivalent of #555b6e */
     --primary-dark: #444a5c;
@@ -10,15 +10,15 @@
     --error: #ff5252;
     --gray: #555b6e;
     --white: #faf9f9;
+    --text-secondary: #555b6e;
 
-    /* Spacing & Sizing from +page.svelte */
+    /* Spacing & Sizing */
     --border-radius: 8px;
     --min-touch-size: 40px;
 
-    /* Typography from +page.svelte */
-    --summary-font: "Georgia", serif;
-    --reply-font: "Palatino", "Garamond", serif;
+    /* Typography */
     --heading-font: "Great Vibes", cursive;
     --body-font: "Space Mono", Georgia, "Times New Roman", Times, serif;
-    --text-secondary: #555b6e;
+    --summary-font: "Verdana", serif;
+    --reply-font: "Verdana", serif;
 }

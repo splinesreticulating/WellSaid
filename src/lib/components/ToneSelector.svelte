@@ -5,20 +5,24 @@ import type { ToneType } from '$lib/types'
 let {
     selectedTone = $bindable(),
     tones = [],
-}: { selectedTone?: ToneType; tones?: ToneType[] } = $props()
+}: { selectedTone: ToneType; tones: ToneType[] } = $props()
 </script>
+
+{#snippet toneOption(toneValue: ToneType)}
+    <label class={selectedTone === toneValue ? 'active' : ''}>
+        <input
+            type="radio"
+            name="tone"
+            bind:group={selectedTone}
+            value={toneValue}
+        />
+        {toneValue}
+    </label>
+{/snippet}
 
 <div class="tone-selector">
     {#each tones as tone}
-        <label class={selectedTone === tone ? 'active' : ''}>
-            <input
-                type="radio"
-                name="tone"
-                bind:group={selectedTone}
-                value={tone}
-            />
-            {tone}
-        </label>
+        {@render toneOption(tone)}
     {/each}
 </div>
 
@@ -30,6 +34,7 @@ let {
     }
 
     .tone-selector label {
+        font-family: var(--body-font);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -46,18 +51,15 @@ let {
     .tone-selector label.active {
         background-color: var(--primary-light);
         color: var(--white);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
-    .tone-selector input[type="radio"] {
-        margin-right: 0.5rem;
-    }
-    
     @media (min-width: 768px) {
         .tone-selector {
             gap: 0.75rem;
             justify-content: flex-start;
         }
-        
+
         .tone-selector label {
             padding: 0.75rem 1rem;
             font-size: 1rem;
