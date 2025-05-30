@@ -1,8 +1,9 @@
 <script lang="ts">
 // biome-ignore lint/style/useConst: Svelte 5 $props() pattern
-let { replies = [], loading = false }: { replies?: string[], loading?: boolean } = $props();
+let { replies = [], loading = false }: { replies: string[]; loading: boolean } =
+    $props()
 
-let copiedIndex = $state(-1);
+let copiedIndex = $state(-1)
 
 // Copy text to clipboard with iOS compatibility
 async function copyToClipboard(text: string, index: number) {
@@ -18,26 +19,7 @@ async function copyToClipboard(text: string, index: number) {
             copiedIndex = -1
         }, 2000)
     } catch (err) {
-        // Fallback method for older browsers
-        const textarea = document.createElement('textarea')
-        textarea.value = text
-        textarea.style.position = 'fixed'
-        textarea.style.opacity = '0'
-        document.body.appendChild(textarea)
-        textarea.focus()
-        textarea.select()
-
-        try {
-            document.execCommand('copy')
-            copiedIndex = index
-            setTimeout(() => {
-                copiedIndex = -1
-            }, 2000)
-        } catch (e) {
-            console.error('Failed to copy text: ', e)
-        }
-
-        document.body.removeChild(textarea)
+        console.error('Failed to copy text: ', err)
     }
 }
 </script>
