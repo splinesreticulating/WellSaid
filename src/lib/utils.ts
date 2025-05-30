@@ -13,3 +13,35 @@ export const parseSummaryToHumanReadable = (rawOutput: string): string => {
 }
 
 export const hasPartnerMessages = (formattedRows: Message[]) => formattedRows.some(msg => msg.sender !== 'me')
+
+// New utility functions
+export const formatMessagesToRecentText = (messages: Message[]): string[] => {
+    return messages.map((m) => {
+        const tag =
+            m.sender === 'me'
+                ? 'Me'
+                : m.sender === 'partner'
+                    ? 'Partner'
+                    : m.sender
+        return `${tag}: ${m.text}`
+    })
+}
+
+export const cleanReplyText = (text: string): string => {
+    return text
+        .replace(/^\*+\s*/, '') // Remove leading asterisks and spaces
+        .replace(/^"/, '')      // Remove leading quote
+        .replace(/"$/, '')      // Remove trailing quote
+        .trim()
+}
+
+export const extractReplies = (rawOutput: string): string[] => {
+    const replyPattern = /\*\*Reply\s*\d:\*\*\s*(.*)|Reply\s*\d:\s*(.*)/g
+    const replies = Array.from(rawOutput.matchAll(replyPattern))
+        .map((m) => {
+            const currentMatch = m as RegExpMatchArray
+            return cleanReplyText(currentMatch[1] || currentMatch[2] || '')
+        })
+        .filter(Boolean)
+    return replies
+}

@@ -2,7 +2,7 @@ import dotenv from 'dotenv'
 import { logger } from './logger'
 import { PERMANENT_CONTEXT, buildReplyPrompt } from './prompts'
 import type { Message } from './types'
-import { parseSummaryToHumanReadable } from './utils'
+import { extractReplies, formatMessagesToRecentText, parseSummaryToHumanReadable } from './utils'
 
 dotenv.config()
 
@@ -10,34 +10,21 @@ const openaiModel = process.env.OPENAI_MODEL || 'gpt-4'
 const openaiTemperature = Number.parseFloat(process.env.OPENAI_TEMPERATURE || '0.5')
 const openaiApiUrl = 'https://api.openai.com/v1/chat/completions'
 
-if (!process.env.OPENAI_API_KEY) {
+if (!process.env.OPENAI_API_KEY)
     logger.warn('⚠️ OPENAI_API_KEY is not set. OpenAI integration will not work.')
-} else {
-    logger.info({ model: openaiModel }, '🤖 Using OpenAI API')
-}
 
 export const getOpenaiReply = async (
     messages: Message[],
     tone: string,
     context: string,
 ): Promise<{ summary: string, replies: string[] }> => {
-    if (!process.env.OPENAI_API_KEY) {
+    if (!process.env.OPENAI_API_KEY)
         return {
             summary: 'OpenAI API key is not configured.',
             replies: ['Please set up your OpenAI API key in the .env file.'],
         }
-    }
 
-    const recentText = messages.map((m) => {
-        const tag =
-            m.sender === 'me'
-                ? 'Me'
-                : m.sender === 'partner'
-                    ? 'Partner'
-                    : m.sender
-        return `${tag}: ${m.text}`
-    })
-
+    const recentText = formatMessagesToRecentText(messages)
     const prompt = buildReplyPrompt(recentText, tone, context)
 
     logger.debug({ prompt }, 'Sending prompt to OpenAI')
@@ -60,42 +47,14 @@ export const getOpenaiReply = async (
         })
 
         if (!response.ok) {
-            let errorBody: string
-            try {
-                errorBody = await response.text()
-            } catch (e) {
-                errorBody = '(could not read body)'
-            }
-            logger.error(
-                { status: response.status, body: errorBody },
-                'OpenAI API error'
-            )
+            logger.error({ status: response.status }, 'OpenAI API error')
             throw new Error(`OpenAI API error: ${response.status}`)
         }
 
         const data = await response.json()
         const rawOutput = data.choices[0]?.message?.content || ''
-
-        // Extract summary as everything before the first reply
         const summary = parseSummaryToHumanReadable(rawOutput)
-
-        // Extract replies using a combined regex and clean them
-        function cleanReply(text: string): string {
-            return text
-                .replace(/^\*+\s*/, '') // Remove leading asterisks and spaces
-                .replace(/^"/, '')      // Remove leading quote
-                .replace(/"$/, '')      // Remove trailing quote
-                .trim()
-        }
-
-        // Match both '**Reply 1:**' and 'Reply 1:'
-        const replyPattern = /\*\*Reply\s*\d:\*\*\s*(.*)|Reply\s*\d:\s*(.*)/g
-        const replies = Array.from(rawOutput.matchAll(replyPattern))
-            .map((m) => {
-                const match = m as RegExpMatchArray
-                return cleanReply(match[1] || match[2] || '')
-            })
-            .filter(Boolean)
+        const replies = extractReplies(rawOutput)
 
         return { summary, replies }
     } catch (err) {
