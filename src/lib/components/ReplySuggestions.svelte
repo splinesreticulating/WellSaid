@@ -3,26 +3,43 @@
 let { replies = [], loading = false }: { replies: string[]; loading: boolean } =
     $props()
 
+// biome-ignore lint/style/useConst: `copiedIndex` is a Svelte $state rune, its value is reactively updated.
 let copiedIndex = $state(-1)
-
-// Copy text to clipboard with iOS compatibility
-async function copyToClipboard(text: string, index: number) {
-    try {
-        // Use modern clipboard API which works on iOS
-        await navigator.clipboard.writeText(text)
-
-        // Show copy confirmation
-        copiedIndex = index
-
-        // Reset after 2 seconds
-        setTimeout(() => {
-            copiedIndex = -1
-        }, 2000)
-    } catch (err) {
-        console.error('Failed to copy text: ', err)
-    }
-}
 </script>
+
+{#snippet copyButton(textToCopy: string, currentIndex: number)}
+    <button
+        class="copy-button"
+        onclick={async () => {
+            try {
+                await navigator.clipboard.writeText(textToCopy);
+                copiedIndex = currentIndex; // Update the component-level state
+                setTimeout(() => {
+                    // Only reset if this button is still the one marked 'copied'
+                    if (copiedIndex === currentIndex) {
+                        copiedIndex = -1;
+                    }
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+            }
+        }}
+        aria-label="Copy to clipboard"
+    >
+        {#if copiedIndex === currentIndex}
+            ✓
+        {:else}
+            📋
+        {/if}
+    </button>
+{/snippet}
+
+{#snippet replySuggestion(replyContent: string, itemIndex: number)}
+    <div class="suggestion-item">
+        <div class="suggestion-content">{replyContent}</div>
+        {@render copyButton(replyContent, itemIndex)}
+    </div>
+{/snippet}
 
 <div class="suggestions">
     {#if loading}
@@ -33,20 +50,7 @@ async function copyToClipboard(text: string, index: number) {
         </div>
     {:else if replies.length > 0}
         {#each replies as reply, i}
-            <div class="suggestion-item">
-                <div class="suggestion-content">{reply}</div>
-                <button 
-                    class="copy-button" 
-                    onclick={() => copyToClipboard(reply, i)}
-                    aria-label="Copy to clipboard"
-                >
-                    {#if copiedIndex === i}
-                        ✓
-                    {:else}
-                        📋
-                    {/if}
-                </button>
-            </div>
+            {@render replySuggestion(reply, i)}
         {/each}
     {:else}
         <div class="empty-state">
