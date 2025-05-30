@@ -1,6 +1,8 @@
 :root {
     /* Colors from +page.svelte */
     --primary: #555b6e;
+    --primary-hsl: 226, 13%, 38%; /* HSL equivalent of #555b6e */
+    --primary-dark: #444a5c;
     --primary-light: #89b0ae;
     --light: #bee3db;
     --success: #00c853;

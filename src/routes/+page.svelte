@@ -261,8 +261,14 @@ async function onclick() {
 	}
 
 	hr {
-		border: none;
-		border-top: 1px solid var(--light);
+		border: 0;
+		height: 1px;
+		background-image: linear-gradient(
+			to right,
+			hsla(var(--primary-hsl, 0, 0%, 20%), 0),
+			hsl(var(--primary-hsl, 0, 0%, 20%)),
+			hsla(var(--primary-hsl, 0, 0%, 20%), 0)
+		);
 		margin: 1rem 0;
 	}
 	

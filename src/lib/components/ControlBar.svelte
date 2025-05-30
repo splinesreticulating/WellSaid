@@ -84,7 +84,7 @@ const lookBackOptions = [
 	}
 
 	.go-button:hover {
-		background-color: var(--primary-dark, #005f5f);
+		background-color: var(--primary-dark);
 	}
 
 	.go-button:active {
