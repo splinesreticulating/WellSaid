@@ -1,6 +1,6 @@
 <script lang="ts">
 // biome-ignore lint/style/useConst: Svelte 5 $props() pattern
-let { value = $bindable('') }: { value?: string } = $props()
+let { value = $bindable('openai') }: { value: string } = $props()
 </script>
 
 <section>
