@@ -48,20 +48,31 @@ yarn
 Create a `.env` file in the root directory by copying the `.env.example` file (`cp .env.example .env`) and then update the values. The following variables are needed:
 
 ```
+# --- AI Provider Configuration ---
+# Option 1: OpenAI (Default)
 OPENAI_API_KEY=your_openai_api_key
 OPENAI_MODEL=gpt-4  # or any other OpenAI model
 OPENAI_TEMPERATURE=0.5
+
+# Option 2: Local Khoj Server (Alternative)
+# If you prefer to use a local Khoj server, set these variables.
+# The application will prioritize Khoj if KHOJ_API_URL is set.
+KHOJ_API_URL=http://127.0.0.1:42110/api/chat # Your Khoj server API URL
+KHOJ_AGENT=your_khoj_agent_name          # The Khoj agent to use
+
+# --- General Configuration ---
 PARTNER_PHONE=+1234567890  # Your partner's phone number in the Messages app
 
-# Authentication - CRITICAL for security
+# --- Authentication (CRITICAL for security) ---
 BASIC_AUTH_USERNAME=your_username
 BASIC_AUTH_PASSWORD=your_strong_password
-JWT_SECRET=your_super_strong_random_jwt_secret # See note below
+JWT_SECRET=your_super_strong_random_jwt_secret # See note on JWT_SECRET generation below
 
-# Optional: Logging level (info, debug, warn, error)
+# --- Optional Settings ---
+# Logging level (info, debug, warn, error)
 LOG_LEVEL=info
 
-# Optional: For remote access via Tailscale (see 'Accessing from Anywhere' section)
+# For remote access via Tailscale (see 'Accessing from Anywhere' section)
 ALLOWED_HOST=your-tailscale-hostname.your-tailscale-domain.ts.net
 ```
 
