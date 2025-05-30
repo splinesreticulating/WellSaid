@@ -7,7 +7,7 @@ WellSaid is an empathy-focused communication tool that helps you craft better re
 ## Features
 
 - **Conversation Summaries**: Analyze your Messages app conversations with a partner from the last 1-24 hours
-- **Smart Reply Suggestions**: Get AI-generated reply options based on conversation context
+- **Smart Reply Suggestions**: Get AI-generated reply options (via OpenAI or a local Khoj server) based on conversation context
 - **Tone Selection**: Choose from five different tones for your replies:
   - Gentle 
   - Honest 
@@ -24,7 +24,7 @@ WellSaid is an empathy-focused communication tool that helps you craft better re
 
 - macOS (required for Messages database access)
 - Node.js 18+ and Yarn
-- OpenAI API key for generating suggestions
+- OpenAI API key (if using OpenAI) or a running local Khoj instance (if using Khoj)
 
 **Note**: This application is designed to run exclusively on macOS as it requires direct access to the Messages app database.
 
@@ -102,7 +102,7 @@ yarn dev
 
 ## How It Works
 
-WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses OpenAI's API to analyze the conversation and generate:
+WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses an AI provider (OpenAI's API by default, or a configured local Khoj server if `KHOJ_API_URL` is set) to analyze the conversation and generate:
 
 1. A summary of the conversation, including emotional tone and key topics
 2. Three suggested replies in your chosen tone
@@ -113,7 +113,7 @@ WellSaid connects to your macOS Messages database to fetch your conversations wi
 - **State Management**: Svelte's built-in $state system
 - **Styling**: Custom CSS with variables for theming
 - **Database**: SQLite (connecting to macOS Messages database)
-- **AI Integration**: OpenAI API (GPT-4 or other models)
+- **AI Integration**: OpenAI API (GPT-4 or other models) or a local Khoj server
 - **Logging**: Pino for structured logging
 
 ## Development and Local Usage
@@ -207,6 +207,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - [Svelte](https://svelte.dev/) - The web framework used
 - [OpenAI](https://openai.com/) - AI model provider
+- [Khoj](https://khoj.dev/) - Alternative local AI model provider and search
 - [SQLite](https://sqlite.org/) - Database engine
 
 ## Box Art
