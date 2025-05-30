@@ -46,14 +46,13 @@ Create a `.env` file in the root directory by copying the `.env.example` file (`
 
 ```
 # --- AI Provider Configuration ---
-# Option 1: OpenAI (Default)
+# OpenAI (Default)
 OPENAI_API_KEY=your_openai_api_key
 OPENAI_MODEL=gpt-4  # or any other OpenAI model
 OPENAI_TEMPERATURE=0.5
 
-# Option 2: Local Khoj Server (Alternative)
-# If you prefer to use a local Khoj server, set these variables.
-# The application will prioritize Khoj if KHOJ_API_URL is set.
+# Local Khoj Server
+# If you happen to have a local Khoj server, set these variables.
 KHOJ_API_URL=http://127.0.0.1:42110/api/chat # Your Khoj server API URL
 KHOJ_AGENT=your_khoj_agent_name          # The Khoj agent to use
 
@@ -92,17 +91,17 @@ yarn dev
 ## Usage
 
 1. Select a time frame to analyze (1-24 hours)
-2. Click the "go" button to generate a conversation summary
-3. Review the summary of your recent conversation
-4. Choose a tone for suggested replies
-5. View and copy suggested replies to use in your conversation
+1. Choose a tone for suggested replies
+1. Click the "go" button to generate a conversation summary
+1. Review the summary of your recent conversation
+1. View and copy suggested replies to use in your conversation
 
 ## How It Works
 
 WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses an AI provider (OpenAI's API by default, or a configured local Khoj server if `KHOJ_API_URL` is set) to analyze the conversation and generate:
 
 1. A summary of the conversation, including emotional tone and key topics
-2. Three suggested replies in your chosen tone
+1. Three suggested replies in your chosen tone
 
 ## Technical Details
 
