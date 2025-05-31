@@ -194,7 +194,7 @@ async function onclick() {
 <style>
 	/* ===== Layout & Structure ===== */
 	main.app {
-		padding-bottom: 4rem;
+		padding-bottom: 1rem;
 	}
 
 	@media (min-width: 768px) {

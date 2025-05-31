@@ -62,3 +62,15 @@ $effect(() => {
         <p>Reticulating splines...</p>
     </div>
 {/if}
+
+<footer>
+    <p>(c) {new Date().getFullYear()} splinesreticulating</p>
+</footer>
+
+<style>
+    footer {
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--gray);
+    }
+</style>
