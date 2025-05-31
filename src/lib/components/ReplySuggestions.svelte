@@ -117,7 +117,7 @@ let copiedIndex = $state(-1)
         width: 12px;
         height: 12px;
         border-radius: 50%;
-        background-color: var(--primary-light);
+        background-color: var(--light);
         animation: pulse 1.5s ease-in-out infinite;
     }
 
