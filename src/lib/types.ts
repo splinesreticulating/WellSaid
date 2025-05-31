@@ -16,4 +16,4 @@ export interface PageData {
     messages?: Message[]
 }
 
-export type ToneType = 'gentle' | 'honest' | 'funny' | 'reassuring' | 'concise'
+export type ToneType = 'gentle' | 'funny' | 'reassuring' | 'concise'

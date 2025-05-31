@@ -101,7 +101,7 @@ let copiedIndex = $state(-1)
     }
     
     .empty-state {
-        color: var(--primary-light);
+        color: var(--light);
         text-align: center;
     }
     

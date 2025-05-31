@@ -7,7 +7,7 @@ import ToneSelector from '$lib/components/ToneSelector.svelte'
 import type { Message, PageData, ToneType } from '$lib/types'
 
 const DEFAULT_PROVIDER = 'openai'
-const TONES: ToneType[] = ['gentle', 'honest', 'funny', 'reassuring', 'concise']
+const TONES: ToneType[] = ['gentle', 'funny', 'reassuring', 'concise']
 const LOCAL_STORAGE_CONTEXT_KEY = 'wellsaid_additional_context'
 
 const { data } = $props<{ data: PageData }>()
@@ -212,6 +212,7 @@ async function onclick() {
 		padding: 1rem;
 		margin-bottom: 1rem;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+		background-color: var(--primary-light);
 	}
 
 	/* ===== Header ===== */

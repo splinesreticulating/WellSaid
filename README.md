@@ -8,9 +8,8 @@ WellSaid is an empathy-focused communication tool that helps you craft better re
 
 - **Conversation Summaries**: Analyze your Messages app conversations with a partner from the last 1-24 hours
 - **Smart Reply Suggestions**: Get AI-generated reply options (via OpenAI or a local Khoj server) based on conversation context
-- **Tone Selection**: Choose from five different tones for your replies:
+- **Tone Selection**: Choose from four different tones for your replies:
   - Gentle 
-  - Honest 
   - Funny 
   - Reassuring 
   - Concise 

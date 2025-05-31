@@ -10,7 +10,6 @@
     --error: #ff5252;
     --gray: #555b6e;
     --white: #faf9f9;
-    --text-secondary: #555b6e;
 
     /* Spacing & Sizing */
     --border-radius: 8px;
@@ -18,7 +17,7 @@
 
     /* Typography */
     --heading-font: "Great Vibes", cursive;
-    --body-font: "Space Mono", Georgia, "Times New Roman", Times, serif;
-    --summary-font: "Verdana", serif;
-    --reply-font: "Verdana", serif;
+    --body-font: "Space Mono", monospace;
+    --summary-font: "Verdana", sans-serif;
+    --reply-font: "Verdana", sans-serif;
 }

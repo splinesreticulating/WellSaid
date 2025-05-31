@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 // Create a mock model that simulates the AdditionalContext component
 class AdditionalContextModel {
@@ -43,10 +43,10 @@ describe('AdditionalContext Component', () => {
   it('should toggle expanded state', () => {
     const component = new AdditionalContextModel();
     expect(component.expanded).toBe(false);
-    
+
     component.toggleExpanded();
     expect(component.expanded).toBe(true);
-    
+
     component.toggleExpanded();
     expect(component.expanded).toBe(false);
   });

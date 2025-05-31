@@ -29,7 +29,7 @@ $effect(() => {
     }
     
     p {
-        color: var(--text-secondary);
+        color: var(--primary);
         margin-bottom: 2rem;
     }
     

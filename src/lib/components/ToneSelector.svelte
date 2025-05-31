@@ -31,6 +31,7 @@ let {
         display: flex;
         flex-wrap: wrap;
         gap: 0.25rem;
+        background-color: var(--primary-light);
     }
 
     .tone-selector label {
@@ -46,10 +47,11 @@ let {
         transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
         min-height: 28px;
         min-width: 60px;
+        background-color: var(--light);
     }
 
     .tone-selector label.active {
-        background-color: var(--primary-light);
+        background-color: var(--primary);
         color: var(--white);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
