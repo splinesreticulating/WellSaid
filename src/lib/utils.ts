@@ -14,7 +14,6 @@ export const parseSummaryToHumanReadable = (rawOutput: string): string => {
 
 export const hasPartnerMessages = (formattedRows: Message[]) => formattedRows.some(msg => msg.sender !== 'me')
 
-// New utility functions
 export const formatMessagesToRecentText = (messages: Message[]): string[] => {
     return messages.map((m) => {
         const tag =
@@ -27,7 +26,7 @@ export const formatMessagesToRecentText = (messages: Message[]): string[] => {
     })
 }
 
-export const cleanReplyText = (text: string): string => {
+const cleanReplyText = (text: string): string => {
     return text
         .replace(/^\*+\s*/, '') // Remove leading asterisks and spaces
         .replace(/^"/, '')      // Remove leading quote
