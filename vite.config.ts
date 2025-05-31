@@ -1,8 +1,8 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { sveltekit } from '@sveltejs/kit/vite';
 import dotenv from 'dotenv';
 import { defineConfig } from 'vite';
-import fs from 'node:fs';
-import path from 'node:path';
 
 dotenv.config();
 
@@ -25,6 +25,6 @@ export default defineConfig({
 			key: fs.readFileSync(path.resolve(__dirname, '.certs/key.pem')),
 			cert: fs.readFileSync(path.resolve(__dirname, '.certs/cert.pem'))
 		},
-		allowedHosts: [process.env.ALLOWED_HOST || 'all'] // Keep allowedHosts as is
+		allowedHosts: [process.env.ALLOWED_HOST || 'all']
 	}
 });
