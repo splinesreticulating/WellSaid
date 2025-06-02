@@ -204,6 +204,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [OpenAI](https://openai.com/) - AI model provider
 - [Khoj](https://khoj.dev/) - Alternative local AI model provider and search
 - [SQLite](https://sqlite.org/) - Database engine
+- [Tailscale](https://tailscale.com/) - For making secure remote access easy
+- [Apple](https://www.apple.com/) - For not securing the iMessages database
 
 ## Box Art
 
