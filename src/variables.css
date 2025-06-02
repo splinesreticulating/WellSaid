@@ -1,7 +1,6 @@
 :root {
     /* Colors */
-    --primary: #555b6e;
-    --primary-hsl: 226, 13%, 38%; /* HSL equivalent of #555b6e */
+    --primary-hsl: 226, 13%, 38%;
     --primary-dark: #444a5c;
     --primary-light: #89b0ae;
     --light: #bee3db;

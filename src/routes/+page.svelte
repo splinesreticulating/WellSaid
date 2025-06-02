@@ -224,7 +224,6 @@ async function onclick() {
 	header h1 {
 		font-family: var(--heading-font);
 		font-size: 3rem;
-		color: var(--primary);
 		text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
 		margin-top: 1rem;
 		margin-bottom: 0;
@@ -256,7 +255,6 @@ async function onclick() {
 		font-family: var(--summary-font);
 		font-size: 1.05rem;
 		line-height: 1.6;
-		color: var(--primary);
 		letter-spacing: 0.02em;
 		overflow-wrap: break-word; /* Prevent long words from overflowing */
 	}

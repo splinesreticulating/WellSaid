@@ -69,7 +69,7 @@ const lookBackOptions = [
 	}
 
 	.go-button {
-		background-color: var(--primary);
+		background-color: var(--primary-dark);
 		color: var(--white);
 		border: 1px solid var(--primary-light);
 		border-radius: var(--border-radius);
@@ -118,7 +118,6 @@ const lookBackOptions = [
 
 	.message-count-value {
 		font-weight: 600;
-		color: var(--primary);
 		margin: 0 0.25rem;
 	}
 

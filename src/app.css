@@ -41,11 +41,11 @@ select {
     background-position: right 0.7rem top 50%;
     background-size: 0.65rem auto;
     padding-right: 1.75rem;
-    color: var(--primary);
+    color: var(--primary-dark);
 }
 
 @keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+    to {
+        transform: rotate(360deg);
+    }
 }

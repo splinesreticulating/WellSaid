@@ -39,6 +39,6 @@ let { additionalContext = $bindable(''), expanded = $bindable(false) } =
         border-radius: var(--border-radius);
         resize: vertical;
         min-height: 80px;
-        color: var(--primary);
+        color: var(--primary-dark);
     }    
 </style>

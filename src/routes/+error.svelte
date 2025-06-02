@@ -25,11 +25,11 @@ $effect(() => {
     h1 {
         font-size: 4rem;
         margin-bottom: 1rem;
-        color: var(--primary);
+        color: var(--primary-dark);
     }
     
     p {
-        color: var(--primary);
+        color: var(--primary-dark);
         margin-bottom: 2rem;
     }
     

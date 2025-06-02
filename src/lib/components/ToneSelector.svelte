@@ -51,7 +51,7 @@ let {
     }
 
     .tone-selector label.active {
-        background-color: var(--primary);
+        background-color: var(--primary-dark);
         color: var(--white);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }

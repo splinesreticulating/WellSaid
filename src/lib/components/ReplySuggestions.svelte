@@ -97,7 +97,7 @@ let copiedIndex = $state(-1)
     
     .copy-button:hover, .copy-button:active {
         background-color: var(--light);
-        color: var(--primary);
+        color: var(--primary-dark);
     }
     
     .empty-state {

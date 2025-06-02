@@ -10,7 +10,7 @@ const formState = $state({
 
 // Check for error query parameter
 $effect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(window.location.search)
     const errorParam = params.get('error')
     if (errorParam === 'too_many_attempts') {
         formState.error = 'Too many login attempts. Please try again later.'
@@ -161,7 +161,7 @@ async function handleSubmit(event: Event) {
     }
     
     .login-button:hover {
-        background-color: var(--primary);
+        background-color: var(--primary-dark);
     }
     
     .login-button:active {
