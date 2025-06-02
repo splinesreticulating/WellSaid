@@ -194,10 +194,6 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
 - **OpenAI API Errors**: Check that your API key is valid and you have sufficient credits
 - **No Partner Messages**: The app will only show conversations where your partner has responded
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 ## Acknowledgements
 
 - [Svelte](https://svelte.dev/) - The web framework used
@@ -213,3 +209,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
   <img src="./box-art/front.png" alt="WellSaid Front Cover" width="45%" style="box-shadow: 0 4px 8px rgba(0,0,0,0.3); border-radius: 8px;"/>
   <img src="./box-art/back.png" alt="WellSaid Back Cover" width="45%" style="box-shadow: 0 4px 8px rgba(0,0,0,0.3); border-radius: 8px;"/>
 </p>
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
