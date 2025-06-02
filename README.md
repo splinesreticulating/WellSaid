@@ -2,7 +2,7 @@
 # WellSaid
 **Empathy. Upgraded.**
 
-WellSaid is an empathy-focused communication tool that helps you craft better responses by providing conversation summaries and tone-based reply suggestions. With a clean, modern UI and straightforward experience, WellSaid helps improve your communication with meaningful, contextually appropriate responses.
+WellSaid is an empathy-focused communication tool that helps you craft better responses by providing conversation summaries and tone-based suggestions. It enhances your communication, and by extension your life, with meaningful, contextually appropriate replies.
 
 ## Features
 
