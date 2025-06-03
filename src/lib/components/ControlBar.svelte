@@ -64,8 +64,7 @@ const lookBackOptions = [
 	}
 
 	.timeframe-controls label {
-		font-weight: 500;
-		white-space: nowrap;
+		font-weight: bold;
 	}
 
 	.go-button {
