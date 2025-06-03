@@ -43,7 +43,7 @@ let {
         border: 1px solid var(--primary-light);
         border-radius: var(--border-radius);
         cursor: pointer;
-        font-size: 0.85rem;
+        font-size: 0.73rem;
         transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
         min-height: 28px;
         min-width: 60px;
@@ -67,6 +67,12 @@ let {
             font-size: 1rem;
             min-height: var(--min-touch-size);
             min-width: 70px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .tone-selector label input[type="radio"] {
+            display: none;
         }
     }
 </style>
