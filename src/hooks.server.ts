@@ -5,6 +5,8 @@ import { redirect } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 import jwt from 'jsonwebtoken'
 
+const MAX_LOGIN_ATTEMPTS = 5
+const LOGIN_ATTEMPT_WINDOW_MS = 15 * 60 * 1000 // 15 minutes
 const PUBLIC_PATHS = new Set([
     '/api/auth/check',
     '/api/auth/login',
@@ -18,6 +20,9 @@ if (!BASIC_AUTH_USERNAME || !BASIC_AUTH_PASSWORD) {
     logger.error('FATAL: BASIC_AUTH_USERNAME and BASIC_AUTH_PASSWORD must be set')
     process.exit(1)
 }
+
+// Simple in-memory rate limiting
+const loginAttempts = new Map<string, { count: number; lastAttempt: number }>()
 
 const securityHeaders = {
     'Strict-Transport-Security': 'max-age=63072000 includeSubDomains preload',
@@ -102,6 +107,23 @@ const authMiddleware: Handle = async ({ event, resolve }) => {
         }
         logger.debug('[AUTH] Authenticated via JWT, returning response for path:', pathname);
         return response;
+    }
+
+    // Check rate limiting
+    const attemptInfo = loginAttempts.get(clientIP) || { count: 0, lastAttempt: 0 }
+
+    // Reset counter if window has passed
+    if (Date.now() - attemptInfo.lastAttempt > LOGIN_ATTEMPT_WINDOW_MS) {
+        loginAttempts.delete(clientIP)
+    }
+    // Block if too many attempts
+    else if (attemptInfo.count >= MAX_LOGIN_ATTEMPTS) {
+        logSecurityEvent('rate_limit_exceeded', { ip: clientIP, path: pathname })
+
+        logger.debug('[AUTH] Too many attempts for IP:', clientIP)
+
+        // We still redirect to login page, but with an error parameter
+        throw redirect(303, '/login?error=too_many_attempts')
     }
 
     // Not authenticated - redirect to login page
