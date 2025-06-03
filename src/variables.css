@@ -16,7 +16,6 @@
 
     /* Typography */
     --heading-font: "Great Vibes", cursive;
-    --body-font: "Space Mono", monospace;
-    --summary-font: "Verdana", sans-serif;
-    --reply-font: "Verdana", sans-serif;
+    --body-font: "Verdana", sans-serif;
+    --label-font: "Space Mono", monospace;
 }

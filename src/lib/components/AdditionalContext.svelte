@@ -31,7 +31,7 @@ let { additionalContext = $bindable(''), expanded = $bindable(false) } =
     }
 
     textarea.context-input {
-        font-family: var(--body-font);
+        font-family: var(--label-font);
         width: 100%;
         margin-top: 0.75rem;
         padding: 0.75rem;

@@ -35,7 +35,7 @@ let {
     }
 
     .tone-selector label {
-        font-family: var(--body-font);
+        font-family: var(--label-font);
         display: inline-flex;
         align-items: center;
         justify-content: center;

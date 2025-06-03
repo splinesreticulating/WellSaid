@@ -70,7 +70,8 @@ $effect(() => {
 <style>
     footer {
         text-align: center;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         color: var(--gray);
+        font-family: var(--body-font);
     }
 </style>

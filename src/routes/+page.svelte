@@ -236,10 +236,6 @@ async function onclick() {
 		margin-bottom: 2rem;
 	}
 
-	h2 {
-		margin-top: 0.1rem;
-	}
-
 	/* ===== Conversation Section ===== */
 	.conversation {
 		background-color: var(--light);

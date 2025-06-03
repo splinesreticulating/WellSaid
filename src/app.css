@@ -20,6 +20,11 @@ body {
     justify-content: center;
 }
 
+h2 {
+    margin-top: 0.1rem;
+    font-family: var(--label-font);
+}
+
 a {
     color: var(--primary-light);
     text-decoration: none;
@@ -42,6 +47,10 @@ select {
     background-size: 0.65rem auto;
     padding-right: 1.75rem;
     color: var(--primary-dark);
+}
+
+label {
+    font-family: var(--label-font);
 }
 
 @keyframes spin {
