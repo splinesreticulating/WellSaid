@@ -173,7 +173,7 @@ async function onclick() {
 
 			<!-- Reply suggestions section -->
 			<section class="reply-section">
-				<h2>suggested replies</h2>
+				<h2>suggested replies:</h2>
 
 				<ToneSelector 
 					bind:selectedTone={formState.form.tone} 
@@ -218,7 +218,6 @@ async function onclick() {
 	/* ===== Header ===== */
 	header {
 		text-align: center;
-		margin-bottom: 1rem;
 	}
 
 	header h1 {
@@ -233,7 +232,7 @@ async function onclick() {
 		font-style: italic;
 		font-size: 1rem;
 		display: block;
-		margin-bottom: 2rem;
+		margin-bottom: 1.25rem;
 	}
 
 	/* ===== Conversation Section ===== */
