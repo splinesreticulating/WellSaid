@@ -39,7 +39,7 @@ let {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 0.05rem 0.75rem;
+        padding: 0.05rem 0.50rem;
         border: 1px solid var(--primary-light);
         border-radius: var(--border-radius);
         cursor: pointer;
