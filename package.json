@@ -13,9 +13,10 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "yarn biome:format",
-		"lint": "yarn biome:lint",
-		"test": "vitest run",
-		"test:watch": "vitest",
+                "lint": "yarn biome:lint",
+                "pretest": "svelte-kit sync",
+                "test": "vitest run",
+                "test:watch": "vitest",
 		"test:coverage": "vitest run --coverage"
 	},
 	"devDependencies": {
