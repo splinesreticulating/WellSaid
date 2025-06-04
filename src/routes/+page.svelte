@@ -86,8 +86,6 @@ $effect(() => {
     }
 })
 
-// messages come from the server load function
-
 function handleSubmit(event: Event) {
     event.preventDefault()
 }
@@ -108,13 +106,12 @@ async function onclick() {
         const response = await fetch('?/generate', {
             method: 'POST',
             headers: {
-                Accept: 'application/json', // Still want to accept JSON response
-                // 'Content-Type' will be set automatically by the browser for FormData
+                Accept: 'application/json',
             },
             body: formData,
         })
 
-        const result = await response.json() // Always try to parse JSON
+        const result = await response.json()
 
         if (!response.ok) {
             // Action called fail()
