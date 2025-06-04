@@ -74,14 +74,7 @@ let copiedIndex = $state(-1)
         line-height: 1.5;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         display: flex;
-        justify-content: space-between;
         align-items: flex-start;
-        gap: 1rem;
-    }
-    
-    .suggestion-content {
-        flex: 1;
-        margin-right: 0.5rem;
     }
     
     .copy-button {
@@ -98,7 +91,6 @@ let copiedIndex = $state(-1)
         min-width: var(--min-touch-size);
         min-height: var(--min-touch-size);
         font-size: 1.5rem;
-        flex-shrink: 0;
     }
     
     .copy-button:hover, .copy-button:active {
