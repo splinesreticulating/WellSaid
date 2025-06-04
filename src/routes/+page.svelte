@@ -55,8 +55,12 @@ $effect(() => {
 $effect(() => {
     const lookBack = formState.form.lookBackHours
     if (lookBack) {
-        // Update the URL with the new lookBackHours parameter
         const url = new URL(window.location.href)
+        const current = url.searchParams.get('lookBackHours')
+
+        if (current === lookBack) return
+
+        // Update the URL with the new lookBackHours parameter
         url.searchParams.set('lookBackHours', lookBack)
 
         // Use SvelteKit's goto to navigate to the new URL
