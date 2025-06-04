@@ -1,7 +1,7 @@
 import { queryMessagesDb } from '$lib/iMessages'
 import { open } from 'sqlite'
 import type { Database } from 'sqlite'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock the sqlite module
 vi.mock('sqlite', () => ({
@@ -18,11 +18,15 @@ vi.mock('$lib/logger', () => ({
   }
 }))
 
+// Mock the SvelteKit environment variables
+vi.mock('$env/static/private', () => ({
+  PARTNER_PHONE: '+1234567890'
+}))
+
 describe('queryMessagesDb', () => {
   beforeEach(() => {
+    // Reset mocks before each test
     vi.resetAllMocks()
-    // Set up environment variable for tests
-    process.env.PARTNER_PHONE = '+1234567890'
 
     // Mock open to prevent actually opening the database
     vi.mocked(open).mockImplementation(async () => {
@@ -109,23 +113,17 @@ describe('queryMessagesDb', () => {
   })
 
   it('should return empty array when PARTNER_PHONE is not set', async () => {
-    // We need to handle the environment variable properly
-    // Save the original value
-    const originalPhone = process.env.PARTNER_PHONE
-    try {
-      // We need to mock the entire queryMessagesDb function for this test
-      // since it's difficult to prevent the database from being opened
-      // Set to undefined instead of using delete operator (performance recommendation)
-      process.env.PARTNER_PHONE = undefined // This simulates PARTNER_PHONE not being set
+    // Temporarily unset the environment variable for this test
+    vi.stubEnv('PARTNER_PHONE', '')
+    
+    const result = await queryMessagesDb()
 
-      const result = await queryMessagesDb()
-
-      // Just verify that the result is an empty array
-      expect(result.messages).toEqual([])
-    } finally {
-      // Restore the original value for other tests
-      process.env.PARTNER_PHONE = originalPhone
-    }
+    // Just verify that the result is an empty array
+    expect(result.messages).toEqual([])
+    
+    // Restore the original value
+    vi.unstubAllEnvs()
+    vi.stubEnv('PARTNER_PHONE', '+1234567890')
   })
 
   // Now that we've added proper error handling, we can test this behavior

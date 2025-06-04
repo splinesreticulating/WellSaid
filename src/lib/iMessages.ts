@@ -1,20 +1,18 @@
 import os from 'node:os'
 import path from 'node:path'
 import type { MessageRow } from '$lib/types'
-import dotenv from 'dotenv'
 import { open } from 'sqlite'
 import sqlite3 from 'sqlite3'
 import { logger } from './logger'
 import { hasPartnerMessages } from './utils'
-
-dotenv.config()
+import { PARTNER_PHONE } from '$env/static/private'
 
 const CHAT_DB_PATH = path.join(os.homedir(), 'Library', 'Messages', 'chat.db')
-const PARTNER_HANDLE_ID = process.env.PARTNER_PHONE
 
 export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
+    const PARTNER_HANDLE_ID = PARTNER_PHONE
     if (!PARTNER_HANDLE_ID) {
-        logger.warn('PARTNER_PHONE env var not set -- do you have an .env file? See .env.example')
+        logger.warn('PARTNER_PHONE env var not set -- make sure it is set in your .env file')
 
         return { messages: [] }
     }
