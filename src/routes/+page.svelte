@@ -57,9 +57,8 @@ $effect(() => {
     if (lookBack) {
         const url = new URL(window.location.href)
         const current = url.searchParams.get('lookBackHours')
-        if (current === lookBack) {
-            return
-        }
+
+        if (current === lookBack) return
 
         // Update the URL with the new lookBackHours parameter
         url.searchParams.set('lookBackHours', lookBack)
