@@ -6,10 +6,12 @@ import type { Message } from '$lib/types'
 import { fail } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 
+const ONE_HOUR = 60 * 60 * 1000
+
 export const load: PageServerLoad = async ({ url }) => {
     const lookBack = Number.parseInt(url.searchParams.get('lookBackHours') || '1')
     const end = new Date()
-    const start = new Date(end.getTime() - lookBack * 60 * 60 * 1000)
+    const start = new Date(end.getTime() - lookBack * ONE_HOUR)
     const { messages } = await queryMessagesDb(start.toISOString(), end.toISOString())
 
     return { messages }
@@ -20,13 +22,13 @@ export const actions: Actions = {
         try {
             // Check content type
             const contentType = request.headers.get('content-type') || ''
-            
+
             // Handle both form data and URL-encoded form data
             let messagesString: string | null = null
             let tone: string | null = null
             let context: string | null = null
             let provider: string | null = null
-            
+
             if (contentType.includes('multipart/form-data') || contentType.includes('application/x-www-form-urlencoded')) {
                 const formData = await request.formData()
                 messagesString = formData.get('messages') as string | null
@@ -34,7 +36,7 @@ export const actions: Actions = {
                 context = formData.get('context') as string | null
                 provider = formData.get('provider') as string | null
             } else {
-                // For testing, try to parse as JSON
+                // Try to parse as JSON
                 try {
                     const data = await request.json()
                     messagesString = data.messages ? JSON.stringify(data.messages) : null
@@ -42,9 +44,9 @@ export const actions: Actions = {
                     context = data.context || null
                     provider = data.provider || 'openai'
                 } catch (e) {
-                    return fail(400, { 
-                        error: 'Unsupported Content-Type', 
-                        details: 'Content-Type must be multipart/form-data, application/x-www-form-urlencoded, or application/json' 
+                    return fail(400, {
+                        error: 'Unsupported Content-Type',
+                        details: 'Content-Type must be multipart/form-data, application/x-www-form-urlencoded, or application/json'
                     })
                 }
             }
@@ -54,7 +56,7 @@ export const actions: Actions = {
             }
 
             const getReplies = provider === 'khoj' ? getKhojReply : getOpenaiReply
-            
+
             let messages: Message[]
             try {
                 messages = JSON.parse(messagesString) as Message[]
