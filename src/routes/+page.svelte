@@ -159,6 +159,11 @@ function onclick() {
                     use:enhance={enhanceSubmit}
                     bind:this={formElement}
                 >
+                    <!-- Hidden fields to include in form submission -->
+                    <input type="hidden" name="messages" value={JSON.stringify(formState.form.messages)} />
+                    <input type="hidden" name="tone" value={formState.form.tone} />
+                    <input type="hidden" name="context" value={formState.form.additionalContext} />
+                    <input type="hidden" name="provider" value={formState.ai.provider} />
 
 			<ControlBar 
 				bind:lookBackHours={formState.form.lookBackHours}
