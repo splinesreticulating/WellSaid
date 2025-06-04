@@ -22,48 +22,29 @@ export const load: PageServerLoad = async ({ url }) => {
 export const actions: Actions = {
     generate: async ({ request }) => {
         // Log request details
-        logger.debug({ 
+        logger.debug({
             method: request.method,
             url: request.url,
-            headers: Object.fromEntries(request.headers.entries()) 
+            headers: Object.fromEntries(request.headers.entries())
         }, 'Received request in action')
-        
+
         try {
-            // Check content type
             const contentType = request.headers.get('content-type') || ''
 
-            // Handle both form data and URL-encoded form data
             let context = ''
             let messagesString = ''
             let tone = DEFAULT_TONE
             let provider = DEFAULT_PROVIDER
 
-            if (contentType.includes('multipart/form-data') || contentType.includes('application/x-www-form-urlencoded')) {
-                const formData = await request.formData()
-                const formDataObj = Object.fromEntries(formData.entries())
-                
-                messagesString = formData.get('messages') as string
-                tone = formData.get('tone') as string || DEFAULT_TONE
-                context = formData.get('context') as string || ''
-                provider = formData.get('provider') as string || DEFAULT_PROVIDER
-                
-                logger.debug({ formData: formDataObj }, 'Received form data in action')
-            } else {
-                // Try to parse as JSON
-                try {
-                    const data = await request.json()
-                    logger.debug({ data }, 'Received JSON data in action')
-                    messagesString = data.messages ? JSON.stringify(data.messages) : ''
-                    tone = data.tone || DEFAULT_TONE
-                    context = data.context || ''
-                    provider = data.provider || DEFAULT_PROVIDER
-                } catch (e) {
-                    return fail(400, {
-                        error: 'Unsupported Content-Type',
-                        details: 'Content-Type must be multipart/form-data, application/x-www-form-urlencoded, or application/json'
-                    })
-                }
-            }
+            const formData = await request.formData()
+            const formDataObj = Object.fromEntries(formData.entries())
+
+            messagesString = formData.get('messages') as string
+            tone = formData.get('tone') as string || DEFAULT_TONE
+            context = formData.get('context') as string || ''
+            provider = formData.get('provider') as string || DEFAULT_PROVIDER
+
+            logger.debug({ formData: formDataObj }, 'Received form data in action')
 
             if (!messagesString || !tone) {
                 return fail(400, { error: 'Invalid request format: Missing messages or tone.' })
