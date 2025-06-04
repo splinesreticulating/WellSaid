@@ -68,26 +68,7 @@ $effect(() => {
     }
 })
 
-async function getMessages() {
-    const end = new Date()
-    const start = new Date(
-        end.getTime() -
-            Number.parseInt(formState.form.lookBackHours) * 60 * 60 * 1000,
-    )
-
-    const res = await fetch(
-        `/api/messages?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`,
-    )
-    const data = await res.json()
-
-    if (data?.messages && Array.isArray(data.messages)) {
-        formState.form.messages = data.messages
-    }
-}
-
-$effect(() => {
-    getMessages()
-})
+// messages come from the server load function
 
 function handleSubmit(event: Event) {
     event.preventDefault()
@@ -100,10 +81,11 @@ async function onclick() {
     formState.form.suggestedReplies = []
 
     try {
-        const response = await fetch('/api/suggestions', {
+        const response = await fetch('/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-SvelteKit-Action': 'generate',
             },
             body: JSON.stringify({
                 messages: formState.form.messages,
