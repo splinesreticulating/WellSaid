@@ -1,6 +1,6 @@
 <script lang="ts">
+import { enhance } from '$app/forms'
 import { goto } from '$app/navigation'
-import { enhance, applyAction } from '$app/forms'
 import AdditionalContext from '$lib/components/AdditionalContext.svelte'
 import AiProviderSelector from '$lib/components/AiProviderSelector.svelte'
 import ControlBar from '$lib/components/ControlBar.svelte'
@@ -94,38 +94,48 @@ $effect(() => {
 // biome-ignore lint/style/useConst: assigned by Svelte via bind:this
 let formElement: HTMLFormElement | null = null
 
-const enhanceSubmit = enhance(({ formData }) => {
-    formState.ui.loading = true
-    formState.form.summary = ''
-    formState.form.suggestedReplies = []
-
-    formData.set('messages', JSON.stringify(formState.form.messages))
-    formData.set('tone', formState.form.tone)
-    formData.set('context', formState.form.additionalContext)
-    formData.set('provider', formState.ai.provider)
-
-    return async ({ result, update }) => {
-        formState.ui.loading = false
-
-        if (result.type === 'success') {
-            const { summary, replies } = result.data as {
-                summary: string
-                replies: string[]
-            }
-            formState.form.summary = summary
-            formState.form.suggestedReplies = replies
-        } else if (result.type === 'failure') {
-            formState.form.summary =
-                (result.data as { error?: string })?.error ||
-                'Error generating summary. Please try again.'
-            formState.form.suggestedReplies = []
-        } else {
-            await applyAction(result)
-        }
-
-        await update({ reset: false, invalidateAll: false })
+// Type for the form submission result
+type FormResult = {
+    type: 'success' | 'failure' | 'error'
+    data?: {
+        summary: string
+        replies: string[]
+        error?: string
     }
-})
+}
+
+// The enhance function with proper typing
+const enhanceSubmit: import('@sveltejs/kit').SubmitFunction = () => {
+    // Return a function that will be called with the form submission result
+    return async ({ result, update }) => {
+        formState.ui.loading = true
+        formState.form.summary = ''
+        formState.form.suggestedReplies = []
+
+        try {
+            // Handle the form submission result
+            if (result.type === 'success' && result.data) {
+                formState.form.summary = result.data.summary || ''
+                formState.form.suggestedReplies = result.data.replies || []
+            } else if (result.type === 'failure') {
+                formState.form.summary =
+                    result.data?.error ||
+                    'Error generating summary. Please try again.'
+                formState.form.suggestedReplies = []
+            }
+
+            // Call update to handle the form submission result
+            await update()
+        } catch (error) {
+            console.error('Error processing form submission:', error)
+            formState.form.summary =
+                'An error occurred while processing the response.'
+            throw error
+        } finally {
+            formState.ui.loading = false
+        }
+    }
+}
 
 function onclick() {
     formElement?.requestSubmit()
