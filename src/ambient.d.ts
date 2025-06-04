@@ -4,5 +4,8 @@ declare namespace App {
     KHOJ_API_URL?: string
     KHOJ_AGENT?: string
     LOG_LEVEL?: 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace' | 'silent'
+    OPENAI_API_KEY?: string
+    OPENAI_MODEL?: string
+    OPENAI_TEMPERATURE?: string
   }
 }
