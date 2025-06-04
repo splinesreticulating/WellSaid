@@ -155,11 +155,9 @@ async function onclick() {
                 throw new Error('Failed to parse response from server')
             }
         } else {
-            console.error('Unexpected response format from action:', result)
             throw new Error('Unexpected response format from server')
         }
     } catch (error) {
-        console.error('Error in onclick handler:', error) // Changed log message for clarity
         formState.form.summary =
             error instanceof Error
                 ? error.message
