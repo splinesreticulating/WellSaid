@@ -43,9 +43,44 @@ const summaryContent = $derived(
               '<em>click "go" to generate a conversation summary</em>',
 )
 
+// Initial load of messages from server
 if (data?.messages && Array.isArray(data.messages)) {
     formState.form.messages = data.messages
 }
+
+// Watch for changes to lookBackHours and refetch messages
+$effect(() => {
+    const fetchMessages = async () => {
+        try {
+            formState.ui.loading = true;
+            const lookBack = formState.form.lookBackHours;
+            const response = await fetch(`?lookBackHours=${lookBack}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                },
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Failed to fetch messages: ${response.status}`);
+            }
+            
+            const { messages } = await response.json();
+            if (Array.isArray(messages)) {
+                formState.form.messages = messages;
+            }
+        } catch (error) {
+            console.error('Error fetching messages:', error);
+        } finally {
+            formState.ui.loading = false;
+        }
+    };
+    
+    // Only fetch if we have a valid lookBackHours value
+    if (formState.form.lookBackHours) {
+        fetchMessages();
+    }
+});
 
 $effect(() => {
     const storedContext = localStorage.getItem(LOCAL_STORAGE_CONTEXT_KEY)
