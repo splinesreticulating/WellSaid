@@ -17,12 +17,21 @@ export const load: PageServerLoad = async ({ url }) => {
 export const actions: Actions = {
     generate: async ({ request }) => {
         try {
-            const { messages, tone, context, provider } = await request.json();
-            if (!Array.isArray(messages) || !tone) {
+            const formData = await request.formData();
+            const messagesString = formData.get('messages') as string | null;
+            const tone = formData.get('tone') as string | null;
+            const context = formData.get('context') as string | null;
+            const provider = formData.get('provider') as string | null;
+
+            if (!messagesString || !tone) {
                 return json({ error: 'Invalid request format' }, { status: 400 });
             }
             const getReplies = provider === 'khoj' ? getKhojReply : getOpenaiReply;
-            const result = await getReplies(messages as Message[], tone as string, context || '');
+            const messages = JSON.parse(messagesString) as Message[];
+            if (!Array.isArray(messages)) {
+                return json({ error: 'Invalid messages format in FormData' }, { status: 400 });
+            }
+            const result = await getReplies(messages, tone, context || '');
             return json(result);
         } catch (err) {
             logger.error({ err }, 'Error generating suggestions');

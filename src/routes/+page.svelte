@@ -81,19 +81,19 @@ async function onclick() {
     formState.form.suggestedReplies = []
 
     try {
+        const formData = new FormData();
+        formData.append('messages', JSON.stringify(formState.form.messages));
+        formData.append('tone', formState.form.tone);
+        formData.append('context', formState.form.additionalContext);
+        formData.append('provider', formState.ai.provider);
+
         const response = await fetch('?/generate', {
             method: 'POST',
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'X-SvelteKit-Action': 'generate',
+                'Accept': 'application/json', // Still want to accept JSON response
+                // 'Content-Type' will be set automatically by the browser for FormData
             },
-            body: JSON.stringify({
-                messages: formState.form.messages,
-                tone: formState.form.tone,
-                context: formState.form.additionalContext,
-                provider: formState.ai.provider,
-            }),
+            body: formData,
         })
 
         if (!response.ok) {
