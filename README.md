@@ -35,10 +35,16 @@ cd WellSaid
 2. Install dependencies
 
 ```bash
-yarn
+yarn install
 ```
 
-3. Configure environment variables
+3. Generate SvelteKit types (required for testing)
+
+```bash
+yarn prepare
+```
+
+4. Configure environment variables
 
 Create a `.env` file in the root directory by copying the `.env.example` file (`cp .env.example .env`) and then update the values. The following variables are needed:
 
@@ -113,6 +119,10 @@ WellSaid connects to your macOS Messages database to fetch your conversations wi
 ## Development and Local Usage
 
 ```bash
+# Install dependencies first
+yarn install
+yarn prepare
+
 # Run in development mode with hot-reloading
 yarn dev
 
