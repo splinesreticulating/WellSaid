@@ -16,6 +16,7 @@ async function performAuthCheck() {
         const response = await fetch('/api/auth/check')
         authenticated = response.ok
     } catch (err) {
+        console.error('Auth check failed:', err)
         authenticated = false
     }
 }
