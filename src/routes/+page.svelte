@@ -96,21 +96,51 @@ async function onclick() {
             body: formData,
         })
 
-        if (!response.ok) {
-            throw new Error(`API error: ${response.status}`)
+        const result = await response.json(); // Always try to parse JSON
+
+        console.log('Result received from action on client:', result);
+        console.log('Response OK:', response.ok);
+
+        if (!response.ok) { // Action called fail()
+            // result here is the object passed to fail(), e.g., { error: 'message', details: '...' }
+            const errorMessage = result?.error || 'Unknown error from action';
+            throw new Error(`Action failed: ${errorMessage}`);
         }
 
-        const result = await response.json()
-
-        if (result.error) {
-            throw new Error(result.error)
+        // SvelteKit wraps the response in { type, status, data }
+        // where data is a JSON string that needs to be parsed
+        if (result && typeof result.data === 'string') {
+            try {
+                const parsedData = JSON.parse(result.data);
+                console.log('Parsed data from action:', parsedData);
+                // The parsed data is in an array where:
+                // parsedData[0] is { summary: 1, replies: 2 } (indices into the array)
+                // parsedData[1] is the summary string
+                // parsedData[2] is [3,4,5] (indices of the actual replies in the array)
+                // parsedData[3], parsedData[4], parsedData[5] are the actual replies
+                formState.form.summary = parsedData[1] || 'No summary generated.';
+                
+                // Extract the actual replies using the indices from parsedData[2]
+                const replyIndices = Array.isArray(parsedData[2]) ? parsedData[2] : [];
+                const replies = [];
+                for (const index of replyIndices) {
+                    if (parsedData[index] && typeof parsedData[index] === 'string') {
+                        replies.push(parsedData[index]);
+                    }
+                }
+                formState.form.suggestedReplies = replies;
+            } catch (parseError) {
+                console.error('Error parsing action data:', parseError);
+                throw new Error('Failed to parse response from server');
+            }
+        } else {
+            console.error('Unexpected response format from action:', result);
+            throw new Error('Unexpected response format from server');
         }
-
-        formState.form.summary = result.summary
-        formState.form.suggestedReplies = result.replies
     } catch (error) {
-        console.error('Error generating replies:', error)
-        formState.form.summary = 'Error generating summary. Please try again.'
+        console.error('Error in onclick handler:', error); // Changed log message for clarity
+        formState.form.summary = (error instanceof Error) ? error.message : 'Error generating summary. Please try again.';
+        formState.form.suggestedReplies = []; // Clear replies on error
     } finally {
         formState.ui.loading = false
     }

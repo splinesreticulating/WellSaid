@@ -4,7 +4,7 @@ import { getKhojReply } from '$lib/khoj';
 import { logger } from '$lib/logger';
 import type { Actions, PageServerLoad } from './$types';
 import type { Message } from '$lib/types';
-import { json } from '@sveltejs/kit';
+import { json, fail } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ url }) => {
     const lookBack = Number.parseInt(url.searchParams.get('lookBackHours') || '1');
@@ -24,21 +24,22 @@ export const actions: Actions = {
             const provider = formData.get('provider') as string | null;
 
             if (!messagesString || !tone) {
-                return json({ error: 'Invalid request format' }, { status: 400 });
+                return fail(400, { error: 'Invalid request format: Missing messages or tone.' });
             }
             const getReplies = provider === 'khoj' ? getKhojReply : getOpenaiReply;
             const messages = JSON.parse(messagesString) as Message[];
             if (!Array.isArray(messages)) {
-                return json({ error: 'Invalid messages format in FormData' }, { status: 400 });
+                return fail(400, { error: 'Invalid messages format in FormData: Messages could not be parsed to an array.' });
             }
             const result = await getReplies(messages, tone, context || '');
-            return json(result);
+            logger.debug({ resultFromService: result }, 'Result received from AI service in action');
+            return result; // Return plain object
         } catch (err) {
             logger.error({ err }, 'Error generating suggestions');
-            return json({
+            return fail(500, {
                 error: 'Failed to generate suggestions',
                 details: err instanceof Error ? err.message : String(err)
-            }, { status: 500 });
+            });
         }
     }
 };
