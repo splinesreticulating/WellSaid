@@ -51,23 +51,23 @@ export const getOpenaiReply = async (
             throw new Error(`OpenAI API error: ${response.status}`)
         }
 
-        logger.debug({ status: response.status, statusText: response.statusText }, 'OpenAI API response status');
-        const data = await response.json();
-        logger.debug({ data }, 'OpenAI API raw data');
+        logger.debug({ status: response.status, statusText: response.statusText }, 'OpenAI API response status')
+        const data = await response.json()
+        logger.debug({ data }, 'OpenAI API raw data')
 
-        const rawOutput = data.choices?.[0]?.message?.content || '';
-        logger.debug({ rawOutput }, 'OpenAI API raw output content');
+        const rawOutput = data.choices?.[0]?.message?.content || ''
+        logger.debug({ rawOutput }, 'OpenAI API raw output content')
 
-        const summary = parseSummaryToHumanReadable(rawOutput);
-        const replies = extractReplies(rawOutput);
-        logger.debug({ summary, replies }, 'Parsed summary and replies from OpenAI');
+        const summary = parseSummaryToHumanReadable(rawOutput)
+        const replies = extractReplies(rawOutput)
+        logger.debug({ summary, replies }, 'Parsed summary and replies from OpenAI')
 
         return { summary, replies };
     } catch (err) {
-        logger.error({ err }, 'Error in getOpenaiReply (fetching or parsing OpenAI response)');
+        logger.error({ err }, 'Error in getOpenaiReply (fetching or parsing OpenAI response)')
         return {
             summary: 'Error: Could not connect to or parse OpenAI response.',
             replies: ['(Sorry, I had trouble generating a response.)']
-        };
+        }
     }
 }
