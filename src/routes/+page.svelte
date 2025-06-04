@@ -81,7 +81,7 @@ async function onclick() {
     formState.form.suggestedReplies = []
 
     try {
-        const response = await fetch('/', {
+        const response = await fetch('?/generate', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
