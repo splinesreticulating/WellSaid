@@ -1,9 +1,6 @@
 
-<div style="display: flex; justify-content: space-between; align-items: center;">
-  <h1 style="margin: 0;">WellSaid</h1>
-  <img src="static/apple-touch-icon.png" alt="WellSaid Logo" style="height: 40px; width: 40px; margin-left: 10px;">
-</div>
-**Empathy. Upgraded.**
+<h1><img src="static/apple-touch-icon.png" alt="WellSaid Logo" width="40" height="40" style="vertical-align: middle; margin-right: 10px;">WellSaid <br><p style="font-size: 20px; font-family: cursive; margin-top: 5px;"><em>Empathy. Upgraded.</em></p></h1>
+
 
 WellSaid is an empathy-focused communication tool that helps you craft better responses by providing conversation summaries and tone-based suggestions. It enhances your communication, and by extension your life, with meaningful, contextually appropriate replies.
 
