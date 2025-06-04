@@ -1,4 +1,4 @@
-import { parseSummaryToHumanReadable } from '$lib/utils'
+import { parseSummaryToHumanReadable, extractReplies, formatMessagesToRecentText } from '$lib/utils'
 import { describe, expect, it } from 'vitest'
 
 describe('parseSummaryToHumanReadable', () => {
@@ -38,5 +38,32 @@ Reply 1: First reply`
   it('should handle empty input', () => {
     const result = parseSummaryToHumanReadable('')
     expect(result).toBe('')
+  })
+})
+
+describe('extractReplies', () => {
+  it('parses replies with and without formatting', () => {
+    const raw = `**Reply 1:** "First reply"
+Reply 2: Second reply
+Reply 3: *Third reply*`
+
+    const replies = extractReplies(raw)
+
+    expect(replies[0]).toBe('First reply')
+    expect(replies[1]).toBe('Second reply')
+    expect(replies[2]).toContain('Third reply')
+  })
+})
+
+describe('formatMessagesToRecentText', () => {
+  it('formats messages with the correct tags', () => {
+    const messages = [
+      { sender: 'me', text: 'Hello', timestamp: '1' },
+      { sender: 'partner', text: 'Hi there', timestamp: '2' }
+    ]
+
+    const formatted = formatMessagesToRecentText(messages)
+
+    expect(formatted).toEqual(['Me: Hello', 'Partner: Hi there'])
   })
 })
