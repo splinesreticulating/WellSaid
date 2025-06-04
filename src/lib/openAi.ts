@@ -62,7 +62,7 @@ export const getOpenaiReply = async (
         const replies = extractReplies(rawOutput)
         logger.debug({ summary, replies }, 'Parsed summary and replies from OpenAI')
 
-        return { summary, replies };
+        return { summary, replies }
     } catch (err) {
         logger.error({ err }, 'Error in getOpenaiReply (fetching or parsing OpenAI response)')
         return {
