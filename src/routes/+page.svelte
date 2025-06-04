@@ -104,9 +104,7 @@ type FormResult = {
     }
 }
 
-// The enhance function with proper typing
 const enhanceSubmit: import('@sveltejs/kit').SubmitFunction = () => {
-    // Set loading state immediately when form is submitted
     formState.ui.loading = true
     formState.form.summary = 'Generating summary and replies...'
     formState.form.suggestedReplies = []
