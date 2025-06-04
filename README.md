@@ -1,5 +1,8 @@
 
-# WellSaid
+<div style="display: flex; justify-content: space-between; align-items: center;">
+  <h1 style="margin: 0;">WellSaid</h1>
+  <img src="static/apple-touch-icon.png" alt="WellSaid Logo" style="height: 40px; width: 40px; margin-left: 10px;">
+</div>
 **Empathy. Upgraded.**
 
 WellSaid is an empathy-focused communication tool that helps you craft better responses by providing conversation summaries and tone-based suggestions. It enhances your communication, and by extension your life, with meaningful, contextually appropriate replies.
@@ -131,7 +134,6 @@ yarn preview
 
 # Run tests
 yarn test
-# Generates SvelteKit type definitions automatically
 
 # Run tests with watch mode
 yarn test:watch
@@ -139,9 +141,6 @@ yarn test:watch
 # Run tests with coverage report
 yarn test:coverage
 ```
-
-Running `yarn test` automatically executes `svelte-kit sync`, generating
-SvelteKit type definitions before the tests run.
 
 **Note**: Since this application only runs on macOS and accesses local system resources, there is no traditional "production deployment" - the built version is simply run locally on your macbook. The `yarn build` and `yarn preview` commands create and run an optimized version that may provide better performance than development mode.
 
