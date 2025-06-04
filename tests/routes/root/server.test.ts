@@ -47,9 +47,11 @@ describe('root page server', () => {
     vi.mocked(openai.getOpenaiReply).mockResolvedValue({ summary: 'sum', replies: ['r1'] })
     const body = { messages: [], tone: 'gentle', context: '', provider: 'openai' }
     const event = createMockRequestEvent(new URL('https://example.com/'), body)
-    const response = await serverModule.actions.generate(event as unknown as Parameters<typeof serverModule.actions.generate>[0])
-    const result = await response.json()
-    expect(result).toEqual({ summary: 'sum', replies: ['r1'] })
+    const result = await serverModule.actions.generate(event as unknown as Parameters<typeof serverModule.actions.generate>[0])
+    const data = typeof (result as any).json === 'function'
+      ? await (result as Response).json()
+      : result
+    expect(data).toEqual({ summary: 'sum', replies: ['r1'] })
     expect(openai.getOpenaiReply).toHaveBeenCalled()
   })
 })

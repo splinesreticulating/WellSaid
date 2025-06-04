@@ -51,7 +51,13 @@ export const getOpenaiReply = async (
             throw new Error(`OpenAI API error: ${response.status}`)
         }
 
-        logger.debug({ status: response.status, statusText: response.statusText }, 'OpenAI API response status')
+        let message = ''
+        if (err instanceof Error) {
+            message = err.message
+        } else if (typeof err === 'string') {
+            message = err
+        }
+            summary: message,
         const data = await response.json()
         logger.debug({ data }, 'OpenAI API raw data')
 
