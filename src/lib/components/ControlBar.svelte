@@ -38,7 +38,7 @@ const lookBackOptions = [
 			{#if isLoading}
 				<span class="loading-spinner"></span>
 			{:else}
-				Go
+				go
 			{/if}
 		</button>
 	</div>

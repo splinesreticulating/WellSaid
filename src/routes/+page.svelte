@@ -271,7 +271,7 @@ async function onclick() {
 	/* ===== Conversation Section ===== */
 	.conversation {
 		background-color: var(--light);
-		min-height: 120px;
+		min-height: 20px;
 		transition: opacity 0.3s;
 		border-radius: var(--border-radius);
 		padding: 1rem;
@@ -281,7 +281,7 @@ async function onclick() {
 
 	.summary {
 		font-family: var(--summary-font);
-		font-size: 1.05rem;
+		font-size: 1rem;
 		line-height: 1.6;
 		letter-spacing: 0.02em;
 		overflow-wrap: break-word; /* Prevent long words from overflowing */
