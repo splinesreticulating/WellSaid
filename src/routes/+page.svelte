@@ -1,6 +1,7 @@
 <script lang="ts">
 import { enhance } from '$app/forms'
 import { goto } from '$app/navigation'
+import { browser } from '$app/environment'
 import AdditionalContext from '$lib/components/AdditionalContext.svelte'
 import AiProviderSelector from '$lib/components/AiProviderSelector.svelte'
 import ControlBar from '$lib/components/ControlBar.svelte'
@@ -16,7 +17,7 @@ const { data } = $props<{ data: PageData }>()
 
 const formState = $state({
     ai: {
-        provider: DEFAULT_PROVIDER,
+        provider: data?.provider ?? DEFAULT_PROVIDER,
     },
     ui: {
         loading: false,
@@ -25,7 +26,7 @@ const formState = $state({
     form: {
         lookBackHours: '1',
         additionalContext: '',
-        tone: 'gentle' as ToneType,
+        tone: (data?.tone ?? 'gentle') as ToneType,
         messages: [] as Message[],
         summary: '',
         suggestedReplies: [] as string[],
@@ -50,16 +51,11 @@ $effect(() => {
     if (data?.messages && Array.isArray(data.messages)) {
         formState.form.messages = data.messages
     }
-    if (data?.tone) {
-        formState.form.tone = data.tone
-    }
-    if (data?.provider) {
-        formState.ai.provider = data.provider
-    }
 })
 
 // Watch for changes to lookBackHours and navigate to the new URL
 $effect(() => {
+    if (!browser) return
     const lookBack = formState.form.lookBackHours
     if (lookBack) {
         const url = new URL(window.location.href)
@@ -77,6 +73,7 @@ $effect(() => {
 })
 
 $effect(() => {
+    if (!browser) return
     const tone = formState.form.tone
     if (tone) {
         const url = new URL(window.location.href)
@@ -90,6 +87,7 @@ $effect(() => {
 })
 
 $effect(() => {
+    if (!browser) return
     const provider = formState.ai.provider
     if (provider) {
         const url = new URL(window.location.href)
@@ -103,6 +101,7 @@ $effect(() => {
 })
 
 $effect(() => {
+    if (!browser) return
     const storedContext = localStorage.getItem(LOCAL_STORAGE_CONTEXT_KEY)
     if (storedContext) {
         formState.form.additionalContext = storedContext
@@ -113,6 +112,7 @@ $effect(() => {
 })
 
 $effect(() => {
+    if (!browser) return
     if (formState.form.additionalContext) {
         localStorage.setItem(
             LOCAL_STORAGE_CONTEXT_KEY,
