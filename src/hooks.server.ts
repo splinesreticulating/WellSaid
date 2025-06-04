@@ -25,10 +25,6 @@ if (!BASIC_AUTH_USERNAME || !BASIC_AUTH_PASSWORD) {
 const loginAttempts = new Map<string, { count: number; lastAttempt: number }>()
 
 const securityHeaders = {
-    // Only include HSTS in production
-    ...(process.env.NODE_ENV === 'production' ? {
-        'Strict-Transport-Security': 'max-age=63072000; includeSubDomains; preload'
-    } : {}),
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
     'X-XSS-Protection': '1; mode=block',
