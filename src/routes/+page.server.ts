@@ -21,16 +21,7 @@ export const load: PageServerLoad = async ({ url }) => {
 
 export const actions: Actions = {
     generate: async ({ request }) => {
-        // Log request details
-        logger.debug({
-            method: request.method,
-            url: request.url,
-            headers: Object.fromEntries(request.headers.entries())
-        }, 'Received request in action')
-
         try {
-            const contentType = request.headers.get('content-type') || ''
-
             let context = ''
             let messagesString = ''
             let tone = DEFAULT_TONE
@@ -44,7 +35,7 @@ export const actions: Actions = {
             context = formData.get('context') as string || ''
             provider = formData.get('provider') as string || DEFAULT_PROVIDER
 
-            logger.debug({ formData: formDataObj }, 'Received form data in action')
+            logger.debug({ formData: formDataObj }, 'Received form data')
 
             if (!messagesString || !tone) {
                 return fail(400, { error: 'Invalid request format: Missing messages or tone.' })
@@ -65,9 +56,8 @@ export const actions: Actions = {
             }
 
             const result = await getReplies(messages, tone, context || '')
-            logger.debug({ resultFromService: result }, 'Result received from AI service in action')
+            logger.debug({ resultFromService: result }, 'Result received from AI service')
 
-            // Return the result directly - SvelteKit will handle the JSON serialization
             return result
         } catch (err) {
             logger.error({ err }, 'Error generating suggestions')

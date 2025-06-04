@@ -94,16 +94,6 @@ $effect(() => {
 // biome-ignore lint/style/useConst: assigned by Svelte via bind:this
 let formElement: HTMLFormElement | null = null
 
-// Type for the form submission result
-type FormResult = {
-    type: 'success' | 'failure' | 'error'
-    data?: {
-        summary: string
-        replies: string[]
-        error?: string
-    }
-}
-
 const enhanceSubmit: import('@sveltejs/kit').SubmitFunction = () => {
     formState.ui.loading = true
     formState.form.summary = 'Generating summary and replies...'
