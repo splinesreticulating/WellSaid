@@ -13,6 +13,7 @@
             ".turbo",
             "dist",
             "build"
+            , ".svelte-kit"
         ]
     },
     "formatter": {
