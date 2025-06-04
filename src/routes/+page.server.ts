@@ -10,6 +10,7 @@ export const load: PageServerLoad = async ({ url }) => {
     const lookBack = Number.parseInt(url.searchParams.get('lookBackHours') || '1');
     const end = new Date();
     const start = new Date(end.getTime() - lookBack * 60 * 60 * 1000);
+    
     const { messages } = await queryMessagesDb(start.toISOString(), end.toISOString());
     return { messages };
 };

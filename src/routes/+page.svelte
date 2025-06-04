@@ -1,4 +1,5 @@
 <script lang="ts">
+import { goto } from '$app/navigation'
 import AdditionalContext from '$lib/components/AdditionalContext.svelte'
 import AiProviderSelector from '$lib/components/AiProviderSelector.svelte'
 import ControlBar from '$lib/components/ControlBar.svelte'
@@ -43,44 +44,26 @@ const summaryContent = $derived(
               '<em>click "go" to generate a conversation summary</em>',
 )
 
-// Initial load of messages from server
-if (data?.messages && Array.isArray(data.messages)) {
-    formState.form.messages = data.messages
-}
-
-// Watch for changes to lookBackHours and refetch messages
+// Update messages when data changes
 $effect(() => {
-    const fetchMessages = async () => {
-        try {
-            formState.ui.loading = true;
-            const lookBack = formState.form.lookBackHours;
-            const response = await fetch(`?lookBackHours=${lookBack}`, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                },
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Failed to fetch messages: ${response.status}`);
-            }
-            
-            const { messages } = await response.json();
-            if (Array.isArray(messages)) {
-                formState.form.messages = messages;
-            }
-        } catch (error) {
-            console.error('Error fetching messages:', error);
-        } finally {
-            formState.ui.loading = false;
-        }
-    };
-    
-    // Only fetch if we have a valid lookBackHours value
-    if (formState.form.lookBackHours) {
-        fetchMessages();
+    if (data?.messages && Array.isArray(data.messages)) {
+        formState.form.messages = data.messages
     }
-});
+})
+
+// Watch for changes to lookBackHours and navigate to the new URL
+$effect(() => {
+    const lookBack = formState.form.lookBackHours
+    if (lookBack) {
+        // Update the URL with the new lookBackHours parameter
+        const url = new URL(window.location.href)
+        url.searchParams.set('lookBackHours', lookBack)
+
+        // Use SvelteKit's goto to navigate to the new URL
+        // This will trigger a new page load with the updated parameter
+        goto(url.toString(), { keepFocus: true, noScroll: true })
+    }
+})
 
 $effect(() => {
     const storedContext = localStorage.getItem(LOCAL_STORAGE_CONTEXT_KEY)
@@ -116,66 +99,72 @@ async function onclick() {
     formState.form.suggestedReplies = []
 
     try {
-        const formData = new FormData();
-        formData.append('messages', JSON.stringify(formState.form.messages));
-        formData.append('tone', formState.form.tone);
-        formData.append('context', formState.form.additionalContext);
-        formData.append('provider', formState.ai.provider);
+        const formData = new FormData()
+        formData.append('messages', JSON.stringify(formState.form.messages))
+        formData.append('tone', formState.form.tone)
+        formData.append('context', formState.form.additionalContext)
+        formData.append('provider', formState.ai.provider)
 
         const response = await fetch('?/generate', {
             method: 'POST',
             headers: {
-                'Accept': 'application/json', // Still want to accept JSON response
+                Accept: 'application/json', // Still want to accept JSON response
                 // 'Content-Type' will be set automatically by the browser for FormData
             },
             body: formData,
         })
 
-        const result = await response.json(); // Always try to parse JSON
+        const result = await response.json() // Always try to parse JSON
 
-        console.log('Result received from action on client:', result);
-        console.log('Response OK:', response.ok);
-
-        if (!response.ok) { // Action called fail()
+        if (!response.ok) {
+            // Action called fail()
             // result here is the object passed to fail(), e.g., { error: 'message', details: '...' }
-            const errorMessage = result?.error || 'Unknown error from action';
-            throw new Error(`Action failed: ${errorMessage}`);
+            const errorMessage = result?.error || 'Unknown error from action'
+            throw new Error(`Action failed: ${errorMessage}`)
         }
 
         // SvelteKit wraps the response in { type, status, data }
         // where data is a JSON string that needs to be parsed
         if (result && typeof result.data === 'string') {
             try {
-                const parsedData = JSON.parse(result.data);
-                console.log('Parsed data from action:', parsedData);
+                const parsedData = JSON.parse(result.data)
                 // The parsed data is in an array where:
                 // parsedData[0] is { summary: 1, replies: 2 } (indices into the array)
                 // parsedData[1] is the summary string
                 // parsedData[2] is [3,4,5] (indices of the actual replies in the array)
                 // parsedData[3], parsedData[4], parsedData[5] are the actual replies
-                formState.form.summary = parsedData[1] || 'No summary generated.';
-                
+                formState.form.summary =
+                    parsedData[1] || 'No summary generated.'
+
                 // Extract the actual replies using the indices from parsedData[2]
-                const replyIndices = Array.isArray(parsedData[2]) ? parsedData[2] : [];
-                const replies = [];
+                const replyIndices = Array.isArray(parsedData[2])
+                    ? parsedData[2]
+                    : []
+                const replies = []
                 for (const index of replyIndices) {
-                    if (parsedData[index] && typeof parsedData[index] === 'string') {
-                        replies.push(parsedData[index]);
+                    if (
+                        parsedData[index] &&
+                        typeof parsedData[index] === 'string'
+                    ) {
+                        replies.push(parsedData[index])
                     }
                 }
-                formState.form.suggestedReplies = replies;
+                formState.form.suggestedReplies = replies
             } catch (parseError) {
-                console.error('Error parsing action data:', parseError);
-                throw new Error('Failed to parse response from server');
+                console.error('Error parsing action data:', parseError)
+                throw new Error('Failed to parse response from server')
             }
         } else {
-            console.error('Unexpected response format from action:', result);
-            throw new Error('Unexpected response format from server');
+            console.error('Unexpected response format from action:', result)
+            throw new Error('Unexpected response format from server')
         }
     } catch (error) {
-        console.error('Error in onclick handler:', error); // Changed log message for clarity
-        formState.form.summary = (error instanceof Error) ? error.message : 'Error generating summary. Please try again.';
-        formState.form.suggestedReplies = []; // Clear replies on error
+        console.error('Error in onclick handler:', error) // Changed log message for clarity
+        formState.form.summary =
+            error instanceof Error
+                ? error.message
+                : 'Error generating summary. Please try again.'
+        formState.form.suggestedReplies = [] // Clear replies on error
     } finally {
         formState.ui.loading = false
     }
