@@ -106,12 +106,13 @@ type FormResult = {
 
 // The enhance function with proper typing
 const enhanceSubmit: import('@sveltejs/kit').SubmitFunction = () => {
+    // Set loading state immediately when form is submitted
+    formState.ui.loading = true
+    formState.form.summary = 'Generating summary and replies...'
+    formState.form.suggestedReplies = []
+
     // Return a function that will be called with the form submission result
     return async ({ result, update }) => {
-        formState.ui.loading = true
-        formState.form.summary = ''
-        formState.form.suggestedReplies = []
-
         try {
             // Handle the form submission result
             if (result.type === 'success' && result.data) {
@@ -130,9 +131,12 @@ const enhanceSubmit: import('@sveltejs/kit').SubmitFunction = () => {
             console.error('Error processing form submission:', error)
             formState.form.summary =
                 'An error occurred while processing the response.'
-            throw error
+            formState.form.suggestedReplies = []
         } finally {
-            formState.ui.loading = false
+            // Only set loading to false after a short delay to ensure UI updates are visible
+            setTimeout(() => {
+                formState.ui.loading = false
+            }, 100)
         }
     }
 }
