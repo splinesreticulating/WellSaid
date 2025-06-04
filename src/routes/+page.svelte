@@ -50,6 +50,12 @@ $effect(() => {
     if (data?.messages && Array.isArray(data.messages)) {
         formState.form.messages = data.messages
     }
+    if (data?.tone) {
+        formState.form.tone = data.tone
+    }
+    if (data?.provider) {
+        formState.ai.provider = data.provider
+    }
 })
 
 // Watch for changes to lookBackHours and navigate to the new URL
@@ -66,6 +72,32 @@ $effect(() => {
 
         // Use SvelteKit's goto to navigate to the new URL
         // This will trigger a new page load with the updated parameter
+        goto(url.toString(), { keepFocus: true, noScroll: true })
+    }
+})
+
+$effect(() => {
+    const tone = formState.form.tone
+    if (tone) {
+        const url = new URL(window.location.href)
+        const current = url.searchParams.get('tone')
+
+        if (current === tone) return
+
+        url.searchParams.set('tone', tone)
+        goto(url.toString(), { keepFocus: true, noScroll: true })
+    }
+})
+
+$effect(() => {
+    const provider = formState.ai.provider
+    if (provider) {
+        const url = new URL(window.location.href)
+        const current = url.searchParams.get('provider')
+
+        if (current === provider) return
+
+        url.searchParams.set('provider', provider)
         goto(url.toString(), { keepFocus: true, noScroll: true })
     }
 })

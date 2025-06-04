@@ -14,6 +14,8 @@ export interface MessageRow {
 
 export interface PageData {
     messages?: Message[]
+    tone?: ToneType
+    provider?: string
 }
 
 export type ToneType = 'gentle' | 'funny' | 'reassuring' | 'concise'

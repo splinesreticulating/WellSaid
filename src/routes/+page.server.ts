@@ -2,7 +2,7 @@ import { queryMessagesDb } from '$lib/iMessages'
 import { getKhojReply } from '$lib/khoj'
 import { logger } from '$lib/logger'
 import { getOpenaiReply } from '$lib/openAi'
-import type { Message } from '$lib/types'
+import type { Message, ToneType } from '$lib/types'
 import { fail } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 
@@ -12,11 +12,14 @@ const ONE_HOUR = 60 * 60 * 1000
 
 export const load: PageServerLoad = async ({ url }) => {
     const lookBack = Number.parseInt(url.searchParams.get('lookBackHours') || '1')
+    const tone = (url.searchParams.get('tone') || DEFAULT_TONE) as ToneType
+    const provider = url.searchParams.get('provider') || DEFAULT_PROVIDER
+
     const end = new Date()
     const start = new Date(end.getTime() - lookBack * ONE_HOUR)
     const { messages } = await queryMessagesDb(start.toISOString(), end.toISOString())
 
-    return { messages }
+    return { messages, tone, provider }
 }
 
 export const actions: Actions = {

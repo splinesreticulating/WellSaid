@@ -43,11 +43,15 @@ describe('root page server', () => {
     vi.resetAllMocks()
   })
 
-  it('load should return messages', async () => {
+  it('load should return messages and query params', async () => {
     vi.mocked(queryDb.queryMessagesDb).mockResolvedValue({ messages: [{ text: 'hi', sender: 'partner', timestamp: '2025-01-01T00:00:00Z' }] })
-    const event = createMockRequestEvent(new URL('https://example.com/'))
+    const event = createMockRequestEvent(new URL('https://example.com/?tone=funny&provider=khoj'))
     const data = await serverModule.load(event as unknown as Parameters<typeof serverModule.load>[0])
-    expect(data).toEqual({ messages: [{ text: 'hi', sender: 'partner', timestamp: '2025-01-01T00:00:00Z' }] })
+    expect(data).toEqual({
+      messages: [{ text: 'hi', sender: 'partner', timestamp: '2025-01-01T00:00:00Z' }],
+      tone: 'funny',
+      provider: 'khoj'
+    })
   })
 
   it('generate action should return suggestions', async () => {
