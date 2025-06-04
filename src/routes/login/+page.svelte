@@ -1,5 +1,6 @@
 <script lang="ts">
 import { goto } from '$app/navigation'
+import { page } from '$app/stores'
 
 const formState = $state({
     username: '',
@@ -26,7 +27,11 @@ async function checkAuthStatus() {
     try {
         const response = await fetch('/api/auth/check')
         if (response.ok) {
-            // Already authenticated, redirect to home
+            // Already authenticated, dispatch event and redirect to home
+            const event = new CustomEvent('authchange', {
+                detail: { authenticated: true }
+            })
+            window.dispatchEvent(event)
             goto('/')
         }
         // If response is 401, that's expected (user not logged in)
@@ -54,7 +59,11 @@ async function handleSubmit(event: Event) {
         })
 
         if (response.ok) {
-            // Authentication successful
+            // Authentication successful, dispatch event and redirect
+            const event = new CustomEvent('authchange', {
+                detail: { authenticated: true }
+            })
+            window.dispatchEvent(event)
             goto('/')
         } else {
             const data = await response.json()
