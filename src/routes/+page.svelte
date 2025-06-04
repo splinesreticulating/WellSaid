@@ -84,6 +84,7 @@ async function onclick() {
         const response = await fetch('/', {
             method: 'POST',
             headers: {
+                'Accept': 'application/json',
                 'Content-Type': 'application/json',
                 'X-SvelteKit-Action': 'generate',
             },
