@@ -6,7 +6,8 @@ export default defineConfig({
   plugins: [svelte({ hot: !process.env.VITEST })],
   resolve: {
     alias: {
-      $lib: resolve('./src/lib')
+      $lib: resolve('./src/lib'),
+      '$env/static/private': resolve('./tests/mocks/env-static-private.ts')
     }
   },
   test: {

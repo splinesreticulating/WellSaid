@@ -17,7 +17,7 @@ describe('/health endpoint', () => {
     global.Date.now = originalDate.now
 
     // Call our mock handler
-    const response = await mockHealthResponse()
+    const response = mockHealthResponse()
     const body = await response.json()
 
     // Restore Date

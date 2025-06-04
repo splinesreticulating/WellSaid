@@ -91,8 +91,6 @@ let copiedIndex = $state(-1)
         min-width: var(--min-touch-size);
         min-height: var(--min-touch-size);
         font-size: 1.5rem;
-        margin-top: -0.5rem;
-        margin-right: -0.5rem;
     }
     
     .copy-button:hover, .copy-button:active {
@@ -103,6 +101,7 @@ let copiedIndex = $state(-1)
     .empty-state {
         color: var(--light);
         text-align: center;
+        font-weight: 100;
     }
     
     .loading-suggestions {

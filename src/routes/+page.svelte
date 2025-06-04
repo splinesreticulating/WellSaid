@@ -1,4 +1,5 @@
 <script lang="ts">
+import { goto } from '$app/navigation'
 import AdditionalContext from '$lib/components/AdditionalContext.svelte'
 import AiProviderSelector from '$lib/components/AiProviderSelector.svelte'
 import ControlBar from '$lib/components/ControlBar.svelte'
@@ -43,9 +44,26 @@ const summaryContent = $derived(
               '<em>click "go" to generate a conversation summary</em>',
 )
 
-if (data?.messages && Array.isArray(data.messages)) {
-    formState.form.messages = data.messages
-}
+// Update messages when data changes
+$effect(() => {
+    if (data?.messages && Array.isArray(data.messages)) {
+        formState.form.messages = data.messages
+    }
+})
+
+// Watch for changes to lookBackHours and navigate to the new URL
+$effect(() => {
+    const lookBack = formState.form.lookBackHours
+    if (lookBack) {
+        // Update the URL with the new lookBackHours parameter
+        const url = new URL(window.location.href)
+        url.searchParams.set('lookBackHours', lookBack)
+
+        // Use SvelteKit's goto to navigate to the new URL
+        // This will trigger a new page load with the updated parameter
+        goto(url.toString(), { keepFocus: true, noScroll: true })
+    }
+})
 
 $effect(() => {
     const storedContext = localStorage.getItem(LOCAL_STORAGE_CONTEXT_KEY)
@@ -68,27 +86,6 @@ $effect(() => {
     }
 })
 
-async function getMessages() {
-    const end = new Date()
-    const start = new Date(
-        end.getTime() -
-            Number.parseInt(formState.form.lookBackHours) * 60 * 60 * 1000,
-    )
-
-    const res = await fetch(
-        `/api/messages?start=${encodeURIComponent(start.toISOString())}&end=${encodeURIComponent(end.toISOString())}`,
-    )
-    const data = await res.json()
-
-    if (data?.messages && Array.isArray(data.messages)) {
-        formState.form.messages = data.messages
-    }
-}
-
-$effect(() => {
-    getMessages()
-})
-
 function handleSubmit(event: Event) {
     event.preventDefault()
 }
@@ -100,34 +97,69 @@ async function onclick() {
     formState.form.suggestedReplies = []
 
     try {
-        const response = await fetch('/api/suggestions', {
+        const formData = new FormData()
+        formData.append('messages', JSON.stringify(formState.form.messages))
+        formData.append('tone', formState.form.tone)
+        formData.append('context', formState.form.additionalContext)
+        formData.append('provider', formState.ai.provider)
+
+        const response = await fetch('?/generate', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                Accept: 'application/json',
             },
-            body: JSON.stringify({
-                messages: formState.form.messages,
-                tone: formState.form.tone,
-                context: formState.form.additionalContext,
-                provider: formState.ai.provider,
-            }),
+            body: formData,
         })
-
-        if (!response.ok) {
-            throw new Error(`API error: ${response.status}`)
-        }
 
         const result = await response.json()
 
-        if (result.error) {
-            throw new Error(result.error)
+        if (!response.ok) {
+            // Action called fail()
+            // result here is the object passed to fail(), e.g., { error: 'message', details: '...' }
+            const errorMessage = result?.error || 'Unknown error from action'
+            throw new Error(`Action failed: ${errorMessage}`)
         }
 
-        formState.form.summary = result.summary
-        formState.form.suggestedReplies = result.replies
+        // SvelteKit wraps the response in { type, status, data }
+        // where data is a JSON string that needs to be parsed
+        if (result && typeof result.data === 'string') {
+            try {
+                const parsedData = JSON.parse(result.data)
+                // The parsed data is in an array where:
+                // parsedData[0] is { summary: 1, replies: 2 } (indices into the array)
+                // parsedData[1] is the summary string
+                // parsedData[2] is [3,4,5] (indices of the actual replies in the array)
+                // parsedData[3], parsedData[4], parsedData[5] are the actual replies
+                formState.form.summary =
+                    parsedData[1] || 'No summary generated.'
+
+                // Extract the actual replies using the indices from parsedData[2]
+                const replyIndices = Array.isArray(parsedData[2])
+                    ? parsedData[2]
+                    : []
+                const replies = []
+                for (const index of replyIndices) {
+                    if (
+                        parsedData[index] &&
+                        typeof parsedData[index] === 'string'
+                    ) {
+                        replies.push(parsedData[index])
+                    }
+                }
+                formState.form.suggestedReplies = replies
+            } catch (parseError) {
+                console.error('Error parsing action data:', parseError)
+                throw new Error('Failed to parse response from server')
+            }
+        } else {
+            throw new Error('Unexpected response format from server')
+        }
     } catch (error) {
-        console.error('Error generating replies:', error)
-        formState.form.summary = 'Error generating summary. Please try again.'
+        formState.form.summary =
+            error instanceof Error
+                ? error.message
+                : 'Error generating summary. Please try again.'
+        formState.form.suggestedReplies = [] // Clear replies on error
     } finally {
         formState.ui.loading = false
     }
@@ -239,7 +271,7 @@ async function onclick() {
 	/* ===== Conversation Section ===== */
 	.conversation {
 		background-color: var(--light);
-		min-height: 120px;
+		min-height: 20px;
 		transition: opacity 0.3s;
 		border-radius: var(--border-radius);
 		padding: 1rem;
@@ -249,7 +281,7 @@ async function onclick() {
 
 	.summary {
 		font-family: var(--summary-font);
-		font-size: 1.05rem;
+		font-size: 1rem;
 		line-height: 1.6;
 		letter-spacing: 0.02em;
 		overflow-wrap: break-word; /* Prevent long words from overflowing */
