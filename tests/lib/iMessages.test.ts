@@ -130,9 +130,7 @@ describe('queryMessagesDb', () => {
 
   // Now that we've added proper error handling, we can test this behavior
   it('should handle database errors gracefully', async () => {
-    // The current implementation makes it difficult to test error handling
-    // due to the try/finally pattern and direct db.close() call
-    // For now, we'll skip this test but note that we should test this behavior
+    // This test verifies that queryMessagesDb handles database errors and closes the connection
     const mockDb = {
       all: vi.fn().mockRejectedValue(new Error('Database error')),
       close: vi.fn().mockResolvedValue(undefined)
