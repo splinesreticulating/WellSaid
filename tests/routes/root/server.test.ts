@@ -6,7 +6,14 @@ import type { RequestEvent } from '@sveltejs/kit'
 
 vi.mock('$lib/iMessages', () => ({ queryMessagesDb: vi.fn() }))
 vi.mock('$lib/openAi', () => ({ getOpenaiReply: vi.fn() }))
-vi.mock('$lib/logger', () => ({ logger: { error: vi.fn() } }))
+vi.mock('$lib/logger', () => ({
+  logger: {
+    error: vi.fn(),
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn()
+  }
+}))
 
 function createMockRequestEvent(url: URL, body?: unknown): RequestEvent<Record<string, string>, '/'> {
   return {
@@ -44,14 +51,43 @@ describe('root page server', () => {
   })
 
   it('generate action should return suggestions', async () => {
-    vi.mocked(openai.getOpenaiReply).mockResolvedValue({ summary: 'sum', replies: ['r1'] })
-    const body = { messages: [], tone: 'gentle', context: '', provider: 'openai' }
-    const event = createMockRequestEvent(new URL('https://example.com/'), body)
+    // Mock the OpenAI response
+    const mockResponse = { summary: 'sum', replies: ['r1'] }
+    vi.mocked(openai.getOpenaiReply).mockResolvedValue(mockResponse)
+    
+    // Create form data
+    const formData = new URLSearchParams()
+    formData.append('messages', JSON.stringify([{ text: 'test', sender: 'user', timestamp: '2025-01-01T00:00:00Z' }]))
+    formData.append('tone', 'gentle')
+    formData.append('context', 'test context')
+    formData.append('provider', 'openai')
+    
+    // Create a proper Request with form data
+    const request = new Request('https://example.com/', {
+      method: 'POST',
+      body: formData.toString(),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    })
+    
+    // Create mock event with the proper request
+    const event = {
+      ...createMockRequestEvent(new URL('https://example.com/')),
+      request
+    }
+    
+    // Call the action
     const result = await serverModule.actions.generate(event as unknown as Parameters<typeof serverModule.actions.generate>[0])
-    const data = typeof (result as any).json === 'function'
-      ? await (result as Response).json()
-      : result
-    expect(data).toEqual({ summary: 'sum', replies: ['r1'] })
-    expect(openai.getOpenaiReply).toHaveBeenCalled()
+    
+    // Verify the result is the expected object
+    expect(result).toEqual(mockResponse)
+    
+    // Verify the OpenAI function was called with the right arguments
+    expect(openai.getOpenaiReply).toHaveBeenCalledWith(
+      [{ text: 'test', sender: 'user', timestamp: '2025-01-01T00:00:00Z' }],
+      'gentle',
+      'test context'
+    )
   })
 })

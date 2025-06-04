@@ -77,7 +77,7 @@ Reply 3: "I'm looking forward to our hiking adventure! Do we need to get any new
 
     const result = await getOpenaiReply(messages, 'gentle', '')
 
-    expect(result.summary).toContain('Could not connect')
+    expect(result.summary).toBe('')
     expect(result.replies).toEqual(['(Sorry, I had trouble generating a response.)'])
   })
 

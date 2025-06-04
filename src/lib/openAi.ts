@@ -51,13 +51,7 @@ export const getOpenaiReply = async (
             throw new Error(`OpenAI API error: ${response.status}`)
         }
 
-        let message = ''
-        if (err instanceof Error) {
-            message = err.message
-        } else if (typeof err === 'string') {
-            message = err
-        }
-            summary: message,
+        logger.debug({ status: response.status, statusText: response.statusText }, 'OpenAI API response status')
         const data = await response.json()
         logger.debug({ data }, 'OpenAI API raw data')
 
@@ -72,7 +66,7 @@ export const getOpenaiReply = async (
     } catch (err) {
         logger.error({ err }, 'Error in getOpenaiReply (fetching or parsing OpenAI response)')
         return {
-            summary: 'Error: Could not connect to or parse OpenAI response.',
+            summary: '',
             replies: ['(Sorry, I had trouble generating a response.)']
         }
     }
