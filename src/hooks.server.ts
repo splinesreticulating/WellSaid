@@ -114,10 +114,15 @@ const authMiddleware: Handle = async ({ event, resolve }) => {
 
     // Reset counter if window has passed
     if (Date.now() - attemptInfo.lastAttempt > LOGIN_ATTEMPT_WINDOW_MS) {
-        loginAttempts.delete(clientIP)
+        attemptInfo.count = 1
+    } else {
+        attemptInfo.count += 1
     }
-    // Block if too many attempts
-    else if (attemptInfo.count >= MAX_LOGIN_ATTEMPTS) {
+
+    attemptInfo.lastAttempt = Date.now()
+    loginAttempts.set(clientIP, attemptInfo)
+
+    if (attemptInfo.count >= MAX_LOGIN_ATTEMPTS) {
         logSecurityEvent('rate_limit_exceeded', { ip: clientIP, path: pathname })
 
         logger.debug('[AUTH] Too many attempts for IP:', clientIP)
