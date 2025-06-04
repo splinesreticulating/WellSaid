@@ -1,4 +1,6 @@
 <script lang="ts">
+// `enhance` allows progressive enhancement for the form action
+import { enhance } from '$app/forms'
 import { goto } from '$app/navigation'
 
 const formState = $state({
@@ -35,38 +37,6 @@ async function checkAuthStatus() {
         console.error('Error checking auth status:', error)
     }
 }
-
-async function handleSubmit(event: Event) {
-    event.preventDefault()
-    formState.loading = true
-    formState.error = ''
-
-    try {
-        const response = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username: formState.username,
-                password: formState.password,
-            }),
-        })
-
-        if (response.ok) {
-            // Authentication successful
-            goto('/')
-        } else {
-            const data = await response.json()
-            formState.error = data.error || 'Invalid username or password'
-        }
-    } catch (error) {
-        console.error('Login error:', error)
-        formState.error = 'An error occurred during login'
-    } finally {
-        formState.loading = false
-    }
-}
 </script>
 
 <svelte:head>
@@ -74,7 +44,17 @@ async function handleSubmit(event: Event) {
 </svelte:head>
 
     <div class="login-card">
-        <form onsubmit={handleSubmit}>
+        <form method="POST" use:enhance={({ cancel }) => {
+            formState.loading = true;
+            return ({ result }) => {
+                formState.loading = false;
+                if (result.type === 'failure') {
+                    formState.error = result.data?.error || 'Invalid username or password';
+                } else if (result.type === 'error') {
+                    formState.error = 'An error occurred during login';
+                }
+            };
+        }}>
             {#if formState.error}
                 <div class="error-message">{formState.error}</div>
             {/if}
