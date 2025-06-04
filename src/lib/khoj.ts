@@ -1,12 +1,10 @@
 import { buildReplyPrompt } from '$lib/prompts'
 import type { Message } from '$lib/types'
 import { extractReplies, formatMessagesToRecentText, parseSummaryToHumanReadable } from '$lib/utils'
-import dotenv from 'dotenv'
 import { logger } from './logger'
+import { KHOJ_API_URL, KHOJ_AGENT } from '$env/static/private'
 
-dotenv.config()
-
-const khojApiUrl = process.env.KHOJ_API_URL || 'http://localhost:42110/api/chat'
+const khojApiUrl = KHOJ_API_URL || 'http://localhost:42110/api/chat'
 
 export const getKhojReply = async (
   messages: Message[],
@@ -23,7 +21,7 @@ export const getKhojReply = async (
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         q: prompt,
-        ...(process.env.KHOJ_AGENT ? { agent: process.env.KHOJ_AGENT } : {}),
+        ...(KHOJ_AGENT ? { agent: KHOJ_AGENT } : {}),
       }),
     })
 

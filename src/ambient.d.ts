@@ -1,8 +1,7 @@
 declare namespace App {
   interface PrivateEnv {
     PARTNER_PHONE: string
+    KHOJ_API_URL?: string
+    KHOJ_AGENT?: string
   }
 }
-
-// This file is used to provide type information for your environment variables
-// Add any other environment variables used in your application here
