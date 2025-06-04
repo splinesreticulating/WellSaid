@@ -29,10 +29,14 @@ const lookBackOptions = [
 <section class="control-bar">
 	<div class="timeframe-controls">
 		<label for="window-back">summarize last:</label>
-		<select id="window-back" bind:value={lookBackHours}>
-			{#each lookBackOptions as option (option.value)}
-				<option value={option.value}>{option.label}</option>
-			{/each}
+		<select 
+		id="window-back" 
+		name="lookBackHours" 
+		bind:value={lookBackHours}
+	>
+		{#each lookBackOptions as option (option.value)}
+			<option value={option.value}>{option.label}</option>
+		{/each}
 		</select>
 		<button type="button" class="go-button" { onclick }  disabled={!canGenerate}>
 			{#if isLoading}

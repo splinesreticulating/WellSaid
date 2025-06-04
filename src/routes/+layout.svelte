@@ -1,5 +1,6 @@
 <script lang="ts">
 import '../app.css'
+import { onMount } from 'svelte'
 import { browser } from '$app/environment'
 import { goto } from '$app/navigation'
 import { page } from '$app/state'
@@ -9,42 +10,69 @@ let { children } = $props()
 let authenticated = $state(false)
 let initialCheckLoading = $state(true)
 
-async function performAuthCheck() {
+// Custom event type for auth changes
+type AuthChangeEvent = CustomEvent<{ authenticated: boolean }>
+const AUTH_CHANGE_EVENT = 'authchange'
+
+// Function to dispatch auth change event
+export function dispatchAuthChange(authenticated: boolean) {
     if (!browser) return
+    
+    const event = new CustomEvent(AUTH_CHANGE_EVENT, {
+        detail: { authenticated }
+    })
+    window.dispatchEvent(event)
+}
+
+async function performAuthCheck() {
+    if (!browser) return false
 
     try {
         const response = await fetch('/api/auth/check')
-        authenticated = response.ok
+        const isAuthenticated = response.ok
+        if (authenticated !== isAuthenticated) {
+            authenticated = isAuthenticated
+            dispatchAuthChange(isAuthenticated)
+        }
+        return isAuthenticated
     } catch (err) {
         console.error('Auth check failed:', err)
-        authenticated = false
+        if (authenticated) {
+            authenticated = false
+            dispatchAuthChange(false)
+        }
+        return false
     }
 }
 
-// For initial data loading and reactive redirection
-$effect(() => {
-    if (browser) {
-        const currentPath = page.url.pathname
+function handleAuthChange(event: AuthChangeEvent) {
+    authenticated = event.detail.authenticated
+    initialCheckLoading = false
+    
+    // If not authenticated and not on login page, redirect to login
+    if (!authenticated && page.url.pathname !== '/login') {
+        goto('/login')
+    }
+}
 
-        // If on login page or already authenticated, ensure loading is false and do nothing else.
-        if (currentPath === '/login' || authenticated) {
-            initialCheckLoading = false
-            return
-        }
-
-        // If not on /login and not authenticated, perform the full check.
-        const performFullCheck = async () => {
-            initialCheckLoading = true
-            await performAuthCheck() // This updates 'authenticated'
-            initialCheckLoading = false
-
-            // After the check, if still not authenticated and not on login page, redirect.
-            if (!authenticated && page.url.pathname !== '/login') {
-                goto('/login')
-            }
-        }
-
-        performFullCheck()
+onMount(() => {
+    if (!browser) return
+    
+    // Initial auth check
+    const checkAuth = async () => {
+        initialCheckLoading = true
+        await performAuthCheck()
+        initialCheckLoading = false
+    }
+    
+    checkAuth()
+    
+    // Listen for auth change events
+    window.addEventListener(AUTH_CHANGE_EVENT, handleAuthChange as EventListener)
+    
+    // Cleanup
+    return () => {
+        window.removeEventListener(AUTH_CHANGE_EVENT, handleAuthChange as EventListener)
     }
 })
 </script>

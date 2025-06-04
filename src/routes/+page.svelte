@@ -1,4 +1,5 @@
 <script lang="ts">
+import { enhance } from '$app/forms'
 import { goto } from '$app/navigation'
 import AdditionalContext from '$lib/components/AdditionalContext.svelte'
 import AiProviderSelector from '$lib/components/AiProviderSelector.svelte'
@@ -90,83 +91,46 @@ $effect(() => {
     }
 })
 
-function handleSubmit(event: Event) {
-    event.preventDefault()
-}
+// biome-ignore lint/style/useConst: assigned by Svelte via bind:this
+let formElement: HTMLFormElement | null = null
 
-// Generate summary and replies
-async function onclick() {
+const enhanceSubmit: import('@sveltejs/kit').SubmitFunction = () => {
     formState.ui.loading = true
-    formState.form.summary = ''
+    formState.form.summary = 'Generating summary and replies...'
     formState.form.suggestedReplies = []
 
-    try {
-        const formData = new FormData()
-        formData.append('messages', JSON.stringify(formState.form.messages))
-        formData.append('tone', formState.form.tone)
-        formData.append('context', formState.form.additionalContext)
-        formData.append('provider', formState.ai.provider)
-
-        const response = await fetch('?/generate', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-            },
-            body: formData,
-        })
-
-        const result = await response.json()
-
-        if (!response.ok) {
-            // Action called fail()
-            // result here is the object passed to fail(), e.g., { error: 'message', details: '...' }
-            const errorMessage = result?.error || 'Unknown error from action'
-            throw new Error(`Action failed: ${errorMessage}`)
-        }
-
-        // SvelteKit wraps the response in { type, status, data }
-        // where data is a JSON string that needs to be parsed
-        if (result && typeof result.data === 'string') {
-            try {
-                const parsedData = JSON.parse(result.data)
-                // The parsed data is in an array where:
-                // parsedData[0] is { summary: 1, replies: 2 } (indices into the array)
-                // parsedData[1] is the summary string
-                // parsedData[2] is [3,4,5] (indices of the actual replies in the array)
-                // parsedData[3], parsedData[4], parsedData[5] are the actual replies
+    // Return a function that will be called with the form submission result
+    return async ({ result, update }) => {
+        try {
+            // Handle the form submission result
+            if (result.type === 'success' && result.data) {
+                formState.form.summary = result.data.summary || ''
+                formState.form.suggestedReplies = result.data.replies || []
+            } else if (result.type === 'failure') {
                 formState.form.summary =
-                    parsedData[1] || 'No summary generated.'
-
-                // Extract the actual replies using the indices from parsedData[2]
-                const replyIndices = Array.isArray(parsedData[2])
-                    ? parsedData[2]
-                    : []
-                const replies = []
-                for (const index of replyIndices) {
-                    if (
-                        parsedData[index] &&
-                        typeof parsedData[index] === 'string'
-                    ) {
-                        replies.push(parsedData[index])
-                    }
-                }
-                formState.form.suggestedReplies = replies
-            } catch (parseError) {
-                console.error('Error parsing action data:', parseError)
-                throw new Error('Failed to parse response from server')
+                    result.data?.error ||
+                    'Error generating summary. Please try again.'
+                formState.form.suggestedReplies = []
             }
-        } else {
-            throw new Error('Unexpected response format from server')
+
+            // Call update to handle the form submission result
+            await update()
+        } catch (error) {
+            console.error('Error processing form submission:', error)
+            formState.form.summary =
+                'An error occurred while processing the response.'
+            formState.form.suggestedReplies = []
+        } finally {
+            // Only set loading to false after a short delay to ensure UI updates are visible
+            setTimeout(() => {
+                formState.ui.loading = false
+            }, 100)
         }
-    } catch (error) {
-        formState.form.summary =
-            error instanceof Error
-                ? error.message
-                : 'Error generating summary. Please try again.'
-        formState.form.suggestedReplies = [] // Clear replies on error
-    } finally {
-        formState.ui.loading = false
     }
+}
+
+function onclick() {
+    formElement?.requestSubmit()
 }
 </script>
 
@@ -180,8 +144,18 @@ async function onclick() {
 		<i>Empathy. Upgraded.</i>
 	</header>
 
-	<div class="content-container">
-		<form onsubmit={handleSubmit}>
+        <div class="content-container">
+                <form
+                    action="?/generate"
+                    method="POST"
+                    use:enhance={enhanceSubmit}
+                    bind:this={formElement}
+                >
+                    <!-- Hidden fields to include in form submission -->
+                    <input type="hidden" name="messages" value={JSON.stringify(formState.form.messages)} />
+                    <input type="hidden" name="tone" value={formState.form.tone} />
+                    <input type="hidden" name="context" value={formState.form.additionalContext} />
+                    <input type="hidden" name="provider" value={formState.ai.provider} />
 
 			<ControlBar 
 				bind:lookBackHours={formState.form.lookBackHours}
