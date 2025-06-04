@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
 import jwt from 'jsonwebtoken'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { GET } from '../../../../../src/routes/api/auth/check/+server'
 
 // Mock the environment variables and logger
@@ -19,8 +19,7 @@ function createMockEvent(token?: string) {
     cookies: {
       get: vi.fn().mockImplementation((name: string) => name === 'auth_token' ? token : undefined)
     }
-    // Add other required properties with default values
-  } as const
+  }
 }
 
 describe('auth check endpoint', () => {
