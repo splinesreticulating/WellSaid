@@ -12,8 +12,9 @@
             ".next",
             ".turbo",
             "dist",
-            "build"
-            , ".svelte-kit"
+            "build",
+            "coverage",
+            ".svelte-kit"
         ]
     },
     "formatter": {
