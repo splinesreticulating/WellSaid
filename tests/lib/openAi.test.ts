@@ -75,7 +75,7 @@ Reply 3: "I'm looking forward to our hiking adventure! Do we need to get any new
     )
   })
 
-  it('should handle API errors gracefully', async () => {
+  it('should handle API errors gracefully with API key set', async () => {
     // Mock fetch to return an error
     global.fetch = vi.fn().mockResolvedValue({
       ok: false,
