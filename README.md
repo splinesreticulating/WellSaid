@@ -54,6 +54,15 @@ Create a `.env` file in the root directory by copying the `.env.example` file (`
 OPENAI_API_KEY=your_openai_api_key
 OPENAI_MODEL=gpt-4  # or any other OpenAI model
 OPENAI_TEMPERATURE=0.5
+OPENAI_TOP_P=
+OPENAI_FREQUENCY_PENALTY=
+OPENAI_PRESENCE_PENALTY=
+
+The following optional variables help shape the tone of the AI's replies:
+
+- `OPENAI_TOP_P` – lets the responses be a little more adventurous
+- `OPENAI_FREQUENCY_PENALTY` – keeps the suggestions from repeating themselves
+- `OPENAI_PRESENCE_PENALTY` – nudges the AI to bring up fresh ideas
 
 # Local Khoj Server
 # If you happen to have a local Khoj server, set these variables.
