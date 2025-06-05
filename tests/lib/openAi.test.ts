@@ -25,8 +25,10 @@ vi.mock('$lib/utils', async (importOriginal) => {
 })
 
 describe('getOpenaiReply', () => {
-  beforeEach(() => {
-    vi.resetAllMocks()
+  beforeEach(async () => {
+    vi.clearAllMocks()
+    vi.mocked(await import('$env/static/private')).OPENAI_API_KEY = 'test-api-key'
+    vi.mocked(await import('$lib/utils')).parseSummaryToHumanReadable = vi.fn((text: string) => text.split('Reply 1:')[0].trim())
     // Mock the fetch function
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
@@ -75,7 +77,7 @@ Reply 3: "I'm looking forward to our hiking adventure! Do we need to get any new
     )
   })
 
-  it('should handle API errors gracefully', async () => {
+  it('should handle API errors gracefully with API key set', async () => {
     // Mock fetch to return an error
     global.fetch = vi.fn().mockResolvedValue({
       ok: false,
@@ -107,26 +109,6 @@ Reply 3: "I'm looking forward to our hiking adventure! Do we need to get any new
     expect(result.replies).toEqual(['Please set up your OpenAI API key in the .env file.'])
   })
   
-  it('should handle API errors gracefully', async () => {
-    // Ensure the API key is set for this test
-    vi.mocked(await import('$env/static/private')).OPENAI_API_KEY = 'test-api-key'
-    
-    // Mock fetch to return an error
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: false,
-      status: 500,
-      text: vi.fn().mockResolvedValue('Internal Server Error')
-    })
-
-    const messages: Message[] = [
-      { sender: 'partner', text: 'How are you today?', timestamp: '2025-05-23T12:00:00Z' }
-    ]
-
-    const result = await getOpenaiReply(messages, 'gentle', '')
-
-    expect(result.summary).toBe('')
-    expect(result.replies).toEqual(['(Sorry, I had trouble generating a response.)'])
-  })
 
   it('should correctly clean replies by removing asterisks and quotes', async () => {
     // We need to mock the response to exactly match what the cleanReply function expects
