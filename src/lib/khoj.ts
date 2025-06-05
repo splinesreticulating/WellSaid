@@ -7,45 +7,45 @@ import { logger } from './logger'
 const khojApiUrl = KHOJ_API_URL || 'http://localhost:42110/api/chat'
 
 export const getKhojReply = async (
-  messages: Message[],
-  tone: string,
-  context: string,
+    messages: Message[],
+    tone: string,
+    context: string,
 ): Promise<{ summary: string; replies: string[]; messageCount: number }> => {
-  const recentText = formatMessages(messages)
-  const prompt = buildReplyPrompt(recentText, tone, context)
-  const body = {
-    q: prompt,
-    ...(KHOJ_AGENT ? { agent: KHOJ_AGENT } : {}),
-  }
-
-  logger.debug({ body }, 'Khoj body')
-
-  try {
-    const khojRes = await fetch(khojApiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    })
-
-    if (!khojRes.ok) {
-      logger.error({ status: khojRes.status }, 'Error from Khoj API')
-      throw new Error(`Khoj API returned ${khojRes.status}`)
+    const recentText = formatMessages(messages)
+    const prompt = buildReplyPrompt(recentText, tone, context)
+    const body = {
+        q: prompt,
+        ...(KHOJ_AGENT ? { agent: KHOJ_AGENT } : {}),
     }
 
-    const data = await khojRes.json()
-    const rawOutput = data.response || ''
-    const summary = parseSummaryToHumanReadable(rawOutput)
-    const replies = extractReplies(rawOutput)
+    logger.debug({ body }, 'Khoj body')
 
-    logger.debug({ summary, replies }, 'Khoj response')
+    try {
+        const khojRes = await fetch(khojApiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        })
 
-    return { summary, replies, messageCount: messages.length }
-  } catch (err: unknown) {
-    logger.error({ error: err }, 'Failed to get Khoj reply')
-    return {
-      summary: '',
-      replies: ['(Sorry, I had trouble generating a response.)'],
-      messageCount: messages.length,
+        if (!khojRes.ok) {
+            logger.error({ status: khojRes.status }, 'Error from Khoj API')
+            throw new Error(`Khoj API returned ${khojRes.status}`)
+        }
+
+        const data = await khojRes.json()
+        const rawOutput = data.response || ''
+        const summary = parseSummaryToHumanReadable(rawOutput)
+        const replies = extractReplies(rawOutput)
+
+        logger.debug({ summary, replies }, 'Khoj response')
+
+        return { summary, replies, messageCount: messages.length }
+    } catch (err: unknown) {
+        logger.error({ error: err }, 'Failed to get Khoj reply')
+        return {
+            summary: '',
+            replies: ['(Sorry, I had trouble generating a response.)'],
+            messageCount: messages.length,
+        }
     }
-  }
 }

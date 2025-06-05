@@ -1,5 +1,10 @@
 import {
-    OPENAI_API_KEY, OPENAI_FREQUENCY_PENALTY, OPENAI_MODEL, OPENAI_PRESENCE_PENALTY, OPENAI_TEMPERATURE, OPENAI_TOP_P,
+    OPENAI_API_KEY,
+    OPENAI_FREQUENCY_PENALTY,
+    OPENAI_MODEL,
+    OPENAI_PRESENCE_PENALTY,
+    OPENAI_TEMPERATURE,
+    OPENAI_TOP_P,
 } from '$env/static/private'
 import { logger } from './logger'
 import { PERMANENT_CONTEXT, buildReplyPrompt } from './prompts'
@@ -40,8 +45,7 @@ const summaryFunction = {
     },
 } as const
 
-if (!OPENAI_API_KEY)
-    logger.warn('⚠️ OPENAI_API_KEY is not set. OpenAI integration will not work.')
+if (!OPENAI_API_KEY) logger.warn('⚠️ OPENAI_API_KEY is not set. OpenAI integration will not work.')
 
 export const getOpenaiReply = async (
     messages: Message[],
@@ -110,10 +114,7 @@ export const getOpenaiReply = async (
             summary = parsed.summary || ''
             replies = parsed.replies || []
         } catch (parseErr) {
-            logger.error(
-                { parseErr, args },
-                'Failed to parse OpenAI function response',
-            )
+            logger.error({ parseErr, args }, 'Failed to parse OpenAI function response')
         }
 
         logger.debug({ summary, replies }, 'Parsed summary and replies from OpenAI')

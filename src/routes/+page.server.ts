@@ -31,7 +31,10 @@ export const actions: Actions = {
             let tone = DEFAULT_TONE
             let provider = DEFAULT_PROVIDER
 
-            if (contentType.includes('multipart/form-data') || contentType.includes('application/x-www-form-urlencoded')) {
+            if (
+                contentType.includes('multipart/form-data') ||
+                contentType.includes('application/x-www-form-urlencoded')
+            ) {
                 const formData = await request.formData()
                 messagesString = formData.get('messages') as string
                 tone = formData.get('tone') as string
@@ -48,7 +51,8 @@ export const actions: Actions = {
                 } catch (e) {
                     return fail(400, {
                         error: 'Unsupported Content-Type',
-                        details: 'Content-Type must be multipart/form-data, application/x-www-form-urlencoded, or application/json'
+                        details:
+                            'Content-Type must be multipart/form-data, application/x-www-form-urlencoded, or application/json',
                     })
                 }
             }
@@ -64,11 +68,15 @@ export const actions: Actions = {
                 messages = JSON.parse(messagesString) as Message[]
             } catch (err) {
                 logger.error({ err, messagesString }, 'Failed to parse messages')
-                return fail(400, { error: 'Invalid messages format in FormData: Messages could not be parsed to an array.' })
+                return fail(400, {
+                    error: 'Invalid messages format in FormData: Messages could not be parsed to an array.',
+                })
             }
 
             if (!Array.isArray(messages)) {
-                return fail(400, { error: 'Invalid messages format: Expected an array of messages.' })
+                return fail(400, {
+                    error: 'Invalid messages format: Expected an array of messages.',
+                })
             }
 
             const result = await getReplies(messages, tone, context || '')
@@ -81,8 +89,8 @@ export const actions: Actions = {
 
             return fail(500, {
                 error: 'Failed to generate suggestions',
-                details: err instanceof Error ? err.message : String(err)
+                details: err instanceof Error ? err.message : String(err),
             })
         }
-    }
+    },
 }

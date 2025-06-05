@@ -17,9 +17,9 @@ const AUTH_CHANGE_EVENT = 'authchange'
 // Function to dispatch auth change event
 export function dispatchAuthChange(authenticated: boolean) {
     if (!browser) return
-    
+
     const event = new CustomEvent(AUTH_CHANGE_EVENT, {
-        detail: { authenticated }
+        detail: { authenticated },
     })
     window.dispatchEvent(event)
 }
@@ -48,7 +48,7 @@ async function performAuthCheck() {
 function handleAuthChange(event: AuthChangeEvent) {
     authenticated = event.detail.authenticated
     initialCheckLoading = false
-    
+
     // If not authenticated and not on login page, redirect to login
     if (!authenticated && page.url.pathname !== '/login') {
         goto('/login')
@@ -57,19 +57,19 @@ function handleAuthChange(event: AuthChangeEvent) {
 
 onMount(() => {
     if (!browser) return
-    
+
     // Initial auth check
     const checkAuth = async () => {
         initialCheckLoading = true
         await performAuthCheck()
         initialCheckLoading = false
     }
-    
+
     checkAuth()
-    
+
     // Listen for auth change events
     window.addEventListener(AUTH_CHANGE_EVENT, handleAuthChange as EventListener)
-    
+
     // Cleanup
     return () => {
         window.removeEventListener(AUTH_CHANGE_EVENT, handleAuthChange as EventListener)

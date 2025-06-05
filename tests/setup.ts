@@ -14,5 +14,5 @@ process.env.OPENAI_PRESENCE_PENALTY = '0.2'
 
 // Reset mocks before each test
 beforeEach(() => {
-  vi.resetAllMocks();
-});
+    vi.resetAllMocks()
+})

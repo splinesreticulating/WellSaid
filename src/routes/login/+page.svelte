@@ -29,7 +29,7 @@ async function checkAuthStatus() {
         if (response.ok) {
             // Already authenticated, dispatch event and redirect to home
             const event = new CustomEvent('authchange', {
-                detail: { authenticated: true }
+                detail: { authenticated: true },
             })
             window.dispatchEvent(event)
             goto('/')
@@ -61,7 +61,7 @@ async function handleSubmit(event: Event) {
         if (response.ok) {
             // Authentication successful, dispatch event and redirect
             const event = new CustomEvent('authchange', {
-                detail: { authenticated: true }
+                detail: { authenticated: true },
             })
             window.dispatchEvent(event)
             goto('/')

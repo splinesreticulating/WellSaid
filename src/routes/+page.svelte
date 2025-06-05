@@ -40,8 +40,7 @@ const showLoadingIndicators = $derived(formState.ui.loading)
 const summaryContent = $derived(
     formState.ui.loading
         ? 'Generating summary and replies...'
-        : formState.form.summary ||
-              '<em>click "go" to generate a conversation summary</em>',
+        : formState.form.summary || '<em>click "go" to generate a conversation summary</em>',
 )
 
 // Update messages when data changes
@@ -81,10 +80,7 @@ $effect(() => {
 
 $effect(() => {
     if (formState.form.additionalContext) {
-        localStorage.setItem(
-            LOCAL_STORAGE_CONTEXT_KEY,
-            formState.form.additionalContext,
-        )
+        localStorage.setItem(LOCAL_STORAGE_CONTEXT_KEY, formState.form.additionalContext)
     } else {
         localStorage.removeItem(LOCAL_STORAGE_CONTEXT_KEY)
     }
@@ -134,19 +130,13 @@ async function onclick() {
                 // parsedData[1] is the summary string
                 // parsedData[2] is [3,4,5] (indices of the actual replies in the array)
                 // parsedData[3], parsedData[4], parsedData[5] are the actual replies
-                formState.form.summary =
-                    parsedData[1] || 'No summary generated.'
+                formState.form.summary = parsedData[1] || 'No summary generated.'
 
                 // Extract the actual replies using the indices from parsedData[2]
-                const replyIndices = Array.isArray(parsedData[2])
-                    ? parsedData[2]
-                    : []
+                const replyIndices = Array.isArray(parsedData[2]) ? parsedData[2] : []
                 const replies = []
                 for (const index of replyIndices) {
-                    if (
-                        parsedData[index] &&
-                        typeof parsedData[index] === 'string'
-                    ) {
+                    if (parsedData[index] && typeof parsedData[index] === 'string') {
                         replies.push(parsedData[index])
                     }
                 }
@@ -160,9 +150,7 @@ async function onclick() {
         }
     } catch (error) {
         formState.form.summary =
-            error instanceof Error
-                ? error.message
-                : 'Error generating summary. Please try again.'
+            error instanceof Error ? error.message : 'Error generating summary. Please try again.'
         formState.form.suggestedReplies = [] // Clear replies on error
     } finally {
         formState.ui.loading = false

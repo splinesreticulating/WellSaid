@@ -1,4 +1,4 @@
-import type { Message } from "./types"
+import type { Message } from './types'
 
 export const parseSummaryToHumanReadable = (rawOutput: string): string => {
     const summaryRegex = /Summary:[ \t]*(\n+)?([\s\S]*?)(?=\s*Suggested replies:|$)/
@@ -12,16 +12,12 @@ export const parseSummaryToHumanReadable = (rawOutput: string): string => {
     return match[2].trim().replace(/\s*###\s*$/, '')
 }
 
-export const hasPartnerMessages = (formattedRows: Message[]) => formattedRows.some(msg => msg.sender !== 'me')
+export const hasPartnerMessages = (formattedRows: Message[]) =>
+    formattedRows.some((msg) => msg.sender !== 'me')
 
 export const formatMessages = (messages: Message[]): string[] => {
     return messages.map((m) => {
-        const tag =
-            m.sender === 'me'
-                ? 'Me'
-                : m.sender === 'partner'
-                    ? 'Partner'
-                    : m.sender
+        const tag = m.sender === 'me' ? 'Me' : m.sender === 'partner' ? 'Partner' : m.sender
         return `${tag}: ${m.text}`
     })
 }
@@ -29,8 +25,8 @@ export const formatMessages = (messages: Message[]): string[] => {
 const cleanReplyText = (text: string): string => {
     return text
         .replace(/^\*+\s*/, '') // Remove leading asterisks and spaces
-        .replace(/^"/, '')      // Remove leading quote
-        .replace(/"$/, '')      // Remove trailing quote
+        .replace(/^"/, '') // Remove leading quote
+        .replace(/"$/, '') // Remove trailing quote
         .trim()
 }
 

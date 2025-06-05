@@ -12,7 +12,7 @@ const PUBLIC_PATHS = new Set([
     '/api/auth/login',
     '/favicon.ico',
     '/robots.txt',
-    '/health'
+    '/health',
 ])
 
 // Validate environment variables
@@ -29,26 +29,30 @@ const securityHeaders = {
     'X-Frame-Options': 'DENY',
     'X-XSS-Protection': '1; mode=block',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
-    'Permissions-Policy': 'geolocation=(), microphone=(), camera=()'
+    'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
 }
 
 const logSecurityEvent = (event: string, details: Record<string, unknown> = {}) => {
-    logger.debug(JSON.stringify({
-        timestamp: new Date().toISOString(),
-        type: 'security',
-        event,
-        ...details
-    }))
+    logger.debug(
+        JSON.stringify({
+            timestamp: new Date().toISOString(),
+            type: 'security',
+            event,
+            ...details,
+        }),
+    )
 }
 
 const authMiddleware: Handle = async ({ event, resolve }) => {
     const { pathname } = event.url
-    let clientIP: string;
+    let clientIP: string
     try {
-        clientIP = event.getClientAddress();
+        clientIP = event.getClientAddress()
     } catch (e: unknown) {
-        logger.warn(`[AUTH] Could not determine clientAddress: ${(e instanceof Error ? e.message : String(e))}. Rate limiting may be less accurate for this request if multiple clients fail IP detection.`);
-        clientIP = 'unknown';
+        logger.warn(
+            `[AUTH] Could not determine clientAddress: ${e instanceof Error ? e.message : String(e)}. Rate limiting may be less accurate for this request if multiple clients fail IP detection.`,
+        )
+        clientIP = 'unknown'
     }
     const cookies = event.request.headers.get('cookie') || ''
 
@@ -67,45 +71,54 @@ const authMiddleware: Handle = async ({ event, resolve }) => {
     }
 
     // Check if user is authenticated via JWT
-    const token = event.cookies.get('auth_token');
-    let isAuthenticated = false;
+    const token = event.cookies.get('auth_token')
+    let isAuthenticated = false
 
     if (!JWT_SECRET) {
-        logger.error('[AUTH] JWT_SECRET is not defined. Cannot verify JWTs in middleware. Denying access.');
+        logger.error(
+            '[AUTH] JWT_SECRET is not defined. Cannot verify JWTs in middleware. Denying access.',
+        )
         // This is a server configuration error, but we still redirect to login to prevent access.
     } else if (token) {
         try {
-            jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
-            isAuthenticated = true;
-            logger.debug('[AUTH] JWT verification successful in middleware for path:', pathname);
+            jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] })
+            isAuthenticated = true
+            logger.debug('[AUTH] JWT verification successful in middleware for path:', pathname)
         } catch (error: unknown) {
-            let reason = 'Invalid token';
-            let errorName = 'UnknownError';
+            let reason = 'Invalid token'
+            let errorName = 'UnknownError'
             if (error instanceof Error) {
-                errorName = error.name;
+                errorName = error.name
                 if (error.name === 'TokenExpiredError') {
-                    reason = 'Token expired';
+                    reason = 'Token expired'
                 } else if (error.name === 'JsonWebTokenError') {
-                    reason = 'Token malformed or signature invalid';
+                    reason = 'Token malformed or signature invalid'
                 }
             }
-            logger.warn(`[AUTH] JWT verification failed in middleware: ${errorName} - ${reason} for path: ${pathname}`);
-            logSecurityEvent('jwt_verification_failed_middleware', { ip: clientIP, path: pathname, reason, errorName });
+            logger.warn(
+                `[AUTH] JWT verification failed in middleware: ${errorName} - ${reason} for path: ${pathname}`,
+            )
+            logSecurityEvent('jwt_verification_failed_middleware', {
+                ip: clientIP,
+                path: pathname,
+                reason,
+                errorName,
+            })
             // Clear the invalid/expired cookie to prevent redirect loops or issues
-            event.cookies.delete('auth_token', { path: '/' });
+            event.cookies.delete('auth_token', { path: '/' })
         }
     } else {
-        logger.debug('[AUTH] No auth_token cookie found in middleware for path:', pathname);
+        logger.debug('[AUTH] No auth_token cookie found in middleware for path:', pathname)
     }
 
     if (isAuthenticated) {
         // User is authenticated - add security headers to response
-        const response = await resolve(event);
+        const response = await resolve(event)
         for (const [key, value] of Object.entries(securityHeaders)) {
-            response.headers.set(key, value);
+            response.headers.set(key, value)
         }
-        logger.debug('[AUTH] Authenticated via JWT, returning response for path:', pathname);
-        return response;
+        logger.debug('[AUTH] Authenticated via JWT, returning response for path:', pathname)
+        return response
     }
 
     // Check rate limiting

@@ -7,21 +7,13 @@
     },
     "files": {
         "ignoreUnknown": false,
-        "ignore": [
-            "node_modules",
-            ".next",
-            ".turbo",
-            "dist",
-            "build",
-            "coverage",
-            ".svelte-kit"
-        ]
+        "ignore": ["node_modules", ".next", ".turbo", "dist", "build", "coverage", ".svelte-kit"]
     },
     "formatter": {
         "enabled": true,
         "indentStyle": "space",
         "indentWidth": 4,
-        "lineWidth": 80
+        "lineWidth": 100
     },
     "organizeImports": {
         "enabled": true
@@ -46,7 +38,7 @@
             "javascript": {
                 "formatter": {
                     "semicolons": "asNeeded",
-                    "lineWidth": 80
+                    "lineWidth": 100
                 }
             }
         }
