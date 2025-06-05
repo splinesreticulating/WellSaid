@@ -2,11 +2,31 @@ import { OPENAI_API_KEY, OPENAI_MODEL, OPENAI_TEMPERATURE } from '$env/static/pr
 import { logger } from './logger'
 import { PERMANENT_CONTEXT, buildReplyPrompt } from './prompts'
 import type { Message } from './types'
-import { extractReplies, formatMessages, parseSummaryToHumanReadable } from './utils'
+import { formatMessages } from './utils'
 
 const openaiModel = OPENAI_MODEL || 'gpt-4'
 const openaiTemperature = Number.parseFloat(OPENAI_TEMPERATURE || '0.5')
 const openaiApiUrl = 'https://api.openai.com/v1/chat/completions'
+
+const summaryFunction = {
+    type: 'function',
+    function: {
+        name: 'draft_replies',
+        description: 'Generate a short summary and three suggested replies',
+        parameters: {
+            type: 'object',
+            properties: {
+                summary: { type: 'string', description: 'Brief summary of the conversation' },
+                replies: {
+                    type: 'array',
+                    items: { type: 'string' },
+                    description: 'Suggested replies for the user',
+                },
+            },
+            required: ['summary', 'replies'],
+        },
+    },
+} as const
 
 if (!OPENAI_API_KEY)
     logger.warn('⚠️ OPENAI_API_KEY is not set. OpenAI integration will not work.')
@@ -41,6 +61,8 @@ export const getOpenaiReply = async (
                     { role: 'user', content: prompt }
                 ],
                 temperature: openaiTemperature,
+                tools: [summaryFunction],
+                tool_choice: { type: 'function', function: { name: summaryFunction.function.name } },
             }),
         })
 
@@ -53,11 +75,19 @@ export const getOpenaiReply = async (
         const data = await response.json()
         logger.debug({ data }, 'OpenAI API raw data')
 
-        const rawOutput = data.choices?.[0]?.message?.content || ''
-        logger.debug({ rawOutput }, 'OpenAI API raw output content')
+        const args = data.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments || '{}'
+        logger.debug({ args }, 'OpenAI API function arguments')
 
-        const summary = parseSummaryToHumanReadable(rawOutput)
-        const replies = extractReplies(rawOutput)
+        let summary = ''
+        let replies: string[] = []
+        try {
+            const parsed = JSON.parse(args) as { summary?: string; replies?: string[] }
+            summary = parsed.summary || ''
+            replies = parsed.replies || []
+        } catch (parseErr) {
+            logger.error({ parseErr, args }, 'Failed to parse OpenAI function response')
+        }
+
         logger.debug({ summary, replies }, 'Parsed summary and replies from OpenAI')
 
         return { summary, replies }
