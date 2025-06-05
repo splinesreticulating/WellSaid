@@ -23,6 +23,29 @@ WellSaid is an empathy-focused communication tool that helps you craft better re
 - iMessages database access -- designed to run from a Mac logged into your iCloud
 - OpenAI API key (if using OpenAI) or a running local Khoj instance (if using Khoj)
 
+### Obtaining an OpenAI API Key
+
+To use WellSaid with OpenAI's models, you'll need an API key. Here's how to get one:
+
+1. **Sign up for an account**
+   - Go to [OpenAI's website](https://platform.openai.com/signup)
+   - Create an account or sign in if you already have one
+
+2. **Access the API key section**
+   - After logging in, click on your profile icon in the top-right corner
+   - Select "View API keys" from the dropdown menu
+
+3. **Create a new secret key**
+   - Click on "Create new secret key"
+   - Give your key a name (e.g., "WellSaid Development")
+   - Click "Create secret key"
+   - **Important**: Copy the key immediately - you won't be able to see it again!
+
+4. **Add the key to your environment**
+   - Paste the key as the value for `OPENAI_API_KEY` in your `.env` file
+
+**Note**: OpenAI API usage is not free. You'll be charged based on the number of tokens processed. Check [OpenAI's pricing page](https://openai.com/pricing) for current rates.
+
 ### Installation
 
 1. Clone the repository
