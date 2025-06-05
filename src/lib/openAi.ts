@@ -1,10 +1,5 @@
 import {
-    OPENAI_API_KEY,
-    OPENAI_MODEL,
-    OPENAI_TEMPERATURE,
-    OPENAI_TOP_P,
-    OPENAI_FREQUENCY_PENALTY,
-    OPENAI_PRESENCE_PENALTY,
+    OPENAI_API_KEY, OPENAI_FREQUENCY_PENALTY, OPENAI_MODEL, OPENAI_PRESENCE_PENALTY, OPENAI_TEMPERATURE, OPENAI_TOP_P,
 } from '$env/static/private'
 import { logger } from './logger'
 import { PERMANENT_CONTEXT, buildReplyPrompt } from './prompts'
@@ -46,9 +41,7 @@ const summaryFunction = {
 } as const
 
 if (!OPENAI_API_KEY)
-    logger.warn(
-        '⚠️ OPENAI_API_KEY is not set. OpenAI integration will not work.',
-    )
+    logger.warn('⚠️ OPENAI_API_KEY is not set. OpenAI integration will not work.')
 
 export const getOpenaiReply = async (
     messages: Message[],
@@ -81,12 +74,8 @@ export const getOpenaiReply = async (
                 ],
                 temperature: openaiTemperature,
                 ...(openaiTopP ? { top_p: openaiTopP } : {}),
-                ...(openaiFrequencyPenalty
-                    ? { frequency_penalty: openaiFrequencyPenalty }
-                    : {}),
-                ...(openaiPresencePenalty
-                    ? { presence_penalty: openaiPresencePenalty }
-                    : {}),
+                ...(openaiFrequencyPenalty ? { frequency_penalty: openaiFrequencyPenalty } : {}),
+                ...(openaiPresencePenalty ? { presence_penalty: openaiPresencePenalty } : {}),
                 tools: [summaryFunction],
                 tool_choice: {
                     type: 'function',
@@ -107,9 +96,7 @@ export const getOpenaiReply = async (
         const data = await response.json()
         logger.debug({ data }, 'OpenAI API raw data')
 
-        const args =
-            data.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments ||
-            '{}'
+        const args = data.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments || '{}'
         logger.debug({ args }, 'OpenAI API function arguments')
 
         let summary = ''
@@ -119,6 +106,7 @@ export const getOpenaiReply = async (
                 summary?: string
                 replies?: string[]
             }
+
             summary = parsed.summary || ''
             replies = parsed.replies || []
         } catch (parseErr) {
@@ -128,17 +116,11 @@ export const getOpenaiReply = async (
             )
         }
 
-        logger.debug(
-            { summary, replies },
-            'Parsed summary and replies from OpenAI',
-        )
+        logger.debug({ summary, replies }, 'Parsed summary and replies from OpenAI')
 
         return { summary, replies }
     } catch (err) {
-        logger.error(
-            { err },
-            'Error in getOpenaiReply (fetching or parsing OpenAI response)',
-        )
+        logger.error({ err }, 'Error in getOpenaiReply (fetching or parsing OpenAI response)')
         return {
             summary: '',
             replies: ['(Sorry, I had trouble generating a response.)'],
