@@ -17,3 +17,8 @@ export interface PageData {
 }
 
 export type ToneType = 'gentle' | 'funny' | 'reassuring' | 'concise'
+
+export interface ChatMessage {
+    role: 'user' | 'assistant'
+    content: string
+}

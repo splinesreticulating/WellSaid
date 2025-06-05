@@ -66,6 +66,9 @@ describe('formatMessages', () => {
 
         const formatted = formatMessages(messages)
 
-        expect(formatted).toEqual(['Me: Hello', 'Partner: Hi there'])
+        expect(formatted).toEqual([
+            { role: 'user', content: 'Hello' },
+            { role: 'assistant', content: 'Hi there' },
+        ])
     })
 })

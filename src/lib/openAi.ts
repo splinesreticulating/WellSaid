@@ -59,7 +59,7 @@ export const getOpenaiReply = async (
         }
 
     const conversation = formatMessages(messages)
-    const prompt = buildReplyPrompt(conversation, tone, context)
+    const prompt = buildReplyPrompt(tone, context)
 
     logger.debug({ prompt }, 'Sending prompt to OpenAI')
 
@@ -74,6 +74,7 @@ export const getOpenaiReply = async (
                 model: openaiModel,
                 messages: [
                     { role: 'system', content: PERMANENT_CONTEXT },
+                    ...conversation,
                     { role: 'user', content: prompt },
                 ],
                 temperature: openaiTemperature,
