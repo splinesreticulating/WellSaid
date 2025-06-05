@@ -1,8 +1,8 @@
+import { KHOJ_AGENT, KHOJ_API_URL } from '$env/static/private'
 import { buildReplyPrompt } from '$lib/prompts'
 import type { Message } from '$lib/types'
-import { extractReplies, formatMessagesToRecentText, parseSummaryToHumanReadable } from '$lib/utils'
+import { extractReplies, formatMessages, parseSummaryToHumanReadable } from '$lib/utils'
 import { logger } from './logger'
-import { KHOJ_API_URL, KHOJ_AGENT } from '$env/static/private'
 
 const khojApiUrl = KHOJ_API_URL || 'http://localhost:42110/api/chat'
 
@@ -11,18 +11,20 @@ export const getKhojReply = async (
   tone: string,
   context: string,
 ): Promise<{ summary: string; replies: string[]; messageCount: number }> => {
-  const recentText = formatMessagesToRecentText(messages)
-
+  const recentText = formatMessages(messages)
   const prompt = buildReplyPrompt(recentText, tone, context)
+  const body = {
+    q: prompt,
+    ...(KHOJ_AGENT ? { agent: KHOJ_AGENT } : {}),
+  }
+
+  logger.debug({ body }, 'Khoj body')
 
   try {
     const khojRes = await fetch(khojApiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        q: prompt,
-        ...(KHOJ_AGENT ? { agent: KHOJ_AGENT } : {}),
-      }),
+      body: JSON.stringify(body),
     })
 
     if (!khojRes.ok) {
@@ -34,6 +36,8 @@ export const getKhojReply = async (
     const rawOutput = data.response || ''
     const summary = parseSummaryToHumanReadable(rawOutput)
     const replies = extractReplies(rawOutput)
+
+    logger.debug({ summary, replies }, 'Khoj response')
 
     return { summary, replies, messageCount: messages.length }
   } catch (err: unknown) {

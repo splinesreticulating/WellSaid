@@ -1,6 +1,6 @@
 import { getOpenaiReply } from '$lib/openAi'
 import type { Message } from '$lib/types'
-import { beforeEach, describe, expect, it, vi, beforeAll } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock the environment variables
 vi.mock('$env/static/private', async (importOriginal) => {
@@ -19,7 +19,7 @@ vi.mock('$env/static/private', async (importOriginal) => {
 vi.mock('$lib/utils', async (importOriginal) => {
   const actual = await importOriginal() as typeof import('$lib/utils')
   return {
-    ...actual, // Use actual implementations for functions like formatMessagesToRecentText, extractReplies
+    ...actual, // Use actual implementations for functions like formatMessages, extractReplies
     parseSummaryToHumanReadable: vi.fn((text: string) => text.split('Reply 1:')[0].trim()), // Keep specific mock for this one
   }
 })
@@ -28,7 +28,7 @@ describe('getOpenaiReply', () => {
   beforeEach(async () => {
     vi.clearAllMocks()
     vi.mocked(await import('$env/static/private')).OPENAI_API_KEY = 'test-api-key'
-    vi.mocked(await import('$lib/utils')).parseSummaryToHumanReadable = vi.fn((text: string) => text.split('Reply 1:')[0].trim())
+    vi.mocked(await import('$lib/utils')).parseSummaryToHumanReadable.mockImplementation((text: string) => text.split('Reply 1:')[0].trim())
     // Mock the fetch function
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
@@ -108,7 +108,7 @@ Reply 3: "I'm looking forward to our hiking adventure! Do we need to get any new
     expect(result.summary).toBe('OpenAI API key is not configured.')
     expect(result.replies).toEqual(['Please set up your OpenAI API key in the .env file.'])
   })
-  
+
 
   it('should correctly clean replies by removing asterisks and quotes', async () => {
     // We need to mock the response to exactly match what the cleanReply function expects

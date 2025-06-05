@@ -1,8 +1,8 @@
+import { OPENAI_API_KEY, OPENAI_MODEL, OPENAI_TEMPERATURE } from '$env/static/private'
 import { logger } from './logger'
 import { PERMANENT_CONTEXT, buildReplyPrompt } from './prompts'
 import type { Message } from './types'
-import { extractReplies, formatMessagesToRecentText, parseSummaryToHumanReadable } from './utils'
-import { OPENAI_API_KEY, OPENAI_MODEL, OPENAI_TEMPERATURE } from '$env/static/private'
+import { extractReplies, formatMessages, parseSummaryToHumanReadable } from './utils'
 
 const openaiModel = OPENAI_MODEL || 'gpt-4'
 const openaiTemperature = Number.parseFloat(OPENAI_TEMPERATURE || '0.5')
@@ -22,8 +22,8 @@ export const getOpenaiReply = async (
             replies: ['Please set up your OpenAI API key in the .env file.'],
         }
 
-    const recentText = formatMessagesToRecentText(messages)
-    const prompt = buildReplyPrompt(recentText, tone, context)
+    const conversation = formatMessages(messages)
+    const prompt = buildReplyPrompt(conversation, tone, context)
 
     logger.debug({ prompt }, 'Sending prompt to OpenAI')
 

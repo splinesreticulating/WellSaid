@@ -1,4 +1,4 @@
-import { parseSummaryToHumanReadable, extractReplies, formatMessagesToRecentText } from '$lib/utils'
+import { extractReplies, formatMessages, parseSummaryToHumanReadable } from '$lib/utils'
 import { describe, expect, it } from 'vitest'
 
 describe('parseSummaryToHumanReadable', () => {
@@ -55,14 +55,14 @@ Reply 3: *Third reply*`
   })
 })
 
-describe('formatMessagesToRecentText', () => {
+describe('formatMessages', () => {
   it('formats messages with the correct tags', () => {
     const messages = [
       { sender: 'me', text: 'Hello', timestamp: '1' },
       { sender: 'partner', text: 'Hi there', timestamp: '2' }
     ]
 
-    const formatted = formatMessagesToRecentText(messages)
+    const formatted = formatMessages(messages)
 
     expect(formatted).toEqual(['Me: Hello', 'Partner: Hi there'])
   })
