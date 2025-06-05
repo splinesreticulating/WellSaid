@@ -13,7 +13,7 @@ export const buildReplyPrompt = (messages: string[], tone: string, context: stri
         Suggest 3 replies that I might send.
         Tone: ${tone}
         ${context ? `Additional context: ${context}` : ""}
-        Please respond in my voice using this format: 
+        Please respond using this format: 
         Summary: <summary>
         Suggested replies:
         Reply 1: <reply>
