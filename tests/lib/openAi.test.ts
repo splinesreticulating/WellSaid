@@ -21,6 +21,7 @@ vi.mock('$env/static/private', async (importOriginal) => {
         OPENAI_FREQUENCY_PENALTY: '0.1',
         OPENAI_PRESENCE_PENALTY: '0.2',
         LOG_LEVEL: 'info',
+        CUSTOM_CONTEXT: 'Act as my therapist suggesting replies to my partner',
     }
 })
 

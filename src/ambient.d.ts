@@ -10,5 +10,6 @@ declare namespace App {
         OPENAI_TOP_P?: string
         OPENAI_FREQUENCY_PENALTY?: string
         OPENAI_PRESENCE_PENALTY?: string
+        CUSTOM_CONTEXT?: string
     }
 }
