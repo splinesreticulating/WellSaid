@@ -1,5 +1,6 @@
 import { BASIC_AUTH_PASSWORD, BASIC_AUTH_USERNAME, JWT_SECRET } from '$env/static/private'
 import { logger } from '$lib/logger'
+import { safeCompare } from '$lib/utils'
 import { type RequestHandler, json } from '@sveltejs/kit'
 import jwt from 'jsonwebtoken'
 
@@ -23,8 +24,11 @@ export const POST: RequestHandler = async ({ request, cookies, url }) => {
 
         const { username, password } = await request.json()
 
-        // Validate credentials against environment variables
-        if (username === BASIC_AUTH_USERNAME && password === BASIC_AUTH_PASSWORD) {
+        // Validate credentials against environment variables using constant-time comparison
+        if (
+            safeCompare(username, BASIC_AUTH_USERNAME) &&
+            safeCompare(password, BASIC_AUTH_PASSWORD)
+        ) {
             // Create authentication cookie (session-based authentication)
             const cookieOptions = {
                 path: '/' as const,

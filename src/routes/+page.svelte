@@ -40,7 +40,7 @@ const showLoadingIndicators = $derived(formState.ui.loading)
 const summaryContent = $derived(
     formState.ui.loading
         ? 'Generating summary and replies...'
-        : formState.form.summary || '<em>click "go" to generate a conversation summary</em>',
+        : formState.form.summary || 'click "go" to generate a conversation summary',
 )
 
 // Update messages when data changes
@@ -185,11 +185,11 @@ async function onclick() {
 			<!-- Conversation summary -->
 			<section class="conversation">
 				<div class="summary">
-					{#if showLoadingIndicators}
-						<div class="loading-indicator">{@html summaryContent}</div>
-					{:else}
-						{@html summaryContent}
-					{/if}
+                                        {#if showLoadingIndicators}
+                                                <div class="loading-indicator">{summaryContent}</div>
+                                        {:else}
+                                                {summaryContent}
+                                        {/if}
 				</div>
 			</section>
 
