@@ -1,4 +1,4 @@
-import type { Message } from './types'
+import type { ChatMessage, Message } from './types'
 
 export const parseSummaryToHumanReadable = (rawOutput: string): string => {
     const summaryRegex = /Summary:[ \t]*(\n+)?([\s\S]*?)(?=\s*Suggested replies:|$)/
@@ -15,11 +15,11 @@ export const parseSummaryToHumanReadable = (rawOutput: string): string => {
 export const hasPartnerMessages = (formattedRows: Message[]) =>
     formattedRows.some((msg) => msg.sender !== 'me')
 
-export const formatMessages = (messages: Message[]): string[] => {
-    return messages.map((m) => {
-        const tag = m.sender === 'me' ? 'Me' : m.sender === 'partner' ? 'Partner' : m.sender
-        return `${tag}: ${m.text}`
-    })
+export const formatAsUserAndAssistant = (messages: Message[]): ChatMessage[] => {
+    return messages.map((m) => ({
+        role: m.sender === 'me' ? 'user' : 'assistant',
+        content: m.text,
+    }))
 }
 
 const cleanReplyText = (text: string): string => {

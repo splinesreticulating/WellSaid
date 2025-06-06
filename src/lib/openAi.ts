@@ -9,7 +9,7 @@ import {
 import { logger } from './logger'
 import { PERMANENT_CONTEXT, buildReplyPrompt } from './prompts'
 import type { Message } from './types'
-import { formatMessages } from './utils'
+import { formatAsUserAndAssistant } from './utils'
 
 const openaiModel = OPENAI_MODEL || 'gpt-4'
 const openaiTemperature = Number.parseFloat(OPENAI_TEMPERATURE || '0.5')
@@ -58,8 +58,8 @@ export const getOpenaiReply = async (
             replies: ['Please set up your OpenAI API key in the .env file.'],
         }
 
-    const conversation = formatMessages(messages)
-    const prompt = buildReplyPrompt(conversation, tone, context)
+    const conversation = formatAsUserAndAssistant(messages)
+    const prompt = buildReplyPrompt(tone, context)
 
     logger.debug({ prompt }, 'Sending prompt to OpenAI')
 
@@ -74,6 +74,7 @@ export const getOpenaiReply = async (
                 model: openaiModel,
                 messages: [
                     { role: 'system', content: PERMANENT_CONTEXT },
+                    ...conversation,
                     { role: 'user', content: prompt },
                 ],
                 temperature: openaiTemperature,
