@@ -22,3 +22,13 @@ export interface ChatMessage {
     role: 'user' | 'assistant'
     content: string
 }
+
+export interface OpenAIConfig {
+    model: string
+    temperature: number
+    topP?: number
+    frequencyPenalty?: number
+    presencePenalty?: number
+    apiUrl: string
+    apiKey?: string
+}

@@ -7,88 +7,91 @@ import {
     OPENAI_TOP_P,
 } from '$env/static/private'
 import { logger } from './logger'
-import { fetchRelevantHistory } from './history'
 import { PERMANENT_CONTEXT, buildReplyPrompt } from './prompts'
-import type { Message } from './types'
+import type { Message, OpenAIConfig } from './types'
 import { formatAsUserAndAssistant } from './utils'
+import { fetchRelevantHistory } from './history'
 
-const openaiModel = OPENAI_MODEL || 'gpt-4'
-const openaiTemperature = Number.parseFloat(OPENAI_TEMPERATURE || '0.5')
-const openaiTopP = OPENAI_TOP_P ? Number.parseFloat(OPENAI_TOP_P) : undefined
-const openaiFrequencyPenalty = OPENAI_FREQUENCY_PENALTY
-    ? Number.parseFloat(OPENAI_FREQUENCY_PENALTY)
-    : undefined
-const openaiPresencePenalty = OPENAI_PRESENCE_PENALTY
-    ? Number.parseFloat(OPENAI_PRESENCE_PENALTY)
-    : undefined
-const openaiApiUrl = 'https://api.openai.com/v1/chat/completions'
+const API_URL = 'https://api.openai.com/v1/chat/completions'
+const DEFAULT_MODEL = 'gpt-4'
+const DEFAULT_TEMPERATURE = 0.5
 
-const summaryFunction = {
-    type: 'function',
-    function: {
-        name: 'draft_replies',
-        description: 'Generate a short summary and three suggested replies',
-        parameters: {
-            type: 'object',
-            properties: {
-                summary: {
-                    type: 'string',
-                    description: 'Brief summary of the conversation',
-                },
-                replies: {
-                    type: 'array',
-                    items: { type: 'string' },
-                    description: 'Suggested replies for the user',
-                },
-            },
-            required: ['summary', 'replies'],
-        },
-    },
-} as const
+const getConfig = (): OpenAIConfig => ({
+    model: OPENAI_MODEL || DEFAULT_MODEL,
+    temperature: Number(OPENAI_TEMPERATURE || DEFAULT_TEMPERATURE),
+    topP: OPENAI_TOP_P ? Number(OPENAI_TOP_P) : undefined,
+    frequencyPenalty: OPENAI_FREQUENCY_PENALTY ? Number(OPENAI_FREQUENCY_PENALTY) : undefined,
+    presencePenalty: OPENAI_PRESENCE_PENALTY ? Number(OPENAI_PRESENCE_PENALTY) : undefined,
+    apiUrl: API_URL,
+    apiKey: OPENAI_API_KEY,
+})
 
-if (!OPENAI_API_KEY) logger.warn('⚠️ OPENAI_API_KEY is not set. OpenAI integration will not work.')
+if (!OPENAI_API_KEY) {
+    logger.warn('⚠️ OPENAI_API_KEY is not set. OpenAI integration will not work.')
+}
 
 export const getOpenaiReply = async (
     messages: Message[],
     tone: string,
     context: string,
 ): Promise<{ summary: string; replies: string[] }> => {
-    if (!OPENAI_API_KEY)
+    const config = getConfig()
+    if (!config.apiKey) {
         return {
             summary: 'OpenAI API key is not configured.',
             replies: ['Please set up your OpenAI API key in the .env file.'],
         }
+    }
 
     const conversation = formatAsUserAndAssistant(messages)
     const historyContext = await fetchRelevantHistory(messages)
-    const mergedContext = [historyContext, context].filter(Boolean).join('\n')
-    const prompt = buildReplyPrompt(tone, mergedContext)
+    const prompt = buildReplyPrompt(tone, [historyContext, context].filter(Boolean).join('\n'))
 
     logger.debug({ prompt }, 'Sending prompt to OpenAI')
 
     try {
-        const response = await fetch(openaiApiUrl, {
+        const summaryFunction = {
+            type: 'function',
+            function: {
+                name: 'draft_replies',
+                description: 'Generate a short summary and three suggested replies',
+                parameters: {
+                    type: 'object',
+                    properties: {
+                        summary: {
+                            type: 'string',
+                            description: 'Brief summary of the conversation',
+                        },
+                        replies: {
+                            type: 'array',
+                            items: { type: 'string' },
+                            description: 'Suggested replies for the user',
+                        },
+                    },
+                    required: ['summary', 'replies'],
+                },
+            },
+        } as const
+
+        const response = await fetch(API_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${OPENAI_API_KEY}`,
+                Authorization: `Bearer ${config.apiKey}`,
             },
             body: JSON.stringify({
-                model: openaiModel,
+                model: config.model,
                 messages: [
                     { role: 'system', content: PERMANENT_CONTEXT },
                     ...conversation,
                     { role: 'user', content: prompt },
                 ],
-                temperature: openaiTemperature,
-                ...(openaiTopP ? { top_p: openaiTopP } : {}),
-                ...(openaiFrequencyPenalty ? { frequency_penalty: openaiFrequencyPenalty } : {}),
-                ...(openaiPresencePenalty ? { presence_penalty: openaiPresencePenalty } : {}),
+                temperature: config.temperature,
+                ...(config.topP && { top_p: config.topP }),
+                ...(config.frequencyPenalty && { frequency_penalty: config.frequencyPenalty }),
+                ...(config.presencePenalty && { presence_penalty: config.presencePenalty }),
                 tools: [summaryFunction],
-                tool_choice: {
-                    type: 'function',
-                    function: { name: summaryFunction.function.name },
-                },
+                tool_choice: { type: 'function', function: { name: 'draft_replies' } },
             }),
         })
 
@@ -99,33 +102,24 @@ export const getOpenaiReply = async (
 
         logger.debug(
             { status: response.status, statusText: response.statusText },
-            'OpenAI API response status',
+            'OpenAI API response received',
         )
-        const data = await response.json()
-        logger.debug({ data }, 'OpenAI API raw data')
 
-        const args = data.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments || '{}'
-        logger.debug({ args }, 'OpenAI API function arguments')
+        const { choices } = await response.json()
+        const functionCall = choices[0]?.message?.tool_calls?.[0]?.function
 
-        let summary = ''
-        let replies: string[] = []
-        try {
-            const parsed = JSON.parse(args) as {
-                summary?: string
-                replies?: string[]
-            }
+        if (!functionCall) throw new Error('No function call in response')
 
-            summary = parsed.summary || ''
-            replies = parsed.replies || []
-        } catch (parseErr) {
-            logger.error({ parseErr, args }, 'Failed to parse OpenAI function response')
+        const { summary, replies } = JSON.parse(functionCall.arguments)
+
+        if (!summary || !Array.isArray(replies)) {
+            logger.error({ summary, replies }, 'Invalid response format from OpenAI')
+            throw new Error('Invalid response format from OpenAI')
         }
 
-        logger.debug({ summary, replies }, 'Parsed summary and replies from OpenAI')
-
         return { summary, replies }
-    } catch (err) {
-        logger.error({ err }, 'Error in getOpenaiReply (fetching or parsing OpenAI response)')
+    } catch (error) {
+        logger.error({ error }, 'Error in getOpenaiReply (fetching or parsing OpenAI response)')
         return {
             summary: '',
             replies: ['(Sorry, I had trouble generating a response.)'],
