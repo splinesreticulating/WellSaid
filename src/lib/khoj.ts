@@ -2,6 +2,7 @@ import { KHOJ_AGENT, KHOJ_API_URL } from '$env/static/private'
 import { PERMANENT_CONTEXT, buildKhojPrompt } from '$lib/prompts'
 import type { Message } from '$lib/types'
 import { extractReplies, formatAsUserAndAssistant, parseSummaryToHumanReadable } from '$lib/utils'
+import { fetchRelevantHistory } from './history'
 import { logger } from './logger'
 
 const khojApiUrl = KHOJ_API_URL || 'http://localhost:42110/api/chat'
@@ -12,7 +13,9 @@ export const getKhojReply = async (
     context: string,
 ): Promise<{ summary: string; replies: string[]; messageCount: number }> => {
     const conversation = formatAsUserAndAssistant(messages)
-    const prompt = buildKhojPrompt(conversation, tone, context)
+    const historyContext = await fetchRelevantHistory(messages)
+    const mergedContext = [historyContext, context].filter(Boolean).join('\n')
+    const prompt = buildKhojPrompt(conversation, tone, mergedContext)
     const body = {
         q: prompt,
         ...(KHOJ_AGENT ? { agent: KHOJ_AGENT } : {}),

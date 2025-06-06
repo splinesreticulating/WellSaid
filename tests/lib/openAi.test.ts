@@ -24,6 +24,10 @@ vi.mock('$env/static/private', async (importOriginal) => {
     }
 })
 
+vi.mock('$lib/history', () => ({
+    fetchRelevantHistory: vi.fn().mockResolvedValue('old context'),
+}))
+
 describe('getOpenaiReply', () => {
     beforeEach(async () => {
         vi.clearAllMocks()
