@@ -12,12 +12,8 @@ export const fetchRelevantHistory = async (
 
     try {
         const now = new Date()
-        let end = new Date(messages[0].timestamp)
+        const end = new Date(messages[0].timestamp)
         const start = new Date(now.getTime() - lookbackHours * 60 * 60 * 1000)
-
-        // Ensure we're not looking into the future
-        if (start > now) return ''
-        if (end > now) end = now
 
         logger.debug({
             lookbackHours,
