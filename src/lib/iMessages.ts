@@ -76,8 +76,8 @@ export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
             sender: row.is_from_me
                 ? 'me'
                 : row.contact_id === PARTNER_HANDLE_ID
-                    ? 'partner'
-                    : 'unknown',
+                  ? 'partner'
+                  : 'unknown',
             text: row.text,
             timestamp: row.timestamp,
         }))

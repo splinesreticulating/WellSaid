@@ -5,9 +5,7 @@ import { logger } from './logger'
 
 const lookbackHours = Number.parseInt(HISTORY_LOOKBACK_HOURS || '0')
 
-export const fetchRelevantHistory = async (
-    messages: Message[],
-): Promise<string> => {
+export const fetchRelevantHistory = async (messages: Message[]): Promise<string> => {
     if (!lookbackHours || messages.length === 0) return ''
 
     try {
@@ -15,24 +13,27 @@ export const fetchRelevantHistory = async (
         const end = new Date(messages[0].timestamp)
         const start = new Date(now.getTime() - lookbackHours * 60 * 60 * 1000)
 
-        logger.debug({
-            lookbackHours,
-            queryRange: {
-                start: start.toISOString(),
-                end: end.toISOString()
+        logger.debug(
+            {
+                lookbackHours,
+                queryRange: {
+                    start: start.toISOString(),
+                    end: end.toISOString(),
+                },
+                now: now.toISOString(),
             },
-            now: now.toISOString()
-        }, 'Fetching message history')
-
-        const { messages: history } = await queryMessagesDb(
-            start.toISOString(),
-            end.toISOString(),
+            'Fetching message history',
         )
 
-        logger.debug({
-            historyCount: history.length,
-            timeRange: `${start.toISOString()} to ${end.toISOString()}`
-        }, 'Fetched message history')
+        const { messages: history } = await queryMessagesDb(start.toISOString(), end.toISOString())
+
+        logger.debug(
+            {
+                historyCount: history.length,
+                timeRange: `${start.toISOString()} to ${end.toISOString()}`,
+            },
+            'Fetched message history',
+        )
 
         if (history.length === 0) return ''
 
@@ -44,9 +45,9 @@ export const fetchRelevantHistory = async (
             {
                 historyCount: history.length,
                 contextLength: context.length,
-                timeRange: `${start.toISOString()} to ${end.toISOString()}`
+                timeRange: `${start.toISOString()} to ${end.toISOString()}`,
             },
-            `Fetched additional history context from ${history.length} messages`
+            `Fetched additional history context from ${history.length} messages`,
         )
 
         return context
