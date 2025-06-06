@@ -190,11 +190,7 @@ yarn test:coverage
 
 If you'd like to securely access WellSaid remotely, consider using a service like [Tailscale](https://tailscale.com). Tailscale sets up a secure private network (a mesh VPN) that connects your devices, making it simple and safe to access your app.
 
-All that's required in the app is that you set the `ALLOWED_HOST` variable in your `.env` file to the address provided by Tailscale.
-If `ALLOWED_HOST` is left unset, the server will accept connections from any host.
-Always define it when exposing WellSaid beyond your local machine.
-
-For more details, visit [Tailscale's documentation](https://tailscale.com/kb/).
+All that's required in the app is that you set the `ALLOWED_HOST` variable in your `.env` file to the address provided by Tailscale. For more details, visit [Tailscale's documentation](https://tailscale.com/kb/).
 
 ### iOS Home Screen Icons (and HTTPS Gotchas)
 
@@ -230,8 +226,7 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
 
 ## Privacy and Security Considerations
 
-- If you set `KHOJ_API_URL`, all conversation analysis is handled by your local Khoj server and never leaves your device.
-- When using OpenAI, messages are sent to OpenAI's API and are subject to their privacy policy.
+- All conversation analysis happens through OpenAI's API, so your data is subject to their privacy policy.
 
 ## Troubleshooting
 
