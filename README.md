@@ -110,6 +110,11 @@ ALLOWED_HOST=your-tailscale-hostname.your-tailscale-domain.ts.net
 
 # How many hours of prior conversation history to search for extra context
 HISTORY_LOOKBACK_HOURS=6
+
+# Custom context to guide the AI's personality and behavior
+# This text will be prepended to every prompt sent to the AI
+# Example: "Act as my therapist suggesting replies to my partner" or "You are a helpful assistant"
+CUSTOM_CONTEXT=your-custom-context
 ```
 
 **Important Note on `JWT_SECRET`**: 
