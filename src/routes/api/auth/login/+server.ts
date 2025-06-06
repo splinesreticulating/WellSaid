@@ -2,6 +2,16 @@ import { BASIC_AUTH_PASSWORD, BASIC_AUTH_USERNAME, JWT_SECRET } from '$env/stati
 import { logger } from '$lib/logger'
 import { type RequestHandler, json } from '@sveltejs/kit'
 import jwt from 'jsonwebtoken'
+import { timingSafeEqual } from 'node:crypto'
+
+const safeCompare = (a: string, b: string): boolean => {
+    const len = Math.max(a.length, b.length)
+    const aBuf = Buffer.alloc(len, 0)
+    const bBuf = Buffer.alloc(len, 0)
+    Buffer.from(a).copy(aBuf)
+    Buffer.from(b).copy(bBuf)
+    return timingSafeEqual(aBuf, bBuf) && a.length === b.length
+}
 
 // 30-day cookie expiration by default
 const AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 30
@@ -23,8 +33,11 @@ export const POST: RequestHandler = async ({ request, cookies, url }) => {
 
         const { username, password } = await request.json()
 
-        // Validate credentials against environment variables
-        if (username === BASIC_AUTH_USERNAME && password === BASIC_AUTH_PASSWORD) {
+        // Validate credentials against environment variables using constant-time comparison
+        if (
+            safeCompare(username, BASIC_AUTH_USERNAME) &&
+            safeCompare(password, BASIC_AUTH_PASSWORD)
+        ) {
             // Create authentication cookie (session-based authentication)
             const cookieOptions = {
                 path: '/' as const,
