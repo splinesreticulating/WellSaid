@@ -6,11 +6,11 @@ import {
     OPENAI_TEMPERATURE,
     OPENAI_TOP_P,
 } from '$env/static/private'
+import { fetchRelevantHistory } from './history'
 import { logger } from './logger'
 import { PERMANENT_CONTEXT, buildReplyPrompt } from './prompts'
-import type { Message, OpenAIConfig } from './types'
+import type { Message, OpenAIConfig, ToneType } from './types'
 import { formatAsUserAndAssistant } from './utils'
-import { fetchRelevantHistory } from './history'
 
 const API_URL = 'https://api.openai.com/v1/chat/completions'
 const DEFAULT_MODEL = 'gpt-4'
@@ -32,7 +32,7 @@ if (!OPENAI_API_KEY) {
 
 export const getOpenaiReply = async (
     messages: Message[],
-    tone: string,
+    tone: ToneType,
     context: string,
 ): Promise<{ summary: string; replies: string[] }> => {
     const config = getConfig()

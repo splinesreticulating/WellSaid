@@ -1,5 +1,5 @@
 import { CUSTOM_CONTEXT } from '$env/static/private'
-import type { ChatMessage } from './types'
+import type { ChatMessage, ToneType } from './types'
 
 export const PERMANENT_CONTEXT = `${CUSTOM_CONTEXT}\n\nMessages with role "user" are from me. Messages with role "assistant" are from my partner. Analyze my messages to mimic my vocabulary and tone when suggesting replies.\n\nAdditional context about recent conversation history is provided below. Use this to understand the current situation and tone, but focus your reply on the most recent messages. Do not summarize the history - it is only for context.`
 
@@ -18,7 +18,7 @@ export const buildReplyPrompt = (tone: string, context: string): string => `
 
 export const buildKhojPrompt = (
     conversation: ChatMessage[],
-    tone: string,
+    tone: ToneType,
     context: string,
 ): string => {
     const formattedMessages = conversation
