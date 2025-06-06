@@ -1,17 +1,8 @@
 import { BASIC_AUTH_PASSWORD, BASIC_AUTH_USERNAME, JWT_SECRET } from '$env/static/private'
 import { logger } from '$lib/logger'
+import { safeCompare } from '$lib/utils'
 import { type RequestHandler, json } from '@sveltejs/kit'
 import jwt from 'jsonwebtoken'
-import { timingSafeEqual } from 'node:crypto'
-
-const safeCompare = (a: string, b: string): boolean => {
-    const len = Math.max(a.length, b.length)
-    const aBuf = Buffer.alloc(len, 0)
-    const bBuf = Buffer.alloc(len, 0)
-    Buffer.from(a).copy(aBuf)
-    Buffer.from(b).copy(bBuf)
-    return timingSafeEqual(aBuf, bBuf) && a.length === b.length
-}
 
 // 30-day cookie expiration by default
 const AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 30
