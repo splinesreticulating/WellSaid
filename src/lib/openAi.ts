@@ -30,12 +30,36 @@ if (!OPENAI_API_KEY) {
     logger.warn('⚠️ OPENAI_API_KEY is not set. OpenAI integration will not work.')
 }
 
+const summaryFunction = {
+    type: 'function',
+    function: {
+        name: 'draft_replies',
+        description: 'Generate a short summary and three suggested replies',
+        parameters: {
+            type: 'object',
+            properties: {
+                summary: {
+                    type: 'string',
+                    description: 'Brief summary of the conversation',
+                },
+                replies: {
+                    type: 'array',
+                    items: { type: 'string' },
+                    description: 'Suggested replies for the user',
+                },
+            },
+            required: ['summary', 'replies'],
+        },
+    },
+}
+
 export const getOpenaiReply = async (
     messages: Message[],
     tone: ToneType,
     context: string,
 ): Promise<{ summary: string; replies: string[] }> => {
     const config = getConfig()
+
     if (!config.apiKey) {
         return {
             summary: 'OpenAI API key is not configured.',
@@ -50,29 +74,6 @@ export const getOpenaiReply = async (
     logger.debug({ prompt }, 'Sending prompt to OpenAI')
 
     try {
-        const summaryFunction = {
-            type: 'function',
-            function: {
-                name: 'draft_replies',
-                description: 'Generate a short summary and three suggested replies',
-                parameters: {
-                    type: 'object',
-                    properties: {
-                        summary: {
-                            type: 'string',
-                            description: 'Brief summary of the conversation',
-                        },
-                        replies: {
-                            type: 'array',
-                            items: { type: 'string' },
-                            description: 'Suggested replies for the user',
-                        },
-                    },
-                    required: ['summary', 'replies'],
-                },
-            },
-        } as const
-
         const response = await fetch(API_URL, {
             method: 'POST',
             headers: {
