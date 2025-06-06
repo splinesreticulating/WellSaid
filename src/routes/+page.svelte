@@ -185,11 +185,11 @@ async function onclick() {
 			<!-- Conversation summary -->
 			<section class="conversation">
 				<div class="summary">
-                                        {#if showLoadingIndicators}
-                                                <div class="loading-indicator">{summaryContent}</div>
-                                        {:else}
-                                                {summaryContent}
-                                        {/if}
+					{#if showLoadingIndicators}
+						<div class="loading-indicator">{summaryContent}</div>
+					{:else}
+						{summaryContent}
+					{/if}
 				</div>
 			</section>
 
