@@ -5,10 +5,9 @@ import AiProviderSelector from '$lib/components/AiProviderSelector.svelte'
 import ControlBar from '$lib/components/ControlBar.svelte'
 import ReplySuggestions from '$lib/components/ReplySuggestions.svelte'
 import ToneSelector from '$lib/components/ToneSelector.svelte'
-import type { Message, PageData, ToneType } from '$lib/types'
+import { type Message, type PageData, TONES, type ToneType } from '$lib/types'
 
 const DEFAULT_PROVIDER = 'openai'
-const TONES: ToneType[] = ['gentle', 'funny', 'reassuring', 'concise']
 const LOCAL_STORAGE_CONTEXT_KEY = 'wellsaid_additional_context'
 
 const { data } = $props<{ data: PageData }>()

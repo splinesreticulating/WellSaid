@@ -2,7 +2,7 @@ import { queryMessagesDb } from '$lib/iMessages'
 import { getKhojReply } from '$lib/khoj'
 import { logger } from '$lib/logger'
 import { getOpenaiReply } from '$lib/openAi'
-import type { Message } from '$lib/types'
+import type { Message, ToneType } from '$lib/types'
 import { fail } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 
@@ -28,7 +28,7 @@ export const actions: Actions = {
             // Handle both form data and URL-encoded form data
             let context = ''
             let messagesString = ''
-            let tone = DEFAULT_TONE
+            let tone: ToneType = DEFAULT_TONE
             let provider = DEFAULT_PROVIDER
 
             if (
@@ -37,7 +37,7 @@ export const actions: Actions = {
             ) {
                 const formData = await request.formData()
                 messagesString = formData.get('messages') as string
-                tone = formData.get('tone') as string
+                tone = formData.get('tone') as ToneType
                 context = formData.get('context') as string
                 provider = formData.get('provider') as string
             } else {

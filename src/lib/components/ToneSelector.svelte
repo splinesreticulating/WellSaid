@@ -2,8 +2,10 @@
 import type { ToneType } from '$lib/types'
 
 // biome-ignore lint/style/useConst: Svelte 5 $props() pattern
-let { selectedTone = $bindable(), tones = [] }: { selectedTone: ToneType; tones: ToneType[] } =
-    $props()
+let { selectedTone = $bindable(), tones = [] as const }: { 
+    selectedTone: ToneType; 
+    tones: readonly ToneType[] 
+} = $props()
 </script>
 
 {#snippet toneOption(toneValue: ToneType)}

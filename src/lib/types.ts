@@ -16,7 +16,8 @@ export interface PageData {
     messages?: Message[]
 }
 
-export type ToneType = 'gentle' | 'funny' | 'reassuring' | 'concise'
+export const TONES = ['gentle', 'funny', 'reassuring', 'concise'] as const
+export type ToneType = (typeof TONES)[number]
 
 export interface ChatMessage {
     role: 'user' | 'assistant'
