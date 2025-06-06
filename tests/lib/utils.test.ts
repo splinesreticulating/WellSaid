@@ -1,4 +1,4 @@
-import { extractReplies, formatMessages, parseSummaryToHumanReadable } from '$lib/utils'
+import { extractReplies, formatAsUserAndAssistant, parseSummaryToHumanReadable } from '$lib/utils'
 import { describe, expect, it } from 'vitest'
 
 describe('parseSummaryToHumanReadable', () => {
@@ -64,7 +64,7 @@ describe('formatMessages', () => {
             { sender: 'partner', text: 'Hi there', timestamp: '2' },
         ]
 
-        const formatted = formatMessages(messages)
+        const formatted = formatAsUserAndAssistant(messages)
 
         expect(formatted).toEqual([
             { role: 'user', content: 'Hello' },

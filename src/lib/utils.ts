@@ -15,7 +15,7 @@ export const parseSummaryToHumanReadable = (rawOutput: string): string => {
 export const hasPartnerMessages = (formattedRows: Message[]) =>
     formattedRows.some((msg) => msg.sender !== 'me')
 
-export const formatMessages = (messages: Message[]): ChatMessage[] => {
+export const formatAsUserAndAssistant = (messages: Message[]): ChatMessage[] => {
     return messages.map((m) => ({
         role: m.sender === 'me' ? 'user' : 'assistant',
         content: m.text,
