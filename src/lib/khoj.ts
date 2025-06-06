@@ -1,5 +1,5 @@
 import { KHOJ_AGENT, KHOJ_API_URL } from '$env/static/private'
-import { PERMANENT_CONTEXT, buildReplyPrompt } from '$lib/prompts'
+import { PERMANENT_CONTEXT, buildKhojPrompt } from '$lib/prompts'
 import type { Message } from '$lib/types'
 import { extractReplies, formatMessages, parseSummaryToHumanReadable } from '$lib/utils'
 import { logger } from './logger'
@@ -12,13 +12,9 @@ export const getKhojReply = async (
     context: string,
 ): Promise<{ summary: string; replies: string[]; messageCount: number }> => {
     const conversation = formatMessages(messages)
-    const prompt = buildReplyPrompt(tone, context)
+    const prompt = buildKhojPrompt(conversation, tone, context)
     const body = {
-        messages: [
-            { role: 'system', content: PERMANENT_CONTEXT },
-            ...conversation,
-            { role: 'user', content: prompt },
-        ],
+        q: prompt,
         ...(KHOJ_AGENT ? { agent: KHOJ_AGENT } : {}),
     }
 
