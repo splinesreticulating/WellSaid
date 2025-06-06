@@ -1,13 +1,14 @@
 import type { ChatMessage } from './types'
 
 export const PERMANENT_CONTEXT =
-    'Act as my therapist suggesting replies to my partner. Messages with role "user" are from me, and messages with role "assistant" are from my partner. Analyze my messages to mimic my vocabulary and tone when suggesting replies.'
+    'Act as my therapist suggesting replies to my partner. Messages with role "user" are from me, and messages with role "assistant" are from my partner. Analyze my messages to mimic my vocabulary and tone when suggesting replies.\n\n' +
+    'Additional context about recent conversation history is provided below. Use this to understand the current situation and tone, but focus your reply on the most recent messages. Do not summarize the history - it is only for context.'
 
 export const buildReplyPrompt = (tone: string, context: string): string => `
     Given the conversation above, provide a brief summary including the emotional tone, main topics, and any changes in mood.
-    Suggest 3 replies that I might send.
+    Suggest 3 replies that I might send. Focus on the most recent messages when crafting replies.
     Tone: ${tone}
-    ${context ? `Additional context: ${context}` : ''}
+    ${context ? `Recent conversation context (for reference only):\n${context}\n` : ''}
     Please respond using this format:
     Summary: <summary>
     Suggested replies:
@@ -31,10 +32,13 @@ export const buildKhojPrompt = (
     return `
         Here are some text messages between my partner and I:
         ${formattedMessages}
+        
         Please give a brief summary, including the emotional tone, main topics, and any changes in mood.
-        Suggest 3 replies that I might send.
+        Suggest 3 replies that I might send. Focus on the most recent messages when crafting replies.
+        
         Tone: ${tone}
-        ${context ? `Additional context: ${context}` : ''}
+        ${context ? `Recent conversation context (for reference only):\n${context}\n` : ''}
+        
         Please respond using this format:
         Summary: <summary>
         Suggested replies:

@@ -11,16 +11,48 @@ export const fetchRelevantHistory = async (
     if (!lookbackHours || messages.length === 0) return ''
 
     try {
-        const first = new Date(messages[0].timestamp)
-        const start = new Date(first.getTime() - lookbackHours * 60 * 60 * 1000)
+        const now = new Date()
+        let end = new Date(messages[0].timestamp)
+        const start = new Date(now.getTime() - lookbackHours * 60 * 60 * 1000)
+
+        // Ensure we're not looking into the future
+        if (start > now) return ''
+        if (end > now) end = now
+
+        logger.debug({
+            lookbackHours,
+            queryRange: {
+                start: start.toISOString(),
+                end: end.toISOString()
+            },
+            now: now.toISOString()
+        }, 'Fetching message history')
+
         const { messages: history } = await queryMessagesDb(
             start.toISOString(),
-            first.toISOString(),
+            end.toISOString(),
         )
+
+        logger.debug({
+            historyCount: history.length,
+            timeRange: `${start.toISOString()} to ${end.toISOString()}`
+        }, 'Fetched message history')
+
+        if (history.length === 0) return ''
+
         const context = history
             .map((m) => `${m.sender === 'me' ? 'Me' : 'Partner'}: ${m.text}`)
             .join('\n')
-        logger.debug({ context }, 'Fetched additional history context')
+
+        logger.debug(
+            {
+                historyCount: history.length,
+                contextLength: context.length,
+                timeRange: `${start.toISOString()} to ${end.toISOString()}`
+            },
+            `Fetched additional history context from ${history.length} messages`
+        )
+
         return context
     } catch (err) {
         logger.error({ err }, 'Failed to fetch history context')
