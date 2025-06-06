@@ -1,11 +1,11 @@
 import os from 'node:os'
 import path from 'node:path'
+import { PARTNER_PHONE } from '$env/static/private'
 import type { MessageRow } from '$lib/types'
 import { open } from 'sqlite'
 import sqlite3 from 'sqlite3'
 import { logger } from './logger'
 import { hasPartnerMessages } from './utils'
-import { PARTNER_PHONE } from '$env/static/private'
 
 const CHAT_DB_PATH = path.join(os.homedir(), 'Library', 'Messages', 'chat.db')
 
@@ -54,6 +54,8 @@ export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
         ${dateWhere}
         ORDER BY message.date DESC`
 
+    logger.debug({ query, params }, 'Querying messages database')
+
     let rows: MessageRow[] = []
 
     try {
@@ -74,8 +76,8 @@ export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
             sender: row.is_from_me
                 ? 'me'
                 : row.contact_id === PARTNER_HANDLE_ID
-                  ? 'partner'
-                  : 'unknown',
+                    ? 'partner'
+                    : 'unknown',
             text: row.text,
             timestamp: row.timestamp,
         }))

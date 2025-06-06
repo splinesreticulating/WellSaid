@@ -106,6 +106,9 @@ LOG_LEVEL=info
 
 # For remote access via Tailscale (see 'Accessing from Anywhere' section)
 ALLOWED_HOST=your-tailscale-hostname.your-tailscale-domain.ts.net
+
+# How many hours of prior conversation history to search for extra context
+HISTORY_LOOKBACK_HOURS=6
 ```
 
 **Important Note on `JWT_SECRET`**: 

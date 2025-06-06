@@ -74,6 +74,7 @@ let copiedIndex = $state(-1)
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         display: flex;
         align-items: flex-start;
+        justify-content: space-between;
     }
     
     .copy-button {

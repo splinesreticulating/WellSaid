@@ -7,6 +7,7 @@ import {
     OPENAI_TOP_P,
 } from '$env/static/private'
 import { logger } from './logger'
+import { fetchRelevantHistory } from './history'
 import { PERMANENT_CONTEXT, buildReplyPrompt } from './prompts'
 import type { Message } from './types'
 import { formatAsUserAndAssistant } from './utils'
@@ -59,7 +60,9 @@ export const getOpenaiReply = async (
         }
 
     const conversation = formatAsUserAndAssistant(messages)
-    const prompt = buildReplyPrompt(tone, context)
+    const historyContext = await fetchRelevantHistory(messages)
+    const mergedContext = [historyContext, context].filter(Boolean).join('\n')
+    const prompt = buildReplyPrompt(tone, mergedContext)
 
     logger.debug({ prompt }, 'Sending prompt to OpenAI')
 
