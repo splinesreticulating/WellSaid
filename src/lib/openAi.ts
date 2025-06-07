@@ -34,7 +34,8 @@ const summaryFunction = {
     type: 'function',
     function: {
         name: 'draft_replies',
-        description: 'Generate a short summary and three suggested replies',
+        description:
+            'Generate a short summary and three suggested replies (short, medium, and long)',
         parameters: {
             type: 'object',
             properties: {
