@@ -11,6 +11,17 @@ let { additionalContext = $bindable(''), expanded = $bindable(false) } = $props(
         bind:value={additionalContext}
         placeholder="anything else we should know about?"
     ></textarea>
+    {#if additionalContext.trim() !== ''}
+        <button
+            type="button"
+            class="clear-button"
+            onclick={() => {
+                additionalContext = ''
+            }}
+        >
+            clear
+        </button>
+    {/if}
 </details>
 
 <style>
@@ -39,5 +50,20 @@ let { additionalContext = $bindable(''), expanded = $bindable(false) } = $props(
         resize: vertical;
         min-height: 80px;
         color: var(--primary-dark);
-    }    
+    }
+
+    .clear-button {
+        margin-top: 0.5rem;
+        border: 1px solid var(--primary-dark);
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
+        border-radius: var(--border-radius);
+        padding: 0.25rem 0.75rem;
+        cursor: pointer;
+    }
+
+    .clear-button:hover {
+        background-color: var(--primary-dark);
+        color: var(--white);
+    }
 </style>

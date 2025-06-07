@@ -8,12 +8,16 @@ import type { Actions, PageServerLoad } from './$types'
 
 const DEFAULT_TONE = 'gentle'
 const DEFAULT_PROVIDER = 'openai'
-const ONE_HOUR = 60 * 60 * 1000
+const MINUTE = 60 * 1000
+const HOUR = 60 * MINUTE
+const DAY = 24 * HOUR
 
 export const load: PageServerLoad = async ({ url }) => {
-    const lookBack = Number.parseInt(url.searchParams.get('lookBackHours') || '1')
+    const amount = Number.parseInt(url.searchParams.get('lookBackAmount') || '1')
+    const unit = url.searchParams.get('lookBackUnit') || 'hours'
+    const multiplier = unit === 'minutes' ? MINUTE : unit === 'days' ? DAY : HOUR
     const end = new Date()
-    const start = new Date(end.getTime() - lookBack * ONE_HOUR)
+    const start = new Date(end.getTime() - amount * multiplier)
     const { messages } = await queryMessagesDb(start.toISOString(), end.toISOString())
 
     return { messages }

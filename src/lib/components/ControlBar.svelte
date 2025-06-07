@@ -1,40 +1,39 @@
 <script lang="ts">
 // biome-ignore lint/style/useConst: Svelte 5 $props() pattern
 let {
-    lookBackHours = $bindable(''),
+    lookBackAmount = $bindable(''),
+    lookBackUnit = $bindable('hours'),
     messageCount,
     onclick,
     canGenerate,
     isLoading,
 }: {
-    lookBackHours?: string
+    lookBackAmount?: string
+    lookBackUnit?: string
     messageCount: number
     onclick: () => void
     canGenerate: boolean
     isLoading: boolean
 } = $props()
 
-const lookBackOptions = [
-    { value: '1', label: 'hour' },
-    { value: '2', label: '2 hours' },
-    { value: '3', label: '3 hours' },
-    { value: '4', label: '4 hours' },
-    { value: '5', label: '5 hours' },
-    { value: '6', label: '6 hours' },
-    { value: '12', label: '12 hours' },
-    { value: '24', label: '24 hours' },
-]
+const amountOptions = ['1', '2', '3', '4', '5', '6', '12', '24']
+const unitOptions = ['minutes', 'hours', 'days']
 </script>
 
 <section class="control-bar">
-	<div class="timeframe-controls">
-		<label for="window-back">summarize last:</label>
-		<select id="window-back" bind:value={lookBackHours}>
-			{#each lookBackOptions as option (option.value)}
-				<option value={option.value}>{option.label}</option>
-			{/each}
-		</select>
-		<button type="button" class="go-button" { onclick }  disabled={!canGenerate}>
+        <div class="timeframe-controls">
+                <label for="window-amount">summarize last:</label>
+                <select id="window-amount" bind:value={lookBackAmount}>
+                        {#each amountOptions as val}
+                                <option value={val}>{val}</option>
+                        {/each}
+                </select>
+                <select id="window-unit" bind:value={lookBackUnit}>
+                        {#each unitOptions as val}
+                                <option value={val}>{val}</option>
+                        {/each}
+                </select>
+                <button type="button" class="go-button" { onclick }  disabled={!canGenerate}>
 			{#if isLoading}
 				<span class="loading-spinner"></span>
 			{:else}
