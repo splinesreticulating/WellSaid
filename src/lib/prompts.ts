@@ -5,15 +5,15 @@ export const PERMANENT_CONTEXT = `${CUSTOM_CONTEXT}\n\nMessages with role "user"
 
 export const buildReplyPrompt = (tone: string, context: string): string => `
     Given the conversation above, provide a brief summary including the emotional tone, main topics, and any changes in mood.
-    Suggest 3 replies that I might send. Focus on the most recent messages when crafting replies.
+    Suggest 3 replies that I might send. Provide one short reply, one medium-length reply, and one long reply. Focus on the most recent messages when crafting replies.
     Tone: ${tone}
     ${context ? `Recent conversation context (for reference only):\n${context}\n` : ''}
     Please respond using this format:
     Summary: <summary>
     Suggested replies:
-    Reply 1: <reply>
-    Reply 2: <reply>
-    Reply 3: <reply>
+    Reply 1: <short reply>
+    Reply 2: <medium reply>
+    Reply 3: <long reply>
 `
 
 export const buildKhojPrompt = (
@@ -33,7 +33,7 @@ export const buildKhojPrompt = (
         ${formattedMessages}
         
         Please give a brief summary, including the emotional tone, main topics, and any changes in mood.
-        Suggest 3 replies that I might send. Focus on the most recent messages when crafting replies.
+        Suggest 3 replies that I might send. Provide one short reply, one medium-length reply, and one long reply. Focus on the most recent messages when crafting replies.
         
         Tone: ${tone}
         ${context ? `Recent conversation context (for reference only):\n${context}\n` : ''}
@@ -41,8 +41,8 @@ export const buildKhojPrompt = (
         Please respond using this format:
         Summary: <summary>
         Suggested replies:
-        Reply 1: <reply>
-        Reply 2: <reply>
-        Reply 3: <reply>
+        Reply 1: <short reply>
+        Reply 2: <medium reply>
+        Reply 3: <long reply>
     `
 }
