@@ -6,6 +6,7 @@ class AdditionalContextModel {
     expanded: boolean
     changeContext: (newContext: string) => void
     toggleExpanded: () => void
+    clearContext: () => void
 
     constructor(initialContext = '', initialExpanded = false) {
         this.additionalContext = initialContext
@@ -13,6 +14,10 @@ class AdditionalContextModel {
 
         this.changeContext = (newContext: string) => {
             this.additionalContext = newContext
+        }
+
+        this.clearContext = () => {
+            this.additionalContext = ''
         }
 
         this.toggleExpanded = () => {
@@ -49,5 +54,11 @@ describe('AdditionalContext Component', () => {
 
         component.toggleExpanded()
         expect(component.expanded).toBe(false)
+    })
+
+    it('should clear additionalContext', () => {
+        const component = new AdditionalContextModel('hey')
+        component.clearContext()
+        expect(component.additionalContext).toBe('')
     })
 })

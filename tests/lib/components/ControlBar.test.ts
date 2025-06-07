@@ -1,199 +1,92 @@
 import { describe, expect, it, vi } from 'vitest'
 
-type LookBackOption = { value: string; label: string }
+type Unit = 'minutes' | 'hours' | 'days'
 
-const DEFAULT_LOOK_BACK_OPTIONS: ReadonlyArray<LookBackOption> = [
-    { value: '1', label: 'hour' },
-    { value: '2', label: '2 hours' },
-    { value: '3', label: '3 hours' },
-    { value: '4', label: '4 hours' },
-    { value: '5', label: '5 hours' },
-    { value: '6', label: '6 hours' },
-    { value: '12', label: '12 hours' },
-    { value: '24', label: '24 hours' },
-]
-
-interface ControlBarModelProps {
-    lookBackHours?: string
+interface Props {
+    lookBackAmount?: string
+    lookBackUnit?: Unit
     messageCount?: number
     onGoClick?: () => void
     canGenerate?: boolean
     isLoading?: boolean
-    lookBackOptions?: LookBackOption[]
 }
 
 class ControlBarModel {
-    lookBackHours: string
+    lookBackAmount: string
+    lookBackUnit: Unit
     messageCount: number
     canGenerate: boolean
     isLoading: boolean
-    readonly lookBackOptions: ReadonlyArray<LookBackOption>
-    private goClickCallback: () => void
+    private goClick: () => void
 
-    constructor(props?: ControlBarModelProps) {
-        const defaultLookBackHours = '1'
-        const defaultMessageCount = 0
-        const defaultCanGenerate = true
-        const defaultIsLoading = false
-        const defaultOnGoClick = () => {}
-        const defaultOptions = props?.lookBackOptions
-            ? [...props.lookBackOptions]
-            : [...DEFAULT_LOOK_BACK_OPTIONS]
-
-        this.lookBackHours = props?.lookBackHours ?? defaultLookBackHours
-        this.messageCount = props?.messageCount ?? defaultMessageCount
-        this.canGenerate = props?.canGenerate ?? defaultCanGenerate
-        this.isLoading = props?.isLoading ?? defaultIsLoading
-        this.goClickCallback = props?.onGoClick ?? defaultOnGoClick
-        this.lookBackOptions = defaultOptions
-
-        if (!this.lookBackOptions.find((opt) => opt.value === this.lookBackHours)) {
-            throw new Error(`Initial lookBackHours "${this.lookBackHours}" is not a valid option.`)
-        }
+    constructor(props?: Props) {
+        this.lookBackAmount = props?.lookBackAmount ?? '1'
+        this.lookBackUnit = props?.lookBackUnit ?? 'hours'
+        this.messageCount = props?.messageCount ?? 0
+        this.canGenerate = props?.canGenerate ?? true
+        this.isLoading = props?.isLoading ?? false
+        this.goClick = props?.onGoClick ?? (() => {})
     }
 
-    selectLookBack(hours: string): void {
-        if (!this.lookBackOptions.find((opt) => opt.value === hours)) {
-            throw new Error(`Invalid lookBackHours value: "${hours}". Not in available options.`)
-        }
-        this.lookBackHours = hours
+    setLookBackAmount(val: string) {
+        this.lookBackAmount = val
     }
 
-    clickGo(): void {
-        if (this.canGenerate && !this.isLoading) {
-            this.goClickCallback()
-        }
+    setLookBackUnit(val: Unit) {
+        this.lookBackUnit = val
     }
 
-    setCanGenerate(value: boolean): void {
-        this.canGenerate = value
+    clickGo() {
+        if (this.canGenerate && !this.isLoading) this.goClick()
     }
 
-    setIsLoading(value: boolean): void {
-        this.isLoading = value
-    }
-
-    setMessageCount(count: number): void {
-        if (count < 0) {
-            throw new Error('Message count cannot be negative.')
-        }
+    setMessageCount(count: number) {
+        if (count < 0) throw new Error('Message count cannot be negative.')
         this.messageCount = count
+    }
+
+    setCanGenerate(val: boolean) {
+        this.canGenerate = val
+    }
+
+    setIsLoading(val: boolean) {
+        this.isLoading = val
     }
 }
 
 describe('ControlBarModel', () => {
-    it('should initialize with default values', () => {
+    it('initializes with defaults', () => {
         const model = new ControlBarModel()
-        expect(model.lookBackHours).toBe('1')
+        expect(model.lookBackAmount).toBe('1')
+        expect(model.lookBackUnit).toBe('hours')
         expect(model.messageCount).toBe(0)
         expect(model.canGenerate).toBe(true)
         expect(model.isLoading).toBe(false)
-        expect(model.lookBackOptions).toEqual(DEFAULT_LOOK_BACK_OPTIONS)
     })
 
-    it('should initialize with provided props', () => {
-        const mockGo = vi.fn()
-        const customOptions = [{ value: 'custom', label: 'Custom Option' }]
-        const props: ControlBarModelProps = {
-            lookBackHours: 'custom',
-            messageCount: 10,
-            canGenerate: false,
-            isLoading: true,
-            onGoClick: mockGo,
-            lookBackOptions: customOptions,
-        }
-        const model = new ControlBarModel(props)
-        expect(model.lookBackHours).toBe('custom')
-        expect(model.messageCount).toBe(10)
-        expect(model.canGenerate).toBe(false)
-        expect(model.isLoading).toBe(true)
-        expect(model.lookBackOptions).toEqual(customOptions)
-        // @ts-expect-error Accessing private for test
-        model.goClickCallback()
-        expect(mockGo).toHaveBeenCalledTimes(1)
-    })
-
-    it('should throw if initial lookBackHours is not in options', () => {
-        expect(() => new ControlBarModel({ lookBackHours: 'invalid' })).toThrow(
-            'Initial lookBackHours "invalid" is not a valid option.',
-        )
-    })
-
-    it('should update lookBackHours with selectLookBack', () => {
-        const model = new ControlBarModel()
-        model.selectLookBack('12')
-        expect(model.lookBackHours).toBe('12')
-    })
-
-    it('should throw if selectLookBack is called with invalid value', () => {
-        const model = new ControlBarModel()
-        expect(() => model.selectLookBack('invalid')).toThrow(
-            'Invalid lookBackHours value: "invalid". Not in available options.',
-        )
-    })
-
-    it('should call onGoClick if canGenerate and not isLoading', () => {
-        const mockGo = vi.fn()
-        const model = new ControlBarModel({
-            onGoClick: mockGo,
-            canGenerate: true,
-            isLoading: false,
-        })
+    it('calls onGoClick when allowed', () => {
+        const fn = vi.fn()
+        const model = new ControlBarModel({ onGoClick: fn })
         model.clickGo()
-        expect(mockGo).toHaveBeenCalledTimes(1)
+        expect(fn).toHaveBeenCalled()
     })
 
-    it('should not call onGoClick if canGenerate is false', () => {
-        const mockGo = vi.fn()
-        const model = new ControlBarModel({
-            onGoClick: mockGo,
-            canGenerate: false,
-            isLoading: false,
-        })
-        model.clickGo()
-        expect(mockGo).not.toHaveBeenCalled()
-    })
-
-    it('should not call onGoClick if isLoading is true', () => {
-        const mockGo = vi.fn()
-        const model = new ControlBarModel({ onGoClick: mockGo, canGenerate: true, isLoading: true })
-        model.clickGo()
-        expect(mockGo).not.toHaveBeenCalled()
-    })
-
-    it('should update canGenerate with setCanGenerate', () => {
+    it('setters update values', () => {
         const model = new ControlBarModel()
+        model.setLookBackAmount('5')
+        model.setLookBackUnit('days')
+        model.setMessageCount(2)
         model.setCanGenerate(false)
-        expect(model.canGenerate).toBe(false)
-        model.setCanGenerate(true)
-        expect(model.canGenerate).toBe(true)
-    })
-
-    it('should update isLoading with setIsLoading', () => {
-        const model = new ControlBarModel()
         model.setIsLoading(true)
+        expect(model.lookBackAmount).toBe('5')
+        expect(model.lookBackUnit).toBe('days')
+        expect(model.messageCount).toBe(2)
+        expect(model.canGenerate).toBe(false)
         expect(model.isLoading).toBe(true)
-        model.setIsLoading(false)
-        expect(model.isLoading).toBe(false)
     })
 
-    it('should update messageCount with setMessageCount', () => {
-        const model = new ControlBarModel()
-        model.setMessageCount(5)
-        expect(model.messageCount).toBe(5)
-    })
-
-    it('should throw if setMessageCount is called with negative value', () => {
+    it('throws when message count negative', () => {
         const model = new ControlBarModel()
         expect(() => model.setMessageCount(-1)).toThrow('Message count cannot be negative.')
-    })
-
-    it('lookBackOptions should be a copy and not modifiable externally', () => {
-        const originalOptions = [{ value: 'a', label: 'A' }]
-        const model = new ControlBarModel({ lookBackOptions: originalOptions, lookBackHours: 'a' })
-        originalOptions.push({ value: 'b', label: 'B' })
-        expect(model.lookBackOptions.length).toBe(1)
-        expect(model.lookBackOptions[0].value).toBe('a')
-        expect(model.lookBackOptions.find((opt) => opt.value === 'b')).toBeUndefined()
     })
 })

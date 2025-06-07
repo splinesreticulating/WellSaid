@@ -21,7 +21,8 @@ const formState = $state({
         copiedIndex: -1,
     },
     form: {
-        lookBackHours: '1',
+        lookBackAmount: '1',
+        lookBackUnit: 'hours',
         additionalContext: '',
         tone: 'gentle' as ToneType,
         messages: [] as Message[],
@@ -49,20 +50,20 @@ $effect(() => {
     }
 })
 
-// Watch for changes to lookBackHours and navigate to the new URL
+// Watch for changes to lookBackAmount/unit and navigate to the new URL
 $effect(() => {
-    const lookBack = formState.form.lookBackHours
-    if (lookBack) {
+    const amount = formState.form.lookBackAmount
+    const unit = formState.form.lookBackUnit
+    if (amount && unit) {
         const url = new URL(window.location.href)
-        const current = url.searchParams.get('lookBackHours')
+        const currentAmt = url.searchParams.get('lookBackAmount')
+        const currentUnit = url.searchParams.get('lookBackUnit')
 
-        if (current === lookBack) return
+        if (currentAmt === amount && currentUnit === unit) return
 
-        // Update the URL with the new lookBackHours parameter
-        url.searchParams.set('lookBackHours', lookBack)
+        url.searchParams.set('lookBackAmount', amount)
+        url.searchParams.set('lookBackUnit', unit)
 
-        // Use SvelteKit's goto to navigate to the new URL
-        // This will trigger a new page load with the updated parameter
         goto(url.toString(), { keepFocus: true, noScroll: true })
     }
 })
@@ -170,13 +171,14 @@ async function onclick() {
 	<div class="content-container">
 		<form onsubmit={handleSubmit}>
 
-			<ControlBar 
-				bind:lookBackHours={formState.form.lookBackHours}
-				messageCount={formState.form.messages.length}
-				onclick={onclick}
-				canGenerate={canGenerateReplies}
-				isLoading={showLoadingIndicators}
-			/>
+                        <ControlBar
+                                bind:lookBackAmount={formState.form.lookBackAmount}
+                                bind:lookBackUnit={formState.form.lookBackUnit}
+                                messageCount={formState.form.messages.length}
+                                onclick={onclick}
+                                canGenerate={canGenerateReplies}
+                                isLoading={showLoadingIndicators}
+                        />
 
 			<!-- Additional context (collapsible) -->
 			<AdditionalContext bind:additionalContext={formState.form.additionalContext} bind:expanded={additionalContextExpanded} />
