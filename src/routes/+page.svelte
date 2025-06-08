@@ -1,5 +1,6 @@
 <script lang="ts">
 import { goto } from '$app/navigation'
+import { browser } from '$app/environment'
 import AdditionalContext from '$lib/components/AdditionalContext.svelte'
 import AiProviderSelector from '$lib/components/AiProviderSelector.svelte'
 import ControlBar from '$lib/components/ControlBar.svelte'
@@ -18,7 +19,6 @@ const formState = $state({
     },
     ui: {
         loading: false,
-        copiedIndex: -1,
     },
     form: {
         lookBackAmount: '1',
@@ -52,6 +52,8 @@ $effect(() => {
 
 // Watch for changes to lookBackAmount/unit and navigate to the new URL
 $effect(() => {
+    if (!browser) return
+  
     const amount = formState.form.lookBackAmount
     const unit = formState.form.lookBackUnit
     if (amount && unit) {
@@ -69,6 +71,8 @@ $effect(() => {
 })
 
 $effect(() => {
+    if (!browser) return
+    
     const storedContext = localStorage.getItem(LOCAL_STORAGE_CONTEXT_KEY)
     if (storedContext) {
         formState.form.additionalContext = storedContext
@@ -79,6 +83,8 @@ $effect(() => {
 })
 
 $effect(() => {
+    if (!browser) return
+    
     if (formState.form.additionalContext) {
         localStorage.setItem(LOCAL_STORAGE_CONTEXT_KEY, formState.form.additionalContext)
     } else {

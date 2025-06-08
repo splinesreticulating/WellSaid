@@ -1,12 +1,12 @@
 <h1><img src="static/apple-touch-icon.png" alt="WellSaid Logo" width="60" height="60"> WellSaid</h1>
 <h3>Empathy. Upgraded.</h3>
 
-WellSaid is an empathy-focused communication tool that helps you craft better responses by providing conversation summaries and tone-based suggestions. It enhances your communication, and by extension your life, with meaningful, contextually appropriate replies.
+WellSaid helps you communicate with more empathy and clarity by offering conversation summaries and tone-based suggestions. When your words land well, everything else tends to go a little better too.
 
 ## Features
 
 - **Conversation Summaries**: Analyze your Messages app conversations with a partner from the last 1-24 hours
-- **Smart Reply Suggestions**: Get AI-generated reply options (via OpenAI or a local Khoj server) based on conversation context
+- **Smart Reply Suggestions**: Get short, medium, and long AI-generated reply options (via OpenAI or a local Khoj server) based on conversation context
 - **Conversation History Context**: Considers recent message history (configurable via `HISTORY_LOOKBACK_HOURS`) to provide more contextually relevant suggestions
 - **Tone Selection**: Choose from four different tones for your replies:
   - Gentle 
@@ -146,7 +146,7 @@ yarn dev
 WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses an AI provider (OpenAI's API by default, or a configured local Khoj server if `KHOJ_API_URL` is set) to analyze the conversation and generate:
 
 1. A summary of the conversation, including emotional tone and key topics
-1. Three suggested replies in your chosen tone
+1. Three suggested replies (short, medium, and long) in your chosen tone
 
 ## Technical Details
 
