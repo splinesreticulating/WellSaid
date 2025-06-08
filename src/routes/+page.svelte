@@ -1,6 +1,6 @@
 <script lang="ts">
-import { goto } from '$app/navigation'
 import { browser } from '$app/environment'
+import { goto } from '$app/navigation'
 import AdditionalContext from '$lib/components/AdditionalContext.svelte'
 import AiProviderSelector from '$lib/components/AiProviderSelector.svelte'
 import ControlBar from '$lib/components/ControlBar.svelte'
@@ -13,7 +13,8 @@ const LOCAL_STORAGE_CONTEXT_KEY = 'wellsaid_additional_context'
 
 const { data } = $props<{ data: PageData }>()
 
-const formState = $state({
+// biome-ignore lint/style/useConst: Svelte 5 $state() pattern
+let formState = $state({
     ai: {
         provider: DEFAULT_PROVIDER,
     },
@@ -52,7 +53,7 @@ $effect(() => {
 // Watch for changes to lookBackHours and navigate to the new URL
 $effect(() => {
     if (!browser) return
-    
+
     const lookBack = formState.form.lookBackHours
     if (lookBack) {
         const url = new URL(window.location.href)
@@ -71,7 +72,7 @@ $effect(() => {
 
 $effect(() => {
     if (!browser) return
-    
+
     const storedContext = localStorage.getItem(LOCAL_STORAGE_CONTEXT_KEY)
     if (storedContext) {
         formState.form.additionalContext = storedContext
@@ -83,7 +84,7 @@ $effect(() => {
 
 $effect(() => {
     if (!browser) return
-    
+
     if (formState.form.additionalContext) {
         localStorage.setItem(LOCAL_STORAGE_CONTEXT_KEY, formState.form.additionalContext)
     } else {
