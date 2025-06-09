@@ -4,7 +4,7 @@ import { safeCompare } from '$lib/utils'
 import { type Actions, fail, redirect } from '@sveltejs/kit'
 import jwt from 'jsonwebtoken'
 
-// 30-day cookie expiration by default
+// 30-day cookie expiration
 const AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 30
 
 export const actions: Actions = {
@@ -65,7 +65,7 @@ export const actions: Actions = {
             if (error && typeof error === 'object') {
                 logger.debug(`[LOGIN ACTION] Error constructor: ${error.constructor.name}`)
                 if ('status' in error) {
-                    logger.debug(`[LOGIN ACTION] Error status: ${(error as any).status}`)
+                    logger.debug(`[LOGIN ACTION] Error status: ${(error as { status: number }).status}`)
                 }
             }
 
