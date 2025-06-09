@@ -6,8 +6,6 @@ import type { Message, ToneType } from '$lib/types'
 import { fail } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 
-const DEFAULT_TONE = 'gentle'
-const DEFAULT_PROVIDER = 'openai'
 const ONE_HOUR = 60 * 60 * 1000
 
 export const load: PageServerLoad = async ({ url }) => {
