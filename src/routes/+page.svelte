@@ -97,7 +97,7 @@ function handleSubmit(event: Event) {
 }
 
 // Generate summary and replies
-async function onclick() {
+async function queryAI() {
     formState.ui.loading = true
     formState.form.summary = ''
     formState.form.suggestedReplies = []
@@ -180,7 +180,7 @@ async function onclick() {
 			<ControlBar 
 				bind:lookBackHours={formState.form.lookBackHours}
 				messageCount={formState.form.messages.length}
-				onclick={onclick}
+				onclick={queryAI}
 				canGenerate={canGenerateReplies}
 				isLoading={showLoadingIndicators}
 			/>
