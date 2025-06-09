@@ -6,8 +6,6 @@ import type { Message, ToneType } from '$lib/types'
 import { fail } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 
-const DEFAULT_TONE = 'gentle'
-const DEFAULT_PROVIDER = 'openai'
 const ONE_HOUR = 60 * 60 * 1000
 
 export const load: PageServerLoad = async ({ url }) => {
@@ -22,40 +20,11 @@ export const load: PageServerLoad = async ({ url }) => {
 export const actions: Actions = {
     generate: async ({ request }) => {
         try {
-            // Check content type
-            const contentType = request.headers.get('content-type') || ''
-
-            // Handle both form data and URL-encoded form data
-            let context = ''
-            let messagesString = ''
-            let tone: ToneType = DEFAULT_TONE
-            let provider = DEFAULT_PROVIDER
-
-            if (
-                contentType.includes('multipart/form-data') ||
-                contentType.includes('application/x-www-form-urlencoded')
-            ) {
-                const formData = await request.formData()
-                messagesString = formData.get('messages') as string
-                tone = formData.get('tone') as ToneType
-                context = formData.get('context') as string
-                provider = formData.get('provider') as string
-            } else {
-                // Try to parse as JSON
-                try {
-                    const data = await request.json()
-                    messagesString = data.messages ? JSON.stringify(data.messages) : ''
-                    tone = data.tone || DEFAULT_TONE
-                    context = data.context || ''
-                    provider = data.provider || DEFAULT_PROVIDER
-                } catch (e) {
-                    return fail(400, {
-                        error: 'Unsupported Content-Type',
-                        details:
-                            'Content-Type must be multipart/form-data, application/x-www-form-urlencoded, or application/json',
-                    })
-                }
-            }
+            const formData = await request.formData()
+            const messagesString = formData.get('messages') as string
+            const tone = formData.get('tone') as ToneType
+            const context = formData.get('context') as string
+            const provider = formData.get('provider') as string
 
             if (!messagesString || !tone) {
                 return fail(400, { error: 'Invalid request format: Missing messages or tone.' })

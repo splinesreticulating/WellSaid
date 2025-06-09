@@ -24,11 +24,24 @@ export const formatAsUserAndAssistant = (messages: Message[]): ChatMessage[] => 
 }
 
 const cleanReplyText = (text: string): string => {
-    return text
-        .replace(/^\*+\s*/, '') // Remove leading asterisks and spaces
-        .replace(/^"/, '') // Remove leading quote
-        .replace(/"$/, '') // Remove trailing quote
-        .trim()
+    let cleaned = text.trim()
+
+    // Remove leading asterisks and spaces
+    while (cleaned.startsWith('*') || cleaned.startsWith(' ')) {
+        cleaned = cleaned.slice(1)
+    }
+
+    // Remove leading quotes
+    if (cleaned.startsWith('"') || cleaned.startsWith('"')) {
+        cleaned = cleaned.slice(1)
+    }
+
+    // Remove trailing quotes
+    if (cleaned.endsWith('"') || cleaned.endsWith('"')) {
+        cleaned = cleaned.slice(0, -1)
+    }
+
+    return cleaned.trim()
 }
 
 export const extractReplies = (rawOutput: string): string[] => {

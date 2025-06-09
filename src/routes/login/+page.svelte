@@ -1,124 +1,76 @@
 <script lang="ts">
-import { goto } from '$app/navigation'
 import { page } from '$app/stores'
+import { enhance } from '$app/forms'
+import type { ActionData } from './$types'
+
+const { form }: { form: ActionData } = $props()
 
 const formState = $state({
     username: '',
     password: '',
-    error: '',
     loading: false,
 })
 
-// Check for error query parameter
+// Check for error query parameter (rate limiting)
 $effect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const errorParam = params.get('error')
+    const errorParam = $page.url.searchParams.get('error')
     if (errorParam === 'too_many_attempts') {
-        formState.error = 'Too many login attempts. Please try again later.'
+        // This will be handled by the error display below
     }
 })
-
-$effect(() => {
-    // Check if we're already logged in
-    checkAuthStatus()
-})
-
-async function checkAuthStatus() {
-    try {
-        const response = await fetch('/api/auth/check')
-        if (response.ok) {
-            // Already authenticated, dispatch event and redirect to home
-            const event = new CustomEvent('authchange', {
-                detail: { authenticated: true },
-            })
-            window.dispatchEvent(event)
-            goto('/')
-        }
-        // If response is 401, that's expected (user not logged in)
-        // Just stay on the login page
-    } catch (error) {
-        console.error('Error checking auth status:', error)
-    }
-}
-
-async function handleSubmit(event: Event) {
-    event.preventDefault()
-    formState.loading = true
-    formState.error = ''
-
-    try {
-        const response = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username: formState.username,
-                password: formState.password,
-            }),
-        })
-
-        if (response.ok) {
-            // Authentication successful, dispatch event and redirect
-            const event = new CustomEvent('authchange', {
-                detail: { authenticated: true },
-            })
-            window.dispatchEvent(event)
-            goto('/')
-        } else {
-            const data = await response.json()
-            formState.error = data.error || 'Invalid username or password'
-        }
-    } catch (error) {
-        console.error('Login error:', error)
-        formState.error = 'An error occurred during login'
-    } finally {
-        formState.loading = false
-    }
-}
 </script>
 
 <svelte:head>
     <title>Login</title>
 </svelte:head>
 
-    <div class="login-card">
-        <form onsubmit={handleSubmit}>
-            {#if formState.error}
-                <div class="error-message">{formState.error}</div>
+<div class="login-card">
+    <form method="POST" use:enhance={() => {
+        formState.loading = true
+        return async ({ update }) => {
+            await update()
+            formState.loading = false
+        }
+    }}>
+        {#if form?.error}
+            <div class="error-message">{form.error}</div>
+        {:else if $page.url.searchParams.get('error') === 'too_many_attempts'}
+            <div class="error-message">Too many login attempts. Please try again later.</div>
+        {/if}
+        
+        <div class="form-group">
+            <input 
+                type="text" 
+                name="username"
+                id="username" 
+                bind:value={formState.username} 
+                required 
+                autocomplete="username"
+                placeholder="username"
+            />
+        </div>
+        
+        <div class="form-group">
+            <input 
+                type="password" 
+                name="password"
+                id="password" 
+                bind:value={formState.password} 
+                required 
+                autocomplete="current-password"
+                placeholder="password"
+            />
+        </div>
+        
+        <button type="submit" class="login-button" disabled={formState.loading}>
+            {#if formState.loading}
+                <span class="loading-spinner"></span>
+            {:else}
+                login
             {/if}
-            
-            <div class="form-group">
-                <input 
-                    type="text" 
-                    id="username" 
-                    bind:value={formState.username} 
-                    required 
-                    autocomplete="username"
-                    placeholder="username"
-                />
-            </div>
-            
-            <div class="form-group">
-                <input 
-                    type="password" 
-                    id="password" 
-                    bind:value={formState.password} 
-                    required 
-                    autocomplete="current-password"
-                    placeholder="password"
-                />
-            </div>
-            
-            <button type="submit" class="login-button" disabled={formState.loading}>
-                {#if formState.loading}
-                    <span class="loading-spinner"></span>
-                {:else}
-                    login
-                {/if}
-            </button>
-        </form>
-    </div>
+        </button>
+    </form>
+</div>
 
 <style>
     
