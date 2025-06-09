@@ -11,15 +11,18 @@ const { children, data }: { children: Snippet; data: LayoutData } = $props()
 // Get authentication state from server
 const authenticated = $derived(data.authenticated)
 
+// Get current page info
+const currentPath = $derived($page.url.pathname)
+
 // Handle redirect for unauthenticated users
 onMount(() => {
-    if (!authenticated && $page.url.pathname !== '/login') {
+    if (!authenticated && currentPath !== '/login') {
         goto('/login')
     }
 })
 </script>
 
-{#if $page.url.pathname === '/login'}
+{#if currentPath === '/login'}
     {@render children()}
 {:else if authenticated}
     {@render children()}
