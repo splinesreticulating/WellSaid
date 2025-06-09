@@ -1,93 +1,31 @@
 <script lang="ts">
 import '../app.css'
-import { onMount } from 'svelte'
-import { browser } from '$app/environment'
+import { page } from '$app/stores'
 import { goto } from '$app/navigation'
-import { page } from '$app/state'
+import { onMount } from 'svelte'
+import type { LayoutData } from './$types'
+import type { Snippet } from 'svelte'
 
-// biome-ignore lint/style/useConst: Svelte 5 $props pattern for layout children
-let { children } = $props()
-let authenticated = $state(false)
-let initialCheckLoading = $state(true)
+const { children, data }: { children: Snippet; data: LayoutData } = $props()
 
-// Custom event type for auth changes
-type AuthChangeEvent = CustomEvent<{ authenticated: boolean }>
-const AUTH_CHANGE_EVENT = 'authchange'
+// Get authentication state from server
+const authenticated = $derived(data.authenticated)
 
-// Function to dispatch auth change event
-export function dispatchAuthChange(authenticated: boolean) {
-    if (!browser) return
-
-    const event = new CustomEvent(AUTH_CHANGE_EVENT, {
-        detail: { authenticated },
-    })
-    window.dispatchEvent(event)
-}
-
-async function performAuthCheck() {
-    if (!browser) return false
-
-    try {
-        const response = await fetch('/api/auth/check')
-        const isAuthenticated = response.ok
-        if (authenticated !== isAuthenticated) {
-            authenticated = isAuthenticated
-            dispatchAuthChange(isAuthenticated)
-        }
-        return isAuthenticated
-    } catch (err) {
-        console.error('Auth check failed:', err)
-        if (authenticated) {
-            authenticated = false
-            dispatchAuthChange(false)
-        }
-        return false
-    }
-}
-
-function handleAuthChange(event: AuthChangeEvent) {
-    authenticated = event.detail.authenticated
-    initialCheckLoading = false
-
-    // If not authenticated and not on login page, redirect to login
-    if (!authenticated && page.url.pathname !== '/login') {
-        goto('/login')
-    }
-}
-
+// Handle redirect for unauthenticated users
 onMount(() => {
-    if (!browser) return
-
-    // Initial auth check
-    const checkAuth = async () => {
-        initialCheckLoading = true
-        await performAuthCheck()
-        initialCheckLoading = false
-    }
-
-    checkAuth()
-
-    // Listen for auth change events
-    window.addEventListener(AUTH_CHANGE_EVENT, handleAuthChange as EventListener)
-
-    // Cleanup
-    return () => {
-        window.removeEventListener(AUTH_CHANGE_EVENT, handleAuthChange as EventListener)
+    if (!authenticated && $page.url.pathname !== '/login') {
+        goto('/login')
     }
 })
 </script>
 
-{#if page.url.pathname === '/login'}
+{#if $page.url.pathname === '/login'}
     {@render children()}
-{:else if initialCheckLoading}
-    <div style="text-align:center; margin-top: 5rem; padding: 1rem;">
-        <p>Reticulating splines...</p>
-    </div>
 {:else if authenticated}
     {@render children()}
 {:else}
     <div style="text-align:center; margin-top: 5rem; padding: 1rem;">
-        <p>Reticulating splines...</p>
+        <p>Redirecting to login...</p>
     </div>
 {/if}
 

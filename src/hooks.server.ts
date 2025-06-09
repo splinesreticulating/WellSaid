@@ -8,8 +8,7 @@ import jwt from 'jsonwebtoken'
 const MAX_LOGIN_ATTEMPTS = 5
 const LOGIN_ATTEMPT_WINDOW_MS = 15 * 60 * 1000 // 15 minutes
 const PUBLIC_PATHS = new Set([
-    '/api/auth/check',
-    '/api/auth/login',
+    '/login',
     '/favicon.ico',
     '/robots.txt',
     '/health',
@@ -69,7 +68,6 @@ const authMiddleware: Handle = async ({ event, resolve }) => {
     // Skip auth for public paths
     if (
         pathname.startsWith('/login') ||
-        pathname.startsWith('/api/auth/') ||
         pathname.startsWith('/_app/') ||
         PUBLIC_PATHS.has(pathname)
     ) {
