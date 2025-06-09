@@ -5,8 +5,7 @@ export const PERMANENT_CONTEXT = `${CUSTOM_CONTEXT}\n\nMessages with role "user"
 
 export const buildReplyPrompt = (tone: string, context: string): string => `
     Given the conversation above, provide a brief summary including the emotional tone, main topics, and any changes in mood.
-    Suggest 3 replies that I might send. Provide one short reply, one medium-length reply, and one long reply. Focus on the most recent messages when crafting replies.
-    Tone: ${tone}
+    Suggest 3 ${tone} replies that I might send. Provide one short reply, one medium-length reply, and one long reply.
     ${context ? `Recent conversation context (for reference only):\n${context}\n` : ''}
     Please respond using this format:
     Summary: <summary>
