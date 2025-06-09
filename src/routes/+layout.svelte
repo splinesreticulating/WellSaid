@@ -1,6 +1,6 @@
 <script lang="ts">
 import '../app.css'
-import { page } from '$app/stores'
+import { page } from '$app/state'
 import { goto } from '$app/navigation'
 import { onMount } from 'svelte'
 import type { LayoutData } from './$types'
@@ -12,7 +12,7 @@ const { children, data }: { children: Snippet; data: LayoutData } = $props()
 const authenticated = $derived(data.authenticated)
 
 // Get current page info
-const currentPath = $derived($page.url.pathname)
+const currentPath = $derived(page.url.pathname)
 
 // Handle redirect for unauthenticated users
 onMount(() => {
