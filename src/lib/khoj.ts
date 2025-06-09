@@ -1,5 +1,5 @@
 import { KHOJ_AGENT, KHOJ_API_URL } from '$env/static/private'
-import { PERMANENT_CONTEXT, buildKhojPrompt } from '$lib/prompts'
+import { PERMANENT_CONTEXT, buildKhojPrompt } from '$lib/prompt'
 import type { Message, ToneType } from '$lib/types'
 import { extractReplies, formatAsUserAndAssistant, parseSummaryToHumanReadable } from '$lib/utils'
 import { fetchRelevantHistory } from './history'

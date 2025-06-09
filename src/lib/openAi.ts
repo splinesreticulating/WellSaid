@@ -8,7 +8,7 @@ import {
 } from '$env/static/private'
 import { fetchRelevantHistory } from './history'
 import { logger } from './logger'
-import { PERMANENT_CONTEXT, buildReplyPrompt } from './prompts'
+import { PERMANENT_CONTEXT, buildReplyPrompt } from './prompt'
 import type { Message, OpenAIConfig, ToneType } from './types'
 import { formatAsUserAndAssistant } from './utils'
 
