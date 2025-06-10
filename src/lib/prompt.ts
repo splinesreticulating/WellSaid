@@ -18,7 +18,7 @@ export const buildReplyPrompt = (tone: string, context: string): string => `
 export const buildKhojPrompt = (
     conversation: ChatMessage[],
     tone: ToneType,
-    context: string
+    context: string,
 ): string => {
     const formattedMessages = conversation
         .map((msg, idx) => {
@@ -28,7 +28,7 @@ export const buildKhojPrompt = (
         .join('\n')
 
     return `
-        Here are some text messages between my partner and I:
+        ${PERMANENT_CONTEXT}\n\nHere are some text messages between my partner and I:
         ${formattedMessages}
         
         Please give a brief summary, including the emotional tone, main topics, and any changes in mood.
