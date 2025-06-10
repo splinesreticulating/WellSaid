@@ -4,7 +4,7 @@ import { safeCompare } from '$lib/utils'
 import { type Actions, fail, redirect } from '@sveltejs/kit'
 import jwt from 'jsonwebtoken'
 
-// 30-day cookie expiration
+// Most cookies go bad after 30 days so
 const AUTH_COOKIE_MAX_AGE = 60 * 60 * 24 * 30
 
 export const actions: Actions = {
