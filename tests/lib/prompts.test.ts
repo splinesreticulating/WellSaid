@@ -12,12 +12,8 @@ describe('prompts', () => {
         it('should include custom context and instructions', () => {
             expect(systemContext).toContain('Test custom context for prompts')
             expect(systemContext).toContain('Messages with role "user" are from me')
-            expect(systemContext).toContain(
-                'Messages with role "assistant" are from my partner'
-            )
-            expect(systemContext).toContain(
-                'Analyze my messages to mimic my vocabulary and tone'
-            )
+            expect(systemContext).toContain('Messages with role "assistant" are from my partner')
+            expect(systemContext).toContain('Analyze my messages to mimic my vocabulary and tone')
         })
     })
 

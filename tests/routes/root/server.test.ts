@@ -59,7 +59,7 @@ describe('root page server', () => {
         )
         expect(data).toEqual({
             messages: [{ text: 'hi', sender: 'partner', timestamp: '2025-01-01T00:00:00Z' }],
-            multiProvider: false
+            multiProvider: false,
         })
     })
 
@@ -81,7 +81,7 @@ describe('root page server', () => {
         // Create a proper Request with form data
         const request = new Request('https://example.com/', {
             method: 'POST',
-            body: formData
+            body: formData,
         })
 
         // Create mock event with the proper request
@@ -104,7 +104,7 @@ describe('root page server', () => {
             setHeaders: vi.fn(),
             url: event.url,
             isDataRequest: false,
-            isSubRequest: false
+            isSubRequest: false,
         } as unknown as Parameters<typeof serverModule.actions.generate>[0])
 
         // Verify the result is the expected object

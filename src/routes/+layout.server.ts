@@ -21,7 +21,9 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
 
         return { authenticated: true }
     } catch (err) {
-        logger.warn(`JWT verification failed in layout: ${err instanceof Error ? err.message : 'Unknown error'}`)
+        logger.warn(
+            `JWT verification failed in layout: ${err instanceof Error ? err.message : 'Unknown error'}`
+        )
 
         return { authenticated: false }
     }
