@@ -24,7 +24,7 @@ Reply 1: First reply`
 
         const result = parseSummaryToHumanReadable(rawOutput)
         expect(result).toBe(
-            'This is a summary.\nIt spans multiple lines.\nIt has details about the conversation.',
+            'This is a summary.\nIt spans multiple lines.\nIt has details about the conversation.'
         )
     })
 

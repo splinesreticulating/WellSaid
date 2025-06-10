@@ -35,7 +35,7 @@ describe('AiProviderSelectorModel', () => {
 
     it('should throw if initialized with an invalid value', () => {
         expect(() => new AiProviderSelectorModel('invalid')).toThrow(
-            "Initial value 'invalid' is not a valid option.",
+            "Initial value 'invalid' is not a valid option."
         )
     })
 

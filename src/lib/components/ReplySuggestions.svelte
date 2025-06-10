@@ -1,9 +1,9 @@
 <script lang="ts">
-// biome-ignore lint/style/useConst: Svelte 5 $props() pattern
-let { replies = [], loading = false }: { replies: string[]; loading: boolean } = $props()
+    // biome-ignore lint/style/useConst: Svelte 5 $props() pattern
+    let { replies = [], loading = false }: { replies: string[]; loading: boolean } = $props()
 
-// biome-ignore lint/style/useConst: `copiedIndex` is a Svelte $state rune, its value is reactively updated.
-let copiedIndex = $state(-1)
+    // biome-ignore lint/style/useConst: `copiedIndex` is a Svelte $state rune, its value is reactively updated.
+    let copiedIndex = $state(-1)
 </script>
 
 {#snippet copyButton(textToCopy: string, currentIndex: number)}
@@ -11,16 +11,16 @@ let copiedIndex = $state(-1)
         class="copy-button"
         onclick={async () => {
             try {
-                await navigator.clipboard.writeText(textToCopy);
-                copiedIndex = currentIndex; // Update the component-level state
+                await navigator.clipboard.writeText(textToCopy)
+                copiedIndex = currentIndex // Update the component-level state
                 setTimeout(() => {
                     // Only reset if this button is still the one marked 'copied'
                     if (copiedIndex === currentIndex) {
-                        copiedIndex = -1;
+                        copiedIndex = -1
                     }
-                }, 2000);
+                }, 2000)
             } catch (err) {
-                console.error('Failed to copy text: ', err);
+                console.error('Failed to copy text: ', err)
             }
         }}
         aria-label="Copy to clipboard"
@@ -76,7 +76,7 @@ let copiedIndex = $state(-1)
         align-items: flex-start;
         justify-content: space-between;
     }
-    
+
     .copy-button {
         border: none;
         background-color: transparent;
@@ -92,18 +92,19 @@ let copiedIndex = $state(-1)
         min-height: var(--min-touch-size);
         font-size: 1.5rem;
     }
-    
-    .copy-button:hover, .copy-button:active {
+
+    .copy-button:hover,
+    .copy-button:active {
         background-color: var(--light);
         color: var(--primary-dark);
     }
-    
+
     .empty-state {
         color: var(--light);
         text-align: center;
         font-weight: 100;
     }
-    
+
     .loading-suggestions {
         display: flex;
         align-items: center;
@@ -127,10 +128,19 @@ let copiedIndex = $state(-1)
     .pulse-loader:nth-child(3) {
         animation-delay: 0.6s;
     }
-    
+
     @keyframes pulse {
-        0% { transform: scale(0.8); opacity: 0.5; }
-        50% { transform: scale(1.2); opacity: 1; }
-        100% { transform: scale(0.8); opacity: 0.5; }
+        0% {
+            transform: scale(0.8);
+            opacity: 0.5;
+        }
+        50% {
+            transform: scale(1.2);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(0.8);
+            opacity: 0.5;
+        }
     }
 </style>

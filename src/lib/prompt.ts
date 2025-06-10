@@ -18,7 +18,7 @@ export const buildReplyPrompt = (tone: string, context: string): string => `
 export const buildKhojPrompt = (
     conversation: ChatMessage[],
     tone: ToneType,
-    context: string,
+    context: string
 ): string => {
     const formattedMessages = conversation
         .map((msg, idx) => {

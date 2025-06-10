@@ -17,7 +17,7 @@ vi.mock('$lib/logger', () => ({
 
 function createMockRequestEvent(
     url: URL,
-    body?: unknown,
+    body?: unknown
 ): RequestEvent<Record<string, string>, '/'> {
     return {
         request: new Request(url, {
@@ -55,7 +55,7 @@ describe('root page server', () => {
         })
         const event = createMockRequestEvent(new URL('https://example.com/'))
         const data = await serverModule.load(
-            event as unknown as Parameters<typeof serverModule.load>[0],
+            event as unknown as Parameters<typeof serverModule.load>[0]
         )
         expect(data).toEqual({
             messages: [{ text: 'hi', sender: 'partner', timestamp: '2025-01-01T00:00:00Z' }],
@@ -71,7 +71,7 @@ describe('root page server', () => {
         const formData = new URLSearchParams()
         formData.append(
             'messages',
-            JSON.stringify([{ text: 'test', sender: 'user', timestamp: '2025-01-01T00:00:00Z' }]),
+            JSON.stringify([{ text: 'test', sender: 'user', timestamp: '2025-01-01T00:00:00Z' }])
         )
         formData.append('tone', 'gentle')
         formData.append('context', 'test context')
@@ -94,7 +94,7 @@ describe('root page server', () => {
 
         // Call the action
         const result = await serverModule.actions.generate(
-            event as unknown as Parameters<typeof serverModule.actions.generate>[0],
+            event as unknown as Parameters<typeof serverModule.actions.generate>[0]
         )
 
         // Verify the result is the expected object
@@ -104,7 +104,7 @@ describe('root page server', () => {
         expect(openai.getOpenaiReply).toHaveBeenCalledWith(
             [{ text: 'test', sender: 'user', timestamp: '2025-01-01T00:00:00Z' }],
             'gentle',
-            'test context',
+            'test context'
         )
     })
 })

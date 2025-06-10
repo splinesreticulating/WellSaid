@@ -1,11 +1,11 @@
-<script lang="ts">  
-let { status, message } = $props()
+<script lang="ts">
+    let { status, message } = $props()
 
-$effect(() => {
-    if (status === 401) {
-        window.location.reload() // Force reload to show auth dialog
-    }
-})
+    $effect(() => {
+        if (status === 401) {
+            window.location.reload() // Force reload to show auth dialog
+        }
+    })
 </script>
 
 <div class="error-container">
@@ -21,18 +21,18 @@ $effect(() => {
         padding: 2rem;
         text-align: center;
     }
-    
+
     h1 {
         font-size: 4rem;
         margin-bottom: 1rem;
         color: var(--primary-dark);
     }
-    
+
     p {
         color: var(--primary-dark);
         margin-bottom: 2rem;
     }
-    
+
     a {
         color: var(--primary-light);
     }

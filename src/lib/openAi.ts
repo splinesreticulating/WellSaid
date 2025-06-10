@@ -57,7 +57,7 @@ const summaryFunction = {
 export const getOpenaiReply = async (
     messages: Message[],
     tone: ToneType,
-    context: string,
+    context: string
 ): Promise<{ summary: string; replies: string[] }> => {
     const config = getConfig()
 
@@ -104,7 +104,7 @@ export const getOpenaiReply = async (
 
         logger.debug(
             { status: response.status, statusText: response.statusText },
-            'OpenAI API response received',
+            'OpenAI API response received'
         )
 
         const { choices } = await response.json()

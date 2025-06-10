@@ -26,7 +26,10 @@ export const actions: Actions = {
             }
 
             // Validate credentials
-            if (safeCompare(username, BASIC_AUTH_USERNAME) && safeCompare(password, BASIC_AUTH_PASSWORD)) {
+            if (
+                safeCompare(username, BASIC_AUTH_USERNAME) &&
+                safeCompare(password, BASIC_AUTH_PASSWORD)
+            ) {
                 // Create authentication cookie (session-based authentication)
                 const cookieOptions = {
                     path: '/' as const,
@@ -61,20 +64,27 @@ export const actions: Actions = {
             return fail(401, { error: 'nope' })
         } catch (error) {
             // Debug what type of error we're getting
-            logger.debug(`[LOGIN ACTION] Caught error type: ${typeof error}, instanceof Response: ${error instanceof Response}, instanceof Error: ${error instanceof Error}`)
+            logger.debug(
+                `[LOGIN ACTION] Caught error type: ${typeof error}, instanceof Response: ${error instanceof Response}, instanceof Error: ${error instanceof Error}`
+            )
             if (error && typeof error === 'object') {
                 logger.debug(`[LOGIN ACTION] Error constructor: ${error.constructor.name}`)
                 if ('status' in error) {
-                    logger.debug(`[LOGIN ACTION] Error status: ${(error as { status: number }).status}`)
+                    logger.debug(
+                        `[LOGIN ACTION] Error status: ${(error as { status: number }).status}`
+                    )
                 }
             }
 
             // Check if this is a SvelteKit redirect (constructor name is 'Redirect')
-            const isRedirect = error && typeof error === 'object' && error.constructor.name === 'Redirect'
+            const isRedirect =
+                error && typeof error === 'object' && error.constructor.name === 'Redirect'
 
             // Only log actual errors, not redirects
             if (!isRedirect) {
-                logger.error(`[LOGIN ACTION] Login error: ${error instanceof Error ? error.message : 'Unknown error'}`)
+                logger.error(
+                    `[LOGIN ACTION] Login error: ${error instanceof Error ? error.message : 'Unknown error'}`
+                )
                 return fail(500, { error: 'An unexpected error occurred' })
             }
 

@@ -5,7 +5,7 @@ import { type Mock, beforeEach, describe, expect, it, vi } from 'vitest'
 // Helper function to get the request body from the fetch mock
 function getFetchRequestBody<T = unknown>(callIndex = 0): T {
     const fetchMock = global.fetch as Mock
-    const fetchCall = fetchMock.mock.calls[callIndex][1] as RequestInit
+    const fetchCall = fetchMock.mock.calls[callIndex][1] as { body?: string }
     return JSON.parse(fetchCall.body as string) as T
 }
 
@@ -94,7 +94,7 @@ describe('getOpenaiReply', () => {
                     Authorization: 'Bearer test-api-key',
                 }),
                 body: expect.any(String),
-            }),
+            })
         )
 
         const body = getFetchRequestBody<{ tools: Array<{ function: { name: string } }> }>()

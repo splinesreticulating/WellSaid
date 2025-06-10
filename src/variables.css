@@ -15,7 +15,7 @@
     --min-touch-size: 40px;
 
     /* Typography */
-    --heading-font: "Great Vibes", cursive;
-    --body-font: "Verdana", sans-serif;
-    --label-font: "Space Mono", monospace;
+    --heading-font: 'Great Vibes', cursive;
+    --body-font: 'Verdana', sans-serif;
+    --label-font: 'Space Mono', monospace;
 }

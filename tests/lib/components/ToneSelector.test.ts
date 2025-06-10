@@ -9,7 +9,7 @@ class ToneSelectorModel {
 
     constructor(
         initialSelectedTone: ToneType = 'gentle',
-        initialTones: ToneType[] = ['gentle', 'funny', 'reassuring', 'concise'],
+        initialTones: ToneType[] = ['gentle', 'funny', 'reassuring', 'concise']
     ) {
         this.selectedTone = initialSelectedTone
         this.tones = initialTones

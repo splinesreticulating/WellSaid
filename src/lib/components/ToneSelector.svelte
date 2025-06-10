@@ -1,21 +1,19 @@
 <script lang="ts">
-import type { ToneType } from '$lib/types'
+    import type { ToneType } from '$lib/types'
 
-// biome-ignore lint/style/useConst: Svelte 5 $props() pattern
-let { selectedTone = $bindable(), tones = [] as const }: { 
-    selectedTone: ToneType; 
-    tones: readonly ToneType[] 
-} = $props()
+    // biome-ignore lint/style/useConst: Svelte 5 $props() pattern
+    let {
+        selectedTone = $bindable(),
+        tones = [] as const,
+    }: {
+        selectedTone: ToneType
+        tones: readonly ToneType[]
+    } = $props()
 </script>
 
 {#snippet toneOption(toneValue: ToneType)}
     <label class={selectedTone === toneValue ? 'active' : ''}>
-        <input
-            type="radio"
-            name="tone"
-            bind:group={selectedTone}
-            value={toneValue}
-        />
+        <input type="radio" name="tone" bind:group={selectedTone} value={toneValue} />
         {toneValue}
     </label>
 {/snippet}
@@ -39,12 +37,15 @@ let { selectedTone = $bindable(), tones = [] as const }: {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 0.05rem 0.50rem;
+        padding: 0.05rem 0.5rem;
         border: 1px solid var(--primary-light);
         border-radius: var(--border-radius);
         cursor: pointer;
         font-size: 0.73rem;
-        transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+        transition:
+            background-color 0.2s,
+            color 0.2s,
+            box-shadow 0.2s;
         min-height: 28px;
         min-width: 60px;
         background-color: var(--light);
@@ -71,7 +72,7 @@ let { selectedTone = $bindable(), tones = [] as const }: {
     }
 
     @media (max-width: 767px) {
-        .tone-selector label input[type="radio"] {
+        .tone-selector label input[type='radio'] {
             display: none;
         }
     }
