@@ -22,9 +22,7 @@
     })
 </script>
 
-{#if currentPath === '/login'}
-    {@render children()}
-{:else if authenticated}
+{#if currentPath === '/login' || authenticated}
     {@render children()}
 {:else}
     <div style="text-align:center; margin-top: 5rem; padding: 1rem;">
