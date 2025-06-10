@@ -24,8 +24,7 @@ Please respond using this format:
         Reply 3: <long reply>`
 }
 
-export const openAiPrompt = (tone: string, context: string): string =>
-    `\n    ${buildPrompt(tone, context)}\n`
+export const openAiPrompt = (tone: string, context: string): string => `\n${buildPrompt(tone, context)}\n`
 
 export const khojPrompt = (
     conversation: ChatMessage[],
