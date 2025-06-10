@@ -15,10 +15,7 @@ export const load: PageServerLoad = async ({ url }) => {
     const start = new Date(end.getTime() - lookBack * ONE_HOUR)
     const { messages } = await queryMessagesDb(start.toISOString(), end.toISOString())
 
-    return {
-        messages,
-        multiProvider: !!KHOJ_API_URL
-    }
+    return { messages, multiProvider: !!KHOJ_API_URL }
 }
 
 export const actions: Actions = {
@@ -55,7 +52,7 @@ export const actions: Actions = {
             const result = await getReplies(messages, tone, context || '')
             logger.debug({ resultFromService: result }, 'Result received from AI service in action')
 
-            // Return the result directly - SvelteKit will handle the JSON serialization
+            // Return the result directly - SvelteKit handles the JSON serialization
             return result
         } catch (err) {
             logger.error({ err }, 'Error generating suggestions')
