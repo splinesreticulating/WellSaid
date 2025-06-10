@@ -1,3 +1,4 @@
+import { KHOJ_API_URL } from '$env/static/private'
 import { queryMessagesDb } from '$lib/iMessages'
 import { getKhojReply } from '$lib/khoj'
 import { logger } from '$lib/logger'
@@ -14,7 +15,10 @@ export const load: PageServerLoad = async ({ url }) => {
     const start = new Date(end.getTime() - lookBack * ONE_HOUR)
     const { messages } = await queryMessagesDb(start.toISOString(), end.toISOString())
 
-    return { messages }
+    return {
+        messages,
+        multiProvider: !!KHOJ_API_URL
+    }
 }
 
 export const actions: Actions = {

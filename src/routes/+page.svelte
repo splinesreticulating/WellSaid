@@ -11,7 +11,7 @@
     const DEFAULT_PROVIDER = 'openai'
     const LOCAL_STORAGE_CONTEXT_KEY = 'wellsaid_additional_context'
 
-    const { data } = $props<{ data: PageData }>()
+    const { data } = $props<{ data: PageData & { multiProvider: boolean } }>()
 
     let formState = $state({
         ai: {
@@ -216,7 +216,9 @@
                 />
             </section>
             <hr />
-            <AiProviderSelector bind:value={formState.ai.provider} />
+            {#if data.multiProvider}
+                <AiProviderSelector bind:value={formState.ai.provider} />
+            {/if}
         </form>
     </div>
 </main>
