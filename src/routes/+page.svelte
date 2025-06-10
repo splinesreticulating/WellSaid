@@ -148,7 +148,7 @@
                     formState.form.suggestedReplies = replies
                 } catch (parseError) {
                     console.error('Error parsing action data:', parseError)
-                    throw new Error('Failed to parse response from server')
+                    throw parseError
                 }
             } else {
                 throw new Error('Unexpected response format from server')
