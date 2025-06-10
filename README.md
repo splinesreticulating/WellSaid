@@ -16,7 +16,8 @@ WellSaid helps you communicate with more empathy and clarity by offering convers
 ### Requirements
 
 - iMessages database access -- designed to run from a Mac logged into your iCloud
-- OpenAI API key (if using OpenAI) or a running local [Khoj](https://khoj.dev/) instance
+- OpenAI API key
+- (optional) local [Khoj](https://khoj.dev/) instance
 
 ### Obtaining an OpenAI API Key
 
