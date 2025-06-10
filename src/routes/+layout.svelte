@@ -1,25 +1,25 @@
 <script lang="ts">
-import '../app.css'
-import { page } from '$app/state'
-import { goto } from '$app/navigation'
-import { onMount } from 'svelte'
-import type { LayoutData } from './$types'
-import type { Snippet } from 'svelte'
+    import '../app.css'
+    import { page } from '$app/state'
+    import { goto } from '$app/navigation'
+    import { onMount } from 'svelte'
+    import type { LayoutData } from './$types'
+    import type { Snippet } from 'svelte'
 
-const { children, data }: { children: Snippet; data: LayoutData } = $props()
+    const { children, data }: { children: Snippet; data: LayoutData } = $props()
 
-// Get authentication state from server
-const authenticated = $derived(data.authenticated)
+    // Get authentication state from server
+    const authenticated = $derived(data.authenticated)
 
-// Get current page info
-const currentPath = $derived(page.url.pathname)
+    // Get current page info
+    const currentPath = $derived(page.url.pathname)
 
-// Handle redirect for unauthenticated users
-onMount(() => {
-    if (!authenticated && currentPath !== '/login') {
-        goto('/login')
-    }
-})
+    // Handle redirect for unauthenticated users
+    onMount(() => {
+        if (!authenticated && currentPath !== '/login') {
+            goto('/login')
+        }
+    })
 </script>
 
 {#if currentPath === '/login'}

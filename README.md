@@ -9,10 +9,10 @@ WellSaid helps you communicate with more empathy and clarity by offering convers
 - **Smart Reply Suggestions**: Get short, medium, and long AI-generated reply options (via OpenAI or a local Khoj server) based on conversation context
 - **Conversation History Context**: Considers recent message history (configurable via `HISTORY_LOOKBACK_HOURS`) to provide more contextually relevant suggestions
 - **Tone Selection**: Choose from four different tones for your replies:
-  - Gentle 
-  - Funny 
-  - Reassuring 
-  - Concise 
+    - Gentle
+    - Funny
+    - Reassuring
+    - Concise
 - **Context Addition**: Add additional context to help generate more relevant replies
 - **Message Database Integration**: Connects to your macOS Messages app database
 - **Real-time Updates**: Dynamic UI with loading indicators and real-time feedback
@@ -29,21 +29,24 @@ WellSaid helps you communicate with more empathy and clarity by offering convers
 To use WellSaid with OpenAI's models, you'll need an API key. Here's how to get one:
 
 1. **Sign up for an account**
-   - Go to [OpenAI's website](https://platform.openai.com/signup)
-   - Create an account or sign in if you already have one
+
+    - Go to [OpenAI's website](https://platform.openai.com/signup)
+    - Create an account or sign in if you already have one
 
 2. **Access the API key section**
-   - After logging in, click on your profile icon in the top-right corner
-   - Select "View API keys" from the dropdown menu
+
+    - After logging in, click on your profile icon in the top-right corner
+    - Select "View API keys" from the dropdown menu
 
 3. **Create a new secret key**
-   - Click on "Create new secret key"
-   - Give your key a name (e.g., "WellSaid Development")
-   - Click "Create secret key"
-   - **Important**: Copy the key immediately - you won't be able to see it again!
+
+    - Click on "Create new secret key"
+    - Give your key a name (e.g., "WellSaid Development")
+    - Click "Create secret key"
+    - **Important**: Copy the key immediately - you won't be able to see it again!
 
 4. **Add the key to your environment**
-   - Paste the key as the value for `OPENAI_API_KEY` in your `.env` file
+    - Paste the key as the value for `OPENAI_API_KEY` in your `.env` file
 
 **Note**: OpenAI API usage is not free. You'll be charged based on the number of tokens processed. Check [OpenAI's pricing page](https://openai.com/pricing) for current rates.
 
@@ -117,7 +120,7 @@ HISTORY_LOOKBACK_HOURS=6
 CUSTOM_CONTEXT=your-custom-context
 ```
 
-**Important Note on `JWT_SECRET`**: 
+**Important Note on `JWT_SECRET`**:
 The `JWT_SECRET` is critical for securing your application's authentication. It should be a long, random, and unpredictable string. **Do not use a weak or easily guessable secret.**
 
 You can generate a strong secret using OpenSSL with the following command in your terminal:
@@ -125,6 +128,7 @@ You can generate a strong secret using OpenSSL with the following command in you
 ```bash
 openssl rand -base64 64
 ```
+
 Copy the output of this command and use it as the value for `JWT_SECRET` in your `.env` file. Ensure it's on a single line.
 
 4. Start the development server
@@ -213,19 +217,21 @@ mkcert -install
 ```bash
 mkcert <your-tailscale-hostname>.<tailscale-subdomain>.ts.net localhost
 ```
+
 This will create a cert/key pair like `rootCA.pem` and `rootCA-key.pem`.
 
 3. **Trust the cert on your iPhone**
 
 - Convert the root CA to iOS-compatible format:
+
 ```bash
 openssl x509 -inform PEM -in "$(mkcert -CAROOT)/rootCA.pem" -outform DER -out mkcert-rootCA.cer
 ```
 
 - AirDrop or email the `mkcert-rootCA.cer` file to your iPhone
 - Open it, then go to:
-  - **Settings → General → VPN & Device Management → Install Profile**
-  - **Settings → General → About → Certificate Trust Settings → Enable full trust** for mkcert root
+    - **Settings → General → VPN & Device Management → Install Profile**
+    - **Settings → General → About → Certificate Trust Settings → Enable full trust** for mkcert root
 
 Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, and your manifest and icon will load properly — giving your app a real custom icon when added to the Home Screen.
 

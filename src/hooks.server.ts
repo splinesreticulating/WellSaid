@@ -7,12 +7,7 @@ import jwt from 'jsonwebtoken'
 
 const MAX_LOGIN_ATTEMPTS = 5
 const LOGIN_ATTEMPT_WINDOW_MS = 15 * 60 * 1000 // 15 minutes
-const PUBLIC_PATHS = new Set([
-    '/login',
-    '/favicon.ico',
-    '/robots.txt',
-    '/health',
-])
+const PUBLIC_PATHS = new Set(['/login', '/favicon.ico', '/robots.txt', '/health'])
 
 // Validate environment variables
 if (!BASIC_AUTH_USERNAME || !BASIC_AUTH_PASSWORD) {
@@ -38,7 +33,7 @@ const logSecurityEvent = (event: string, details: Record<string, unknown> = {}) 
             type: 'security',
             event,
             ...details,
-        }),
+        })
     )
 }
 
@@ -49,7 +44,7 @@ const authMiddleware: Handle = async ({ event, resolve }) => {
         clientIP = event.getClientAddress()
     } catch (e: unknown) {
         logger.warn(
-            `[AUTH] Could not determine clientAddress: ${e instanceof Error ? e.message : String(e)}. Rate limiting may be less accurate for this request if multiple clients fail IP detection.`,
+            `[AUTH] Could not determine clientAddress: ${e instanceof Error ? e.message : String(e)}. Rate limiting may be less accurate for this request if multiple clients fail IP detection.`
         )
         clientIP = 'unknown'
     }
@@ -82,7 +77,7 @@ const authMiddleware: Handle = async ({ event, resolve }) => {
 
     if (!JWT_SECRET) {
         logger.error(
-            '[AUTH] JWT_SECRET is not defined. Cannot verify JWTs in middleware. Denying access.',
+            '[AUTH] JWT_SECRET is not defined. Cannot verify JWTs in middleware. Denying access.'
         )
         // This is a server configuration error, but we still redirect to login to prevent access.
     } else if (token) {
@@ -102,7 +97,7 @@ const authMiddleware: Handle = async ({ event, resolve }) => {
                 }
             }
             logger.warn(
-                `[AUTH] JWT verification failed in middleware: ${errorName} - ${reason} for path: ${pathname}`,
+                `[AUTH] JWT verification failed in middleware: ${errorName} - ${reason} for path: ${pathname}`
             )
             logSecurityEvent('jwt_verification_failed_middleware', {
                 ip: clientIP,

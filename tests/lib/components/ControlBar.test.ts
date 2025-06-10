@@ -115,7 +115,7 @@ describe('ControlBarModel', () => {
 
     it('should throw if initial lookBackHours is not in options', () => {
         expect(() => new ControlBarModel({ lookBackHours: 'invalid' })).toThrow(
-            'Initial lookBackHours "invalid" is not a valid option.',
+            'Initial lookBackHours "invalid" is not a valid option.'
         )
     })
 
@@ -128,7 +128,7 @@ describe('ControlBarModel', () => {
     it('should throw if selectLookBack is called with invalid value', () => {
         const model = new ControlBarModel()
         expect(() => model.selectLookBack('invalid')).toThrow(
-            'Invalid lookBackHours value: "invalid". Not in available options.',
+            'Invalid lookBackHours value: "invalid". Not in available options.'
         )
     })
 

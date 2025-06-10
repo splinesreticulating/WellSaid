@@ -22,7 +22,7 @@ export const fetchRelevantHistory = async (messages: Message[]): Promise<string>
                 },
                 now: now.toISOString(),
             },
-            'Fetching message history',
+            'Fetching message history'
         )
 
         const { messages: history } = await queryMessagesDb(start.toISOString(), end.toISOString())
@@ -32,7 +32,7 @@ export const fetchRelevantHistory = async (messages: Message[]): Promise<string>
                 historyCount: history.length,
                 timeRange: `${start.toISOString()} to ${end.toISOString()}`,
             },
-            'Fetched message history',
+            'Fetched message history'
         )
 
         if (history.length === 0) return ''
@@ -47,7 +47,7 @@ export const fetchRelevantHistory = async (messages: Message[]): Promise<string>
                 contextLength: context.length,
                 timeRange: `${start.toISOString()} to ${end.toISOString()}`,
             },
-            `Fetched additional history context from ${history.length} messages`,
+            `Fetched additional history context from ${history.length} messages`
         )
 
         return context
