@@ -1,8 +1,6 @@
 <script lang="ts">
-    // biome-ignore lint/style/useConst: Svelte 5 $props() pattern
     let { replies = [], loading = false }: { replies: string[]; loading: boolean } = $props()
 
-    // biome-ignore lint/style/useConst: `copiedIndex` is a Svelte $state rune, its value is reactively updated.
     let copiedIndex = $state(-1)
 </script>
 

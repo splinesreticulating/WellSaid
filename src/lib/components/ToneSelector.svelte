@@ -1,7 +1,6 @@
 <script lang="ts">
     import type { ToneType } from '$lib/types'
 
-    // biome-ignore lint/style/useConst: Svelte 5 $props() pattern
     let {
         selectedTone = $bindable(),
         tones = [] as const,
