@@ -60,14 +60,14 @@ describe('ReplySuggestions Component', () => {
         vi.useFakeTimers()
     })
 
-    it('should initialize with default values', () => {
+    it('should initialize with empty replies, not loading, and no copied index', () => {
         const component = new ReplySuggestionsModel()
         expect(component.replies).toEqual([])
         expect(component.loading).toBe(false)
         expect(component.copiedIndex).toBe(-1)
     })
 
-    it('should initialize with provided values', () => {
+    it('should initialize with provided replies and loading state', () => {
         const replies = ['Reply 1', 'Reply 2', 'Reply 3']
         const component = new ReplySuggestionsModel(replies, true)
         expect(component.replies).toEqual(replies)
@@ -75,21 +75,21 @@ describe('ReplySuggestions Component', () => {
         expect(component.copiedIndex).toBe(-1)
     })
 
-    it('should update loading state', () => {
+    it('should toggle loading state using setLoading', () => {
         const component = new ReplySuggestionsModel()
         expect(component.loading).toBe(false)
         component.setLoading(true)
         expect(component.loading).toBe(true)
     })
 
-    it('should update replies', () => {
+    it('should replace all replies when setReplies is called', () => {
         const component = new ReplySuggestionsModel()
         const newReplies = ['New reply 1', 'New reply 2']
         component.setReplies(newReplies)
         expect(component.replies).toEqual(newReplies)
     })
 
-    it('should set copied index when copying and reset after timeout', async () => {
+    it('should set copiedIndex when copying and reset after 2 seconds', async () => {
         const component = new ReplySuggestionsModel(['Reply 1', 'Reply 2'])
 
         await component.copyToClipboard('Reply 2', 1)
@@ -100,7 +100,7 @@ describe('ReplySuggestions Component', () => {
         expect(component.copiedIndex).toBe(-1)
     })
 
-    it('should use fallback method if clipboard API fails', async () => {
+    it('should fall back to execCommand when clipboard API fails', async () => {
         const component = new ReplySuggestionsModel(['Reply 1', 'Reply 2'])
         component.simulateClipboardAPIFailure()
 
@@ -112,7 +112,7 @@ describe('ReplySuggestions Component', () => {
         expect(component.copiedIndex).toBe(-1)
     })
 
-    it('should handle failure of both clipboard methods', async () => {
+    it('should throw an error when both clipboard API and execCommand fail', async () => {
         const component = new ReplySuggestionsModel(['Reply 1'])
         component.simulateClipboardAPIFailure()
         component.simulateExecCommandFailure()
