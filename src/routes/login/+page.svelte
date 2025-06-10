@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { page } from '$app/stores'
+    import { page } from '$app/state'
     import { enhance } from '$app/forms'
     import type { ActionData } from './$types'
 
@@ -13,7 +13,7 @@
 
     // Check for error query parameter (rate limiting)
     $effect(() => {
-        const errorParam = $page.url.searchParams.get('error')
+        const errorParam = page.url.searchParams.get('error')
         if (errorParam === 'too_many_attempts') {
             // This will be handled by the error display below
         }
@@ -37,7 +37,7 @@
     >
         {#if form?.error}
             <div class="error-message">{form.error}</div>
-        {:else if $page.url.searchParams.get('error') === 'too_many_attempts'}
+        {:else if page.url.searchParams.get('error') === 'too_many_attempts'}
             <div class="error-message">Too many login attempts. Please try again later.</div>
         {/if}
 
