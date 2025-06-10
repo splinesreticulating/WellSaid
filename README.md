@@ -64,40 +64,38 @@ yarn prepare
 
 Create a `.env` file in the root directory by copying the `.env.example` file (`cp .env.example .env`) and then update the values. The following variables are needed:
 
-### Customization
-- `PARTNER_PHONE`: Your partner's phone number in the Messages app
-- `HISTORY_LOOKBACK_HOURS`: How many hours of prior conversation history to search for extra context
-- `CUSTOM_CONTEXT`: To guide the AI's personality and behavior (Example: "Act as my therapist suggesting replies to my partner" or "You are a helpful assistant")
+- **Customization**
+    - `PARTNER_PHONE`: Your partner's phone number in the Messages app
+    - `HISTORY_LOOKBACK_HOURS`: How many hours of prior conversation history to search for extra context
+    - `CUSTOM_CONTEXT`: To guide the AI's personality and behavior (Example: "Act as my therapist suggesting replies to my partner" or "You are a helpful assistant")
 
-### Open AI
-- `OPENAI_API_KEY`: Your OpenAI API key
-- `OPENAI_MODEL`: gpt-4 or any other OpenAI model
-- `OPENAI_TEMPERATURE`: Controls the randomness of the responses
-- `OPENAI_TOP_P`: Lets the responses be a little more adventurous
-- `OPENAI_FREQUENCY_PENALTY`: Keeps the suggestions from repeating themselves
-- `OPENAI_PRESENCE_PENALTY`: Nudges the AI to bring up fresh ideas
+- **Open AI**
+    - `OPENAI_API_KEY`: Your OpenAI API key
+    - `OPENAI_MODEL`: gpt-4 or any other OpenAI model
+    - `OPENAI_TEMPERATURE`: Controls the randomness of the responses
+    - `OPENAI_TOP_P`: Lets the responses be a little more adventurous
+    - `OPENAI_FREQUENCY_PENALTY`: Keeps the suggestions from repeating themselves
+    - `OPENAI_PRESENCE_PENALTY`: Nudges the AI to bring up fresh ideas
 
-### Khoj
-- `KHOJ_API_URL`: Your khoj server API URL if you have one
-- `KHOJ_AGENT`: The khoj agent to use if you have one
+- **Khoj**
+    - `KHOJ_API_URL`: Your khoj server API URL if you have one
+    - `KHOJ_AGENT`: The khoj agent to use if you have one
 
-### Logging
-- `LOG_LEVEL=info`: Logging level (info, debug, warn, error)
+- **Logging**
+    - `LOG_LEVEL`: Logging level (info, debug, warn, error)
 
-### Remote Access
-- `ALLOWED_HOST`: For remote access via Tailscale (see 'Accessing from Anywhere' section)
+- **Remote Access**
+    - `ALLOWED_HOST`: For remote access via Tailscale (see 'Accessing from Anywhere' section)
 
-### Security
-- `BASIC_AUTH_USERNAME`: Your username
-- `BASIC_AUTH_PASSWORD`: Your password
-- `JWT_SECRET`: Should be a long, random, and unpredictable string. 
-You can generate one using OpenSSL with the following command in your terminal:
-
+- **Security**
+    - `BASIC_AUTH_USERNAME`: Your username
+    - `BASIC_AUTH_PASSWORD`: Your password
+    - `JWT_SECRET`: Should be a long, random, and unpredictable string. 
+    You can generate one using OpenSSL with the following command in your terminal:
     ```bash
     openssl rand -base64 64
     ```
-
-- Copy the output of this command and use it as the value for `JWT_SECRET` in your `.env` file. Ensure it's on a single line.
+    - Copy the output of this command and use it as the value for `JWT_SECRET` in your `.env` file. Ensure it's on a single line.
 
 5. Start the development server
 
