@@ -63,3 +63,9 @@ export const safeCompare = (a: string, b: string): boolean => {
     Buffer.from(b).copy(bBuf)
     return timingSafeEqual(aBuf, bBuf) && a.length === b.length
 }
+
+export const formatMessages = (conversation: ChatMessage[]): string => {
+    return conversation
+        .map((msg, idx) => `Message ${idx + 1}: ${msg.role}: ${msg.content}`)
+        .join('\n')
+}

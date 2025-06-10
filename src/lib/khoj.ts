@@ -1,5 +1,5 @@
 import { KHOJ_AGENT, KHOJ_API_URL } from '$env/static/private'
-import { buildKhojPrompt } from '$lib/prompt'
+import { khojPrompt } from '$lib/prompts'
 import type { Message, ToneType } from '$lib/types'
 import { extractReplies, formatAsUserAndAssistant, parseSummaryToHumanReadable } from '$lib/utils'
 import { fetchRelevantHistory } from './history'
@@ -15,7 +15,7 @@ export const getKhojReply = async (
     const conversation = formatAsUserAndAssistant(messages)
     const historyContext = await fetchRelevantHistory(messages)
     const mergedContext = [historyContext, context].filter(Boolean).join('\n')
-    const prompt = buildKhojPrompt(conversation, tone, mergedContext)
+    const prompt = khojPrompt(conversation, tone, mergedContext)
     const body = {
         q: prompt,
         ...(KHOJ_AGENT ? { agent: KHOJ_AGENT } : {}),
