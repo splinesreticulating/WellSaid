@@ -119,8 +119,8 @@ describe('ReplySuggestions Component', () => {
 
         try {
             await component.copyToClipboard('Reply 1', 0)
-            // Should not reach here
-            expect(true).toBe(false)
+            // If we reach here, the test should fail
+            expect.fail('Expected copyToClipboard to throw an error')
         } catch (error: unknown) {
             if (error instanceof Error) {
                 expect(error).toBeInstanceOf(Error)

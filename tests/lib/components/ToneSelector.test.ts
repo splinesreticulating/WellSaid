@@ -45,10 +45,23 @@ describe('ToneSelector Component', () => {
         expect(component.tones).toEqual(['funny', 'concise'])
     })
 
-    it('should change selected tone', () => {
+    it('should change selected tone via onToneChange', () => {
         const component = new ToneSelectorModel()
         component.onToneChange('funny')
         expect(component.selectedTone).toBe('funny')
+        expect(component.isActive('funny')).toBe(true)
+    })
+
+    it('should change selected tone via setSelectedTone', () => {
+        const component = new ToneSelectorModel()
+        component.setSelectedTone('concise')
+        expect(component.selectedTone).toBe('concise')
+        expect(component.isActive('concise')).toBe(true)
+    })
+
+    it('should throw when setting invalid tone via setSelectedTone', () => {
+        const component = new ToneSelectorModel()
+        expect(() => component.setSelectedTone('invalid' as ToneType)).toThrow('Invalid tone: invalid')
     })
 
     it('should correctly identify active tone', () => {
@@ -58,25 +71,9 @@ describe('ToneSelector Component', () => {
         expect(component.isActive('concise')).toBe(false)
     })
 
-    it('should validate tone when setting it directly', () => {
-        const component = new ToneSelectorModel()
-
-        // Valid tone should work
-        component.setSelectedTone('concise')
-        expect(component.selectedTone).toBe('concise')
-
-        // Invalid tone should throw an error
-        try {
-            // TypeScript would normally catch this, but we're testing runtime behavior
-            component.setSelectedTone('invalid' as ToneType)
-            // Should not reach here
-            expect(true).toBe(false)
-        } catch (error: unknown) {
-            if (error instanceof Error) {
-                expect(error.message).toBe('Invalid tone: invalid')
-            } else {
-                expect.fail('Expected an Error instance')
-            }
-        }
+    it('should handle empty initialTones array', () => {
+        const component = new ToneSelectorModel(undefined, [])
+        expect(component.tones).toEqual([])
+        expect(() => component.setSelectedTone('gentle' as ToneType)).toThrow('Invalid tone: gentle')
     })
 })
