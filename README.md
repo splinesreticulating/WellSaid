@@ -1,28 +1,22 @@
 <h1><img src="static/apple-touch-icon.png" alt="WellSaid Logo" width="60" height="60"> WellSaid</h1>
 <h3>Empathy. Upgraded.</h3>
 
-WellSaid helps you communicate with more empathy and clarity by offering conversation summaries and tone-based suggestions. When your words land well, everything else tends to go a little better too.
+WellSaid helps you communicate with more empathy and clarity by offering conversation summaries and tone-based reply suggestions.
 
 ## Features
 
 - **Conversation Summaries**: Analyze your Messages app conversations with a partner from the last 1-24 hours
-- **Smart Reply Suggestions**: Get short, medium, and long AI-generated reply options (via OpenAI or a local Khoj server) based on conversation context
-- **Conversation History Context**: Considers recent message history (configurable via `HISTORY_LOOKBACK_HOURS`) to provide more contextually relevant suggestions
-- **Tone Selection**: Choose from four different tones for your replies:
-    - Gentle
-    - Funny
-    - Reassuring
-    - Concise
+- **Smart Reply Suggestions**: Get short, medium, and long AI-generated reply options based on recent and and historical conversation context
+- **Tone Selection**: Set the tone for your replies with (eg: gentle, funny, reassuring, concise)
 - **Context Addition**: Add additional context to help generate more relevant replies
 - **Message Database Integration**: Connects to your macOS Messages app database
-- **Real-time Updates**: Dynamic UI with loading indicators and real-time feedback
 
 ## Getting Started
 
 ### Requirements
 
 - iMessages database access -- designed to run from a Mac logged into your iCloud
-- OpenAI API key (if using OpenAI) or a running local Khoj instance (if using Khoj)
+- OpenAI API key (if using OpenAI) or a running local [Khoj](https://khoj.dev/) instance
 
 ### Obtaining an OpenAI API Key
 
@@ -99,7 +93,7 @@ KHOJ_AGENT=your_khoj_agent_name          # The Khoj agent to use
 # --- General Configuration ---
 PARTNER_PHONE=+1234567890  # Your partner's phone number in the Messages app
 
-# --- Authentication (CRITICAL for security) ---
+# --- Authentication ---
 BASIC_AUTH_USERNAME=your_username
 BASIC_AUTH_PASSWORD=your_strong_password
 JWT_SECRET=your_super_strong_random_jwt_secret # See note on JWT_SECRET generation below
@@ -120,10 +114,10 @@ HISTORY_LOOKBACK_HOURS=6
 CUSTOM_CONTEXT=your-custom-context
 ```
 
-**Important Note on `JWT_SECRET`**:
-The `JWT_SECRET` is critical for securing your application's authentication. It should be a long, random, and unpredictable string. **Do not use a weak or easily guessable secret.**
+**Note on `JWT_SECRET`**:
+The `JWT_SECRET` should be a long, random, and unpredictable string. 
 
-You can generate a strong secret using OpenSSL with the following command in your terminal:
+You can generate one using OpenSSL with the following command in your terminal:
 
 ```bash
 openssl rand -base64 64
@@ -139,15 +133,14 @@ yarn dev
 
 ## Usage
 
-1. Select a time frame to analyze (1-24 hours)
-1. Choose a tone for suggested replies
-1. Click the "go" button to generate a conversation summary
-1. Review the summary of your recent conversation
-1. View and copy suggested replies to use in your conversation
+1. Select a time frame to analyze
+1. Choose a tone for the reply suggestions 
+1. Click "go" to generate a conversation summary and some suggested replies of varying length
+1. Copy and paste a suggested reply into your conversation
 
 ## How It Works
 
-WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses an AI provider (OpenAI's API by default, or a configured local Khoj server if `KHOJ_API_URL` is set) to analyze the conversation and generate:
+WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses an AI provider (OpenAI's API by default, or a configured local [Khoj](https://khoj.dev/) server if `KHOJ_API_URL` is set) to analyze the conversation and generate:
 
 1. A summary of the conversation, including emotional tone and key topics
 1. Three suggested replies (short, medium, and long) in your chosen tone
@@ -158,7 +151,7 @@ WellSaid connects to your macOS Messages database to fetch your conversations wi
 - **State Management**: Svelte's built-in $state system
 - **Styling**: Custom CSS with variables for theming
 - **Database**: SQLite (connecting to macOS Messages database)
-- **AI Integration**: OpenAI API (GPT-4 or other models) or a local Khoj server
+- **AI Integration**: OpenAI API (GPT-4 or other models) and/or a local [Khoj](https://khoj.dev/) server
 - **Logging**: Pino for structured logging
 
 ## Development and Local Usage
@@ -193,11 +186,11 @@ yarn test:watch
 yarn test:coverage
 ```
 
-**Note**: Since this application only runs on macOS and accesses local system resources, there is no traditional "production deployment" - the built version is simply run locally on your macbook. The `yarn build` and `yarn preview` commands create and run an optimized version that may provide better performance than development mode.
+**Note**: Since this application only runs on macOS and accesses local system resources, there is no traditional "production deployment" - the built version is simply run locally on your Mac. The `yarn build` and `yarn preview` commands create and run an optimized version that may provide better performance than development mode.
 
 ## Accessing from Anywhere
 
-If you'd like to securely access WellSaid remotely, consider using a service like [Tailscale](https://tailscale.com). Tailscale sets up a secure private network (a mesh VPN) that connects your devices, making it simple and safe to access your app.
+If you'd like to securely access WellSaid remotely, consider using a service like [Tailscale](https://tailscale.com) to set up a secure private network that connects your devices.
 
 All that's required in the app is that you set the `ALLOWED_HOST` variable in your `.env` file to the address provided by Tailscale. For more details, visit [Tailscale's documentation](https://tailscale.com/kb/).
 
@@ -245,8 +238,8 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
 
 - **Messages Not Loading**: Ensure you've set the correct `PARTNER_PHONE` in your `.env` file
 - **Permission Issues**: WellSaid needs access to your Messages database. Make sure Terminal/your editor has Full Disk Access in System Preferences > Security & Privacy
-- **OpenAI API Errors**: Check that your API key is valid and you have sufficient credits
 - **No Partner Messages**: The app will only show conversations where your partner has responded
+- **"Error generating summary / trouble generating a response" messages**: Check that your API key is valid and you have sufficient credits
 
 ## Acknowledgements
 
@@ -255,7 +248,6 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
 - [Khoj](https://khoj.dev/) - Alternative local AI model provider and search
 - [SQLite](https://sqlite.org/) - Database engine
 - [Tailscale](https://tailscale.com/) - For making secure remote access easy
-- [Apple](https://www.apple.com/) - For not securing the iMessages database
 
 ## Box Art
 
