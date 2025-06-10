@@ -32,7 +32,6 @@ export const khojPrompt = (
     tone: ToneType,
     context: string
 ): string => {
-
     return `
         ${PERMANENT_CONTEXT}
         

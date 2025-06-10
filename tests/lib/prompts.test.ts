@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 // Mock the environment variable
 vi.mock('$env/static/private', () => ({
-    CUSTOM_CONTEXT: 'Test custom context for prompts'
+    CUSTOM_CONTEXT: 'Test custom context for prompts',
 }))
 
 describe('prompts', () => {
@@ -12,8 +12,12 @@ describe('prompts', () => {
         it('should include custom context and instructions', () => {
             expect(PERMANENT_CONTEXT).toContain('Test custom context for prompts')
             expect(PERMANENT_CONTEXT).toContain('Messages with role "user" are from me')
-            expect(PERMANENT_CONTEXT).toContain('Messages with role "assistant" are from my partner')
-            expect(PERMANENT_CONTEXT).toContain('Analyze my messages to mimic my vocabulary and tone')
+            expect(PERMANENT_CONTEXT).toContain(
+                'Messages with role "assistant" are from my partner'
+            )
+            expect(PERMANENT_CONTEXT).toContain(
+                'Analyze my messages to mimic my vocabulary and tone'
+            )
         })
     })
 
@@ -42,7 +46,7 @@ describe('prompts', () => {
         it('should handle different tone types', () => {
             const tones = ['gentle', 'professional', 'reassuring', 'formal']
 
-            tones.forEach(tone => {
+            tones.forEach((tone) => {
                 const result = openAiPrompt(tone, '')
                 expect(result).toContain(`Suggest 3 ${tone} replies`)
             })
@@ -53,7 +57,7 @@ describe('prompts', () => {
         const mockConversation: ChatMessage[] = [
             { role: 'user', content: 'Hey, how was your day?' },
             { role: 'assistant', content: 'It was great! How about yours?' },
-            { role: 'user', content: 'Pretty good, thanks for asking' }
+            { role: 'user', content: 'Pretty good, thanks for asking' },
         ]
 
         it('should generate complete prompt with conversation and no context', () => {
@@ -89,9 +93,7 @@ describe('prompts', () => {
         })
 
         it('should handle single message conversation', () => {
-            const singleMessage: ChatMessage[] = [
-                { role: 'user', content: 'Hello there!' }
-            ]
+            const singleMessage: ChatMessage[] = [{ role: 'user', content: 'Hello there!' }]
             const result = khojPrompt(singleMessage, 'reassuring', '')
 
             expect(result).toContain('Message 1: user: Hello there!')
@@ -102,7 +104,9 @@ describe('prompts', () => {
             const result = khojPrompt(mockConversation, 'gentle', '')
 
             const message1Index = result.indexOf('Message 1: user: Hey, how was your day?')
-            const message2Index = result.indexOf('Message 2: assistant: It was great! How about yours?')
+            const message2Index = result.indexOf(
+                'Message 2: assistant: It was great! How about yours?'
+            )
             const message3Index = result.indexOf('Message 3: user: Pretty good, thanks for asking')
 
             expect(message1Index).toBeLessThan(message2Index)
@@ -113,7 +117,11 @@ describe('prompts', () => {
     describe('prompt structure consistency', () => {
         it('should have consistent format sections in both functions', () => {
             const openAiResult = openAiPrompt('gentle', 'test context')
-            const khojResult = khojPrompt([{ role: 'user', content: 'test' }], 'gentle', 'test context')
+            const khojResult = khojPrompt(
+                [{ role: 'user', content: 'test' }],
+                'gentle',
+                'test context'
+            )
 
             // Both should contain the same format instructions
             const formatSection = 'Please respond using this format:'
