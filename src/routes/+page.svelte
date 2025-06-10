@@ -110,9 +110,7 @@
 
             const response = await fetch('?/generate', {
                 method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                },
+                headers: { Accept: 'application/json' },
                 body: formData,
             })
 
@@ -120,13 +118,13 @@
 
             if (!response.ok) {
                 // Action called fail()
-                // result here is the object passed to fail(), e.g., { error: 'message', details: '...' }
+                // result is the object passed to fail(), e.g., { error: 'message', details: '...' }
                 const errorMessage = result?.error || 'Unknown error from action'
                 throw new Error(`Action failed: ${errorMessage}`)
             }
 
             // SvelteKit wraps the response in { type, status, data }
-            // where data is a JSON string that needs to be parsed
+            // where data is a JSON string
             if (result && typeof result.data === 'string') {
                 try {
                     const parsedData = JSON.parse(result.data)
