@@ -17,29 +17,23 @@ WellSaid helps you communicate with more empathy and clarity by offering convers
 
 - iMessages database access -- designed to run from a Mac logged into your iCloud
 - OpenAI API key
-- (optional) local [Khoj](https://khoj.dev/) instance
+- (optional) Local [Khoj](https://khoj.dev/) instance, for a second opinion
 
 ### Obtaining an OpenAI API Key
 
 To use WellSaid with OpenAI's models, you'll need an API key. Here's how to get one:
 
 1. **Sign up for an account**
-
     - Go to [OpenAI's website](https://platform.openai.com/signup)
     - Create an account or sign in if you already have one
-
 2. **Access the API key section**
-
     - After logging in, click on your profile icon in the top-right corner
     - Select "View API keys" from the dropdown menu
-
 3. **Create a new secret key**
-
     - Click on "Create new secret key"
     - Give your key a name (e.g., "WellSaid Development")
     - Click "Create secret key"
     - **Important**: Copy the key immediately - you won't be able to see it again!
-
 4. **Add the key to your environment**
     - Paste the key as the value for `OPENAI_API_KEY` in your `.env` file
 
@@ -73,7 +67,7 @@ Create a `.env` file in the root directory by copying the `.env.example` file (`
 ### Customization
 - `PARTNER_PHONE`: Your partner's phone number in the Messages app
 - `HISTORY_LOOKBACK_HOURS`: How many hours of prior conversation history to search for extra context
-- `CUSTOM_CONTEXT`: Custom context to guide the AI's personality and behavior (Example: "Act as my therapist suggesting replies to my partner" or "You are a helpful assistant")
+- `CUSTOM_CONTEXT`: To guide the AI's personality and behavior (Example: "Act as my therapist suggesting replies to my partner" or "You are a helpful assistant")
 
 ### Open AI
 - `OPENAI_API_KEY`: Your OpenAI API key
@@ -120,7 +114,7 @@ yarn dev
 
 ## How It Works
 
-WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses an AI provider (OpenAI's API by default, or a configured local [Khoj](https://khoj.dev/) server if `KHOJ_API_URL` is set) to analyze the conversation and generate:
+WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses an AI provider (OpenAI's API by default) to analyze the conversation and generate:
 
 1. A summary of the conversation, including emotional tone and key topics
 1. Three suggested replies (short, medium, and long) in your chosen tone
@@ -131,7 +125,7 @@ WellSaid connects to your macOS Messages database to fetch your conversations wi
 - **State Management**: Svelte's built-in $state system
 - **Styling**: Custom CSS with variables for theming
 - **Database**: SQLite (connecting to macOS Messages database)
-- **AI Integration**: OpenAI API (GPT-4 or other models) and/or a local [Khoj](https://khoj.dev/) server
+- **AI Integration**: OpenAI API (GPT-4 or other models) plus optional local [Khoj](https://khoj.dev/) server
 - **Logging**: Pino for structured logging
 
 ## Development and Local Usage
