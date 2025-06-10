@@ -2,7 +2,7 @@ import { CUSTOM_CONTEXT } from '$env/static/private'
 import type { ChatMessage, ToneType } from './types'
 import { formatMessages } from './utils'
 
-export const PERMANENT_CONTEXT = `${CUSTOM_CONTEXT}
+export const systemContext = `${CUSTOM_CONTEXT}
 
 Messages with role "user" are from me. Messages with role "assistant" are from my partner. Analyze my messages to mimic my vocabulary and tone when suggesting replies.
 
@@ -33,7 +33,7 @@ export const khojPrompt = (
     context: string
 ): string => {
     return `
-        ${PERMANENT_CONTEXT}
+        ${systemContext}
         
         Here are some text messages between my partner and I:
         

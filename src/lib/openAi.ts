@@ -8,7 +8,7 @@ import {
 } from '$env/static/private'
 import { fetchRelevantHistory } from './history'
 import { logger } from './logger'
-import { PERMANENT_CONTEXT, openAiPrompt } from './prompts'
+import { openAiPrompt, systemContext } from './prompts'
 import type { Message, OpenAIConfig, ToneType } from './types'
 import { formatAsUserAndAssistant } from './utils'
 
@@ -84,7 +84,7 @@ export const getOpenaiReply = async (
             body: JSON.stringify({
                 model: config.model,
                 messages: [
-                    { role: 'system', content: PERMANENT_CONTEXT },
+                    { role: 'system', content: systemContext },
                     ...conversation,
                     { role: 'user', content: prompt },
                 ],

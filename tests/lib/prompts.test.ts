@@ -1,4 +1,4 @@
-import { khojPrompt, openAiPrompt, PERMANENT_CONTEXT } from '$lib/prompts'
+import { khojPrompt, openAiPrompt, systemContext } from '$lib/prompts'
 import type { ChatMessage } from '$lib/types'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -10,12 +10,12 @@ vi.mock('$env/static/private', () => ({
 describe('prompts', () => {
     describe('PERMANENT_CONTEXT', () => {
         it('should include custom context and instructions', () => {
-            expect(PERMANENT_CONTEXT).toContain('Test custom context for prompts')
-            expect(PERMANENT_CONTEXT).toContain('Messages with role "user" are from me')
-            expect(PERMANENT_CONTEXT).toContain(
+            expect(systemContext).toContain('Test custom context for prompts')
+            expect(systemContext).toContain('Messages with role "user" are from me')
+            expect(systemContext).toContain(
                 'Messages with role "assistant" are from my partner'
             )
-            expect(PERMANENT_CONTEXT).toContain(
+            expect(systemContext).toContain(
                 'Analyze my messages to mimic my vocabulary and tone'
             )
         })
@@ -63,7 +63,7 @@ describe('prompts', () => {
         it('should generate complete prompt with conversation and no context', () => {
             const result = khojPrompt(mockConversation, 'gentle', '')
 
-            expect(result).toContain(PERMANENT_CONTEXT)
+            expect(result).toContain(systemContext)
             expect(result).toContain('Here are some text messages between my partner and I:')
             expect(result).toContain('Message 1: user: Hey, how was your day?')
             expect(result).toContain('Message 2: assistant: It was great! How about yours?')
@@ -76,7 +76,7 @@ describe('prompts', () => {
             const context = 'They mentioned being stressed about work earlier'
             const result = khojPrompt(mockConversation, 'funny', context)
 
-            expect(result).toContain(PERMANENT_CONTEXT)
+            expect(result).toContain(systemContext)
             expect(result).toContain('Message 1: user: Hey, how was your day?')
             expect(result).toContain('Suggest 3 funny replies')
             expect(result).toContain('Recent conversation context (for reference only):')
@@ -86,7 +86,7 @@ describe('prompts', () => {
         it('should handle empty conversation', () => {
             const result = khojPrompt([], 'gentle', '')
 
-            expect(result).toContain(PERMANENT_CONTEXT)
+            expect(result).toContain(systemContext)
             expect(result).toContain('Here are some text messages between my partner and I:')
             expect(result).toContain('Suggest 3 gentle replies')
             expect(result).not.toContain('Message 1:')
