@@ -82,7 +82,7 @@ class ControlBarModel {
 }
 
 describe('ControlBarModel', () => {
-    it('should initialize with default values', () => {
+    it('should initialize with default lookback of 1 hour and empty options', () => {
         const model = new ControlBarModel()
         expect(model.lookBackHours).toBe('1')
         expect(model.messageCount).toBe(0)
@@ -91,7 +91,7 @@ describe('ControlBarModel', () => {
         expect(model.lookBackOptions).toEqual(DEFAULT_LOOK_BACK_OPTIONS)
     })
 
-    it('should initialize with provided props', () => {
+    it('should initialize with custom props including lookback options and callbacks', () => {
         const mockGo = vi.fn()
         const customOptions = [{ value: 'custom', label: 'Custom Option' }]
         const props: ControlBarModelProps = {
@@ -113,26 +113,26 @@ describe('ControlBarModel', () => {
         expect(mockGo).toHaveBeenCalledTimes(1)
     })
 
-    it('should throw if initial lookBackHours is not in options', () => {
+    it('should throw when initial lookBackHours is not found in lookBackOptions', () => {
         expect(() => new ControlBarModel({ lookBackHours: 'invalid' })).toThrow(
             'Initial lookBackHours "invalid" is not a valid option.'
         )
     })
 
-    it('should update lookBackHours with selectLookBack', () => {
+    it('should update lookBackHours when selectLookBack is called with valid value', () => {
         const model = new ControlBarModel()
         model.selectLookBack('12')
         expect(model.lookBackHours).toBe('12')
     })
 
-    it('should throw if selectLookBack is called with invalid value', () => {
+    it('should throw when selectLookBack is called with value not in lookBackOptions', () => {
         const model = new ControlBarModel()
         expect(() => model.selectLookBack('invalid')).toThrow(
             'Invalid lookBackHours value: "invalid". Not in available options.'
         )
     })
 
-    it('should call onGoClick if canGenerate and not isLoading', () => {
+    it('should trigger onGoClick when canGenerate is true and isLoading is false', () => {
         const mockGo = vi.fn()
         const model = new ControlBarModel({
             onGoClick: mockGo,
@@ -143,7 +143,7 @@ describe('ControlBarModel', () => {
         expect(mockGo).toHaveBeenCalledTimes(1)
     })
 
-    it('should not call onGoClick if canGenerate is false', () => {
+    it('should prevent onGoClick when canGenerate is false', () => {
         const mockGo = vi.fn()
         const model = new ControlBarModel({
             onGoClick: mockGo,
@@ -154,14 +154,14 @@ describe('ControlBarModel', () => {
         expect(mockGo).not.toHaveBeenCalled()
     })
 
-    it('should not call onGoClick if isLoading is true', () => {
+    it('should prevent onGoClick when isLoading is true', () => {
         const mockGo = vi.fn()
         const model = new ControlBarModel({ onGoClick: mockGo, canGenerate: true, isLoading: true })
         model.clickGo()
         expect(mockGo).not.toHaveBeenCalled()
     })
 
-    it('should update canGenerate with setCanGenerate', () => {
+    it('should toggle canGenerate state using setCanGenerate', () => {
         const model = new ControlBarModel()
         model.setCanGenerate(false)
         expect(model.canGenerate).toBe(false)
@@ -169,7 +169,7 @@ describe('ControlBarModel', () => {
         expect(model.canGenerate).toBe(true)
     })
 
-    it('should update isLoading with setIsLoading', () => {
+    it('should toggle isLoading state using setIsLoading', () => {
         const model = new ControlBarModel()
         model.setIsLoading(true)
         expect(model.isLoading).toBe(true)
@@ -177,18 +177,18 @@ describe('ControlBarModel', () => {
         expect(model.isLoading).toBe(false)
     })
 
-    it('should update messageCount with setMessageCount', () => {
+    it('should update messageCount when setMessageCount is called with valid value', () => {
         const model = new ControlBarModel()
         model.setMessageCount(5)
         expect(model.messageCount).toBe(5)
     })
 
-    it('should throw if setMessageCount is called with negative value', () => {
+    it('should throw when setMessageCount is called with negative value', () => {
         const model = new ControlBarModel()
         expect(() => model.setMessageCount(-1)).toThrow('Message count cannot be negative.')
     })
 
-    it('lookBackOptions should be a copy and not modifiable externally', () => {
+    it('should prevent external modifications to lookBackOptions by creating a defensive copy', () => {
         const originalOptions = [{ value: 'a', label: 'A' }]
         const model = new ControlBarModel({ lookBackOptions: originalOptions, lookBackHours: 'a' })
         originalOptions.push({ value: 'b', label: 'B' })
