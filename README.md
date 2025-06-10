@@ -211,7 +211,6 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
 - **Messages Not Loading**: Ensure you've set the correct `PARTNER_PHONE` in your `.env` file
 - **Permission Issues**: WellSaid needs access to your Messages database. Make sure Terminal/your editor has Full Disk Access in System Preferences > Security & Privacy
 - **No Partner Messages**: The app will only show conversations where your partner has responded
-- **"Error generating summary / trouble generating a response" messages**: Check that your API key is valid and you have sufficient credits
 
 ## Acknowledgements
 

@@ -120,7 +120,7 @@ describe('getOpenaiReply', () => {
         const result = await getOpenaiReply(messages, 'gentle', '')
 
         expect(result.summary).toBe('')
-        expect(result.replies).toEqual(['(Sorry, I had trouble generating a response.)'])
+        expect(result.replies).toEqual(['(AI API error. Check your key and usage.)'])
     })
 
     it('should handle case when OPENAI_API_KEY is not set', async () => {

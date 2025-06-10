@@ -124,7 +124,7 @@ export const getOpenaiReply = async (
         logger.error({ error }, 'Error in getOpenaiReply (fetching or parsing OpenAI response)')
         return {
             summary: '',
-            replies: ['(Sorry, I had trouble generating a response.)'],
+            replies: ['(AI API error. Check your key and usage.)'],
         }
     }
 }

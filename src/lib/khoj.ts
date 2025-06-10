@@ -37,17 +37,20 @@ export const getKhojReply = async (
 
         const data = await khojRes.json()
         const rawOutput = data.response || ''
+
+        logger.debug({ rawOutput }, 'Khoj raw response')
+
         const summary = parseSummaryToHumanReadable(rawOutput)
         const replies = extractReplies(rawOutput)
 
-        logger.debug({ summary, replies }, 'Khoj response')
+        logger.debug({ summary, replies }, 'Khoj parsed response')
 
         return { summary, replies, messageCount: messages.length }
     } catch (err: unknown) {
         logger.error({ error: err }, 'Failed to get Khoj reply')
         return {
             summary: '',
-            replies: ['(Sorry, I had trouble generating a response.)'],
+            replies: ['(AI API error. Check your key and usage.)'],
             messageCount: messages.length,
         }
     }
