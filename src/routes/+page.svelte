@@ -13,7 +13,6 @@
 
     const { data } = $props<{ data: PageData }>()
 
-    // biome-ignore lint/style/useConst: Svelte 5 $state() pattern
     let formState = $state({
         ai: {
             provider: DEFAULT_PROVIDER,

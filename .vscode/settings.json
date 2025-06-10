@@ -1,14 +1,12 @@
 {
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "biomejs.biome",
+    "editor.defaultFormatter": "vscode.typescript-language-features",
     "editor.codeActionsOnSave": {
-        "source.organizeImports.biome": "always"
+        "source.organizeImports": "always"
     },
     "[svelte]": {
-        "editor.defaultFormatter": "biomejs.biome"
+        "editor.defaultFormatter": "svelte.svelte-vscode"
     },
-    "biome.javascript.formatter.semicolons": "asNeeded",
-    "biome.typescript.formatter.semicolons": "asNeeded",
     "[typescript]": {
         "editor.defaultFormatter": "vscode.typescript-language-features"
     }
