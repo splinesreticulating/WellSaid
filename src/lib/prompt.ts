@@ -6,13 +6,15 @@ export const PERMANENT_CONTEXT = `${CUSTOM_CONTEXT}\n\nMessages with role "user"
 export const buildReplyPrompt = (tone: string, context: string): string => `
     Given the conversation above, provide a brief summary including the emotional tone, main topics, and any changes in mood.
     Suggest 3 ${tone} replies that I might send. Provide one short reply, one medium-length reply, and one long reply.
+    
     ${context ? `Recent conversation context (for reference only):\n${context}\n` : ''}
+    
     Please respond using this format:
-    Summary: <summary>
-    Suggested replies:
-    Reply 1: <short reply>
-    Reply 2: <medium reply>
-    Reply 3: <long reply>
+        Summary: <summary>
+        Suggested replies:
+            Reply 1: <short reply>
+            Reply 2: <medium reply>
+            Reply 3: <long reply>
 `
 
 export const buildKhojPrompt = (
@@ -21,27 +23,26 @@ export const buildKhojPrompt = (
     context: string,
 ): string => {
     const formattedMessages = conversation
-        .map((msg, idx) => {
-            const tag = msg.role === 'user' ? 'Me' : 'Partner'
-            return `Message ${idx + 1}: ${tag}: ${msg.content}`
-        })
+        .map((msg, idx) => `Message ${idx + 1}: ${msg.role}: ${msg.content}`)
         .join('\n')
 
     return `
-        ${PERMANENT_CONTEXT}\n\nHere are some text messages between my partner and I:
+        ${PERMANENT_CONTEXT}
+        
+        Here are some text messages between my partner and I:
+        
         ${formattedMessages}
-        
-        Please give a brief summary, including the emotional tone, main topics, and any changes in mood.
-        Suggest 3 replies that I might send. Provide one short reply, one medium-length reply, and one long reply. Focus on the most recent messages when crafting replies.
-        
-        Tone: ${tone}
+    
+        Given the conversation above, provide a brief summary including the emotional tone, main topics, and any changes in mood.
+        Suggest 3 ${tone} replies that I might send. Provide one short reply, one medium-length reply, and one long reply.
+    
         ${context ? `Recent conversation context (for reference only):\n${context}\n` : ''}
-        
+    
         Please respond using this format:
         Summary: <summary>
         Suggested replies:
-        Reply 1: <short reply>
-        Reply 2: <medium reply>
-        Reply 3: <long reply>
+            Reply 1: <short reply>
+            Reply 2: <medium reply>
+            Reply 3: <long reply>
     `
 }
