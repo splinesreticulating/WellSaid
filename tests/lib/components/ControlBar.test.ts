@@ -196,4 +196,29 @@ describe('ControlBarModel', () => {
         expect(model.lookBackOptions[0].value).toBe('a')
         expect(model.lookBackOptions.find((opt) => opt.value === 'b')).toBeUndefined()
     })
+
+    it('should handle duplicate values in lookBackOptions by using first occurrence', () => {
+        const duplicateOptions = [
+            { value: '1', label: 'First One' },
+            { value: '1', label: 'Second One' },
+            { value: '2', label: 'Two' }
+        ]
+        
+        // Should use the first occurrence of value '1'
+        const model = new ControlBarModel({
+            lookBackOptions: duplicateOptions,
+            lookBackHours: '1'
+        })
+        
+        expect(model.lookBackHours).toBe('1')
+        expect(model.lookBackOptions.length).toBe(3)
+        
+        // Should be able to select the first '1' value
+        model.selectLookBack('1')
+        expect(model.lookBackHours).toBe('1')
+        
+        // Should be able to select other values
+        model.selectLookBack('2')
+        expect(model.lookBackHours).toBe('2')
+    })
 })
