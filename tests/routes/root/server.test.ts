@@ -49,7 +49,7 @@ describe('root page server', () => {
         vi.resetAllMocks()
     })
 
-    it('load should return messages', async () => {
+    it('load should return messages and multiProvider flag', async () => {
         vi.mocked(queryDb.queryMessagesDb).mockResolvedValue({
             messages: [{ text: 'hi', sender: 'partner', timestamp: '2025-01-01T00:00:00Z' }],
         })
@@ -59,6 +59,7 @@ describe('root page server', () => {
         )
         expect(data).toEqual({
             messages: [{ text: 'hi', sender: 'partner', timestamp: '2025-01-01T00:00:00Z' }],
+            multiProvider: false
         })
     })
 
@@ -68,7 +69,7 @@ describe('root page server', () => {
         vi.mocked(openai.getOpenaiReply).mockResolvedValue(mockResponse)
 
         // Create form data
-        const formData = new URLSearchParams()
+        const formData = new FormData()
         formData.append(
             'messages',
             JSON.stringify([{ text: 'test', sender: 'user', timestamp: '2025-01-01T00:00:00Z' }])
@@ -80,10 +81,7 @@ describe('root page server', () => {
         // Create a proper Request with form data
         const request = new Request('https://example.com/', {
             method: 'POST',
-            body: formData.toString(),
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
+            body: formData
         })
 
         // Create mock event with the proper request
@@ -93,9 +91,21 @@ describe('root page server', () => {
         }
 
         // Call the action
-        const result = await serverModule.actions.generate(
-            event as unknown as Parameters<typeof serverModule.actions.generate>[0]
-        )
+        const result = await serverModule.actions.generate({
+            request: event.request,
+            // Add other required properties from RequestEvent
+            cookies: event.cookies,
+            fetch: event.fetch,
+            getClientAddress: event.getClientAddress,
+            locals: {},
+            params: {},
+            platform: undefined,
+            route: { id: '/' },
+            setHeaders: vi.fn(),
+            url: event.url,
+            isDataRequest: false,
+            isSubRequest: false
+        } as unknown as Parameters<typeof serverModule.actions.generate>[0])
 
         // Verify the result is the expected object
         expect(result).toEqual(mockResponse)
