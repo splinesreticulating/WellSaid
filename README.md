@@ -69,63 +69,42 @@ yarn prepare
 
 Create a `.env` file in the root directory by copying the `.env.example` file (`cp .env.example .env`) and then update the values. The following variables are needed:
 
-```
-# --- AI Provider Configuration ---
-# OpenAI (Default)
-OPENAI_API_KEY=your_openai_api_key
-OPENAI_MODEL=gpt-4  # or any other OpenAI model
-OPENAI_TEMPERATURE=0.5
-OPENAI_TOP_P=
-OPENAI_FREQUENCY_PENALTY=
-OPENAI_PRESENCE_PENALTY=
+### Customization
+- `PARTNER_PHONE`: Your partner's phone number in the Messages app
+- `HISTORY_LOOKBACK_HOURS`: How many hours of prior conversation history to search for extra context
+- `CUSTOM_CONTEXT`: Custom context to guide the AI's personality and behavior (Example: "Act as my therapist suggesting replies to my partner" or "You are a helpful assistant")
 
-The following optional variables help shape the tone of the AI's replies:
+### Open AI
+- `OPENAI_API_KEY`: Your OpenAI API key
+- `OPENAI_MODEL`: gpt-4 or any other OpenAI model
+- `OPENAI_TEMPERATURE`: Controls the randomness of the responses
+- `OPENAI_TOP_P`: Lets the responses be a little more adventurous
+- `OPENAI_FREQUENCY_PENALTY`: Keeps the suggestions from repeating themselves
+- `OPENAI_PRESENCE_PENALTY`: Nudges the AI to bring up fresh ideas
 
-- `OPENAI_TOP_P` – lets the responses be a little more adventurous
-- `OPENAI_FREQUENCY_PENALTY` – keeps the suggestions from repeating themselves
-- `OPENAI_PRESENCE_PENALTY` – nudges the AI to bring up fresh ideas
+### Khoj
+- `KHOJ_API_URL`: Your khoj server API URL if you have one
+- `KHOJ_AGENT`: The khoj agent to use if you have one
 
-# Local Khoj Server
-# If you happen to have a local Khoj server, set these variables.
-KHOJ_API_URL=http://127.0.0.1:42110/api/chat # Your Khoj server API URL
-KHOJ_AGENT=your_khoj_agent_name          # The Khoj agent to use
+### Logging
+- `LOG_LEVEL=info`: Logging level (info, debug, warn, error)
 
-# --- General Configuration ---
-PARTNER_PHONE=+1234567890  # Your partner's phone number in the Messages app
+### Remote Access
+- `ALLOWED_HOST`: For remote access via Tailscale (see 'Accessing from Anywhere' section)
 
-# --- Authentication ---
-BASIC_AUTH_USERNAME=your_username
-BASIC_AUTH_PASSWORD=your_strong_password
-JWT_SECRET=your_super_strong_random_jwt_secret # See note on JWT_SECRET generation below
-
-# --- Optional Settings ---
-# Logging level (info, debug, warn, error)
-LOG_LEVEL=info
-
-# For remote access via Tailscale (see 'Accessing from Anywhere' section)
-ALLOWED_HOST=your-tailscale-hostname.your-tailscale-domain.ts.net
-
-# How many hours of prior conversation history to search for extra context
-HISTORY_LOOKBACK_HOURS=6
-
-# Custom context to guide the AI's personality and behavior
-# This text will be prepended to every prompt sent to the AI
-# Example: "Act as my therapist suggesting replies to my partner" or "You are a helpful assistant"
-CUSTOM_CONTEXT=your-custom-context
-```
-
-**Note on `JWT_SECRET`**:
-The `JWT_SECRET` should be a long, random, and unpredictable string. 
-
+### Security
+- `BASIC_AUTH_USERNAME`: Your username
+- `BASIC_AUTH_PASSWORD`: Your password
+- `JWT_SECRET`: Should be a long, random, and unpredictable string. 
 You can generate one using OpenSSL with the following command in your terminal:
 
-```bash
-openssl rand -base64 64
-```
+    ```bash
+    openssl rand -base64 64
+    ```
 
-Copy the output of this command and use it as the value for `JWT_SECRET` in your `.env` file. Ensure it's on a single line.
+- Copy the output of this command and use it as the value for `JWT_SECRET` in your `.env` file. Ensure it's on a single line.
 
-4. Start the development server
+5. Start the development server
 
 ```bash
 yarn dev
