@@ -70,7 +70,7 @@ export const getOpenaiReply = async (
 
     const conversation = formatAsUserAndAssistant(messages)
     const historyContext = await fetchRelevantHistory(messages)
-    const prompt = openAiPrompt(tone, [historyContext, context].filter(Boolean).join('\n'))
+    const prompt = openAiPrompt(tone, historyContext) + '\n\n' + context
 
     logger.debug({ prompt }, 'Sending prompt to OpenAI')
 
