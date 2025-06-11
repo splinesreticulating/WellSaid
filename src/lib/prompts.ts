@@ -16,12 +16,7 @@ const buildPrompt = (tone: string, context: string): string => {
     return `Given the conversation above, provide a brief summary including the emotional tone, main topics, and any changes in mood.
 Suggest 3 ${tone} replies that I might send. Provide one short reply, one medium-length reply, and one long reply.
 ${contextSection}
-Please respond using this format:
-    Summary: <summary>
-    Suggested replies:
-        Reply 1: <short reply>
-        Reply 2: <medium reply>
-        Reply 3: <long reply>`
+`
 }
 
 export const openAiPrompt = (tone: string, context: string): string =>
@@ -40,5 +35,11 @@ export const khojPrompt = (
         ${formatMessages(conversation)}
     
         ${buildPrompt(tone, context)}
+        Please respond using this format:
+        Summary: <summary>
+        Suggested replies:
+            Reply 1: <short reply>
+            Reply 2: <medium reply>
+            Reply 3: <long reply>
     `
 }
