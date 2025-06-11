@@ -24,9 +24,6 @@ describe('prompts', () => {
             expect(result).toContain('Given the conversation above')
             expect(result).toContain('Suggest 3 gentle replies')
             expect(result).toContain('one short reply, one medium-length reply, and one long reply')
-            expect(result).toContain('Please respond using this format:')
-            expect(result).toContain('Summary: <summary>')
-            expect(result).toContain('Reply 1: <short reply>')
             expect(result).not.toContain('Recent conversation context')
         })
 
@@ -119,14 +116,15 @@ describe('prompts', () => {
                 'test context'
             )
 
-            // Both should contain the same format instructions
+            // khojPrompt should contain the format instructions
             const formatSection = 'Please respond using this format:'
-            expect(openAiResult).toContain(formatSection)
             expect(khojResult).toContain(formatSection)
 
-            // Both should contain the same reply structure
-            expect(openAiResult).toContain('Reply 1: <short reply>')
+            // khojPrompt should contain the reply structure
             expect(khojResult).toContain('Reply 1: <short reply>')
+            
+            // openAiPrompt should not contain the format section
+            expect(openAiResult).not.toContain(formatSection)
         })
     })
 })
