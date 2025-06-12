@@ -1,4 +1,10 @@
-import { extractReplies, parseSummaryToHumanReadable, formatMessagesAsText, hasPartnerMessages, safeCompare } from '$lib/utils'
+import {
+    extractReplies,
+    parseSummaryToHumanReadable,
+    formatMessagesAsText,
+    hasPartnerMessages,
+    safeCompare,
+} from '$lib/utils'
 import { describe, expect, it } from 'vitest'
 
 describe('parseSummaryToHumanReadable', () => {

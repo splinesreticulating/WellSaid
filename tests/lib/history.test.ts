@@ -55,8 +55,8 @@ describe('fetchRelevantHistory', () => {
         vi.mocked(queryMessagesDb).mockResolvedValue({
             messages: [
                 { sender: 'me', text: 'older message', timestamp: '2025-05-20T09:30:00Z' },
-                { sender: 'partner', text: 'oldest message', timestamp: '2025-05-20T09:00:00Z' }
-            ]
+                { sender: 'partner', text: 'oldest message', timestamp: '2025-05-20T09:00:00Z' },
+            ],
         })
 
         const result = await fetchRelevantHistory(inputMessages)

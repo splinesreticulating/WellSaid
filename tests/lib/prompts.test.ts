@@ -104,7 +104,9 @@ describe('prompts', () => {
         })
 
         it('should handle single message conversation', () => {
-            const singleMessage: Message[] = [{ sender: 'me', text: 'Hello there!', timestamp: '1' }]
+            const singleMessage: Message[] = [
+                { sender: 'me', text: 'Hello there!', timestamp: '1' },
+            ]
             const result = khojPrompt(singleMessage, 'reassuring', '')
 
             expect(result).toContain('me: Hello there!')

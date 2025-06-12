@@ -61,7 +61,9 @@ describe('ToneSelector Component', () => {
 
     it('should throw when setting invalid tone via setSelectedTone', () => {
         const component = new ToneSelectorModel()
-        expect(() => component.setSelectedTone('invalid' as ToneType)).toThrow('Invalid tone: invalid')
+        expect(() => component.setSelectedTone('invalid' as ToneType)).toThrow(
+            'Invalid tone: invalid'
+        )
     })
 
     it('should correctly identify active tone', () => {
@@ -74,6 +76,8 @@ describe('ToneSelector Component', () => {
     it('should handle empty initialTones array', () => {
         const component = new ToneSelectorModel(undefined, [])
         expect(component.tones).toEqual([])
-        expect(() => component.setSelectedTone('gentle' as ToneType)).toThrow('Invalid tone: gentle')
+        expect(() => component.setSelectedTone('gentle' as ToneType)).toThrow(
+            'Invalid tone: gentle'
+        )
     })
 })

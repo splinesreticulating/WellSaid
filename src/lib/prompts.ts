@@ -34,4 +34,3 @@ export const khojPrompt = (messages: Message[], tone: ToneType, context: string)
      ${buildPrompt(tone, context)}\n
      ${responseFormat}\n
 `
-

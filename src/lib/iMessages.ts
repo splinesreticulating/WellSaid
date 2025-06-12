@@ -11,11 +11,7 @@ const CHAT_DB_PATH = path.join(os.homedir(), 'Library', 'Messages', 'chat.db')
 
 const buildQuery = (startDate: string, endDate: string) => {
     logger.debug({ startDate, endDate }, 'Getting messages')
-    const params = [
-        PARTNER_PHONE,
-        isoToAppleNanoseconds(startDate),
-        isoToAppleNanoseconds(endDate)
-    ]
+    const params = [PARTNER_PHONE, isoToAppleNanoseconds(startDate), isoToAppleNanoseconds(endDate)]
 
     const query = `
         SELECT
@@ -37,11 +33,15 @@ const buildQuery = (startDate: string, endDate: string) => {
 const formatMessages = (rows: MessageRow[]) => {
     return rows
         .map((row) => ({
-            sender: row.is_from_me ? 'me' : row.contact_id === PARTNER_PHONE ? 'partner' : 'unknown',
+            sender: row.is_from_me
+                ? 'me'
+                : row.contact_id === PARTNER_PHONE
+                  ? 'partner'
+                  : 'unknown',
             text: row.text,
             timestamp: new Date(
                 row.timestamp.endsWith('Z') ? row.timestamp : `${row.timestamp}Z`
-            ).toISOString()
+            ).toISOString(),
         }))
         .reverse() // Reverse to get chronological order
 }
