@@ -5,54 +5,44 @@ import { logger } from './logger'
 
 const lookbackHours = Number.parseInt(HISTORY_LOOKBACK_HOURS || '0')
 
+const formatMessage = ({ sender, text }: Message): string => 
+    `${sender === 'me' ? 'Me' : 'Partner'}: ${text}`
+
+const getTimeRange = (latestMessageTime: string, lookbackHours: number) => {
+    const end = new Date(latestMessageTime)
+    const start = new Date(Date.now() - lookbackHours * 60 * 60 * 1000)
+    return { start, end }
+}
+
 export const fetchRelevantHistory = async (messages: Message[]): Promise<string> => {
     if (!lookbackHours || messages.length === 0) return ''
 
     try {
-        const now = new Date()
-        const end = new Date(messages[0].timestamp)
-        const start = new Date(now.getTime() - lookbackHours * 60 * 60 * 1000)
-
-        logger.debug(
-            {
-                lookbackHours,
-                queryRange: {
-                    start: start.toISOString(),
-                    end: end.toISOString(),
-                },
-                now: now.toISOString(),
-            },
-            'Fetching message history'
+        const { start, end } = getTimeRange(messages[0].timestamp, lookbackHours)
+        
+        logger.debug({ lookbackHours, start, end }, 'Fetching message history')
+        
+        const { messages: history } = await queryMessagesDb(
+            start.toISOString(), 
+            end.toISOString()
         )
+        
+        if (!history.length) return ''
 
-        const { messages: history } = await queryMessagesDb(start.toISOString(), end.toISOString())
-
-        logger.debug(
-            {
-                historyCount: history.length,
-                timeRange: `${start.toISOString()} to ${end.toISOString()}`,
-            },
-            'Fetched message history'
-        )
-
-        if (history.length === 0) return ''
-
-        const context = history
-            .map((m) => `${m.sender === 'me' ? 'Me' : 'Partner'}: ${m.text}`)
-            .join('\n')
-
-        logger.debug(
-            {
-                historyCount: history.length,
-                contextLength: context.length,
-                timeRange: `${start.toISOString()} to ${end.toISOString()}`,
-            },
-            `Fetched additional history context from ${history.length} messages`
-        )
-
-        return context
-    } catch (err) {
-        logger.error({ err }, 'Failed to fetch history context')
+        const inputTexts = new Set(messages.map(m => m.text))
+        const filteredHistory = history.filter(m => !inputTexts.has(m.text))
+        
+        const historyText = filteredHistory.map(formatMessage).join('\n')
+        
+        logger.debug({
+            historyText,
+            filtered: history.length - filteredHistory.length,
+            total: history.length
+        }, 'Fetched message history')
+        
+        return historyText
+    } catch (error) {
+        logger.error({ error }, 'Failed to fetch history context')
         return ''
     }
 }

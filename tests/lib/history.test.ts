@@ -45,4 +45,26 @@ describe('fetchRelevantHistory', () => {
         expect(result).toContain('Me: old1')
         expect(result).toContain('Partner: old2')
     })
+
+    it('does not include input messages in the returned history', async () => {
+        const inputMessages = [
+            { sender: 'me', text: 'current message', timestamp: '2025-05-20T10:00:00Z' },
+            { sender: 'partner', text: 'another current', timestamp: '2025-05-20T10:01:00Z' }
+        ]
+        
+        // Mock queryMessagesDb to return a message that has the same text as one of the input messages
+        vi.mocked(queryMessagesDb).mockResolvedValue({
+            messages: [
+                { sender: 'me', text: 'current message', timestamp: '2025-05-20T09:59:00Z' }, // Same text as input
+                { sender: 'partner', text: 'old message', timestamp: '2025-05-20T09:30:00Z' }
+            ]
+        })
+
+        const result = await fetchRelevantHistory(inputMessages)
+        
+        // Verify that the message with the same text as input is not in the result
+        expect(result).not.toContain('current message')
+        // But other messages should still be there
+        expect(result).toContain('Partner: old message')
+    })
 })
