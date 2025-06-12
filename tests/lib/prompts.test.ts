@@ -1,5 +1,5 @@
 import { khojPrompt, openAiPrompt, systemContext } from '$lib/prompts'
-import type { ChatMessage } from '$lib/types'
+import type { Message } from '$lib/types'
 import { describe, expect, it, vi } from 'vitest'
 
 // Mock the environment variable
@@ -45,10 +45,10 @@ describe('prompts', () => {
     })
 
     describe('khojPrompt', () => {
-        const mockConversation: ChatMessage[] = [
-            { sender: 'me', content: 'Hey, how was your day?' },
-            { sender: 'partner', content: 'It was great! How about yours?' },
-            { sender: 'me', content: 'Pretty good, thanks for asking' },
+        const mockConversation: Message[] = [
+            { sender: 'me', text: 'Hey, how was your day?', timestamp: '1' },
+            { sender: 'partner', text: 'It was great! How about yours?', timestamp: '2' },
+            { sender: 'me', text: 'Pretty good, thanks for asking', timestamp: '3' },
         ]
 
         it('should generate complete prompt with conversation and no context', () => {
@@ -56,9 +56,9 @@ describe('prompts', () => {
 
             expect(result).toContain(systemContext)
             expect(result).toContain('Here are some text messages between my partner and I:')
-            expect(result).toContain('Message 1: me: Hey, how was your day?')
-            expect(result).toContain('Message 2: partner: It was great! How about yours?')
-            expect(result).toContain('Message 3: me: Pretty good, thanks for asking')
+            expect(result).toContain('me: Hey, how was your day?')
+            expect(result).toContain('partner: It was great! How about yours?')
+            expect(result).toContain('me: Pretty good, thanks for asking')
             expect(result).toContain('Suggest 3 gentle replies')
             expect(result).not.toContain('Recent conversation context')
         })
@@ -68,7 +68,7 @@ describe('prompts', () => {
             const result = khojPrompt(mockConversation, 'funny', context)
 
             expect(result).toContain(systemContext)
-            expect(result).toContain('Message 1: me: Hey, how was your day?')
+            expect(result).toContain('me: Hey, how was your day?')
             expect(result).toContain('Suggest 3 funny replies')
             expect(result).toContain('Recent conversation context (for reference only):')
             expect(result).toContain(context)
@@ -80,25 +80,25 @@ describe('prompts', () => {
             expect(result).toContain(systemContext)
             expect(result).toContain('Here are some text messages between my partner and I:')
             expect(result).toContain('Suggest 3 gentle replies')
-            expect(result).not.toContain('Message 1:')
+            // Check that there are no actual message lines (empty conversation)
+            expect(result).not.toContain('\nme: ')
+            expect(result).not.toContain('\npartner: ')
         })
 
         it('should handle single message conversation', () => {
-            const singleMessage: ChatMessage[] = [{ sender: 'me', content: 'Hello there!' }]
+            const singleMessage: Message[] = [{ sender: 'me', text: 'Hello there!', timestamp: '1' }]
             const result = khojPrompt(singleMessage, 'reassuring', '')
 
-            expect(result).toContain('Message 1: me: Hello there!')
-            expect(result).not.toContain('Message 2:')
+            expect(result).toContain('me: Hello there!')
+            expect(result).not.toContain('partner:')
         })
 
         it('should preserve message order and indexing', () => {
             const result = khojPrompt(mockConversation, 'gentle', '')
 
-            const message1Index = result.indexOf('Message 1: me: Hey, how was your day?')
-            const message2Index = result.indexOf(
-                'Message 2: partner: It was great! How about yours?'
-            )
-            const message3Index = result.indexOf('Message 3: me: Pretty good, thanks for asking')
+            const message1Index = result.indexOf('me: Hey, how was your day?')
+            const message2Index = result.indexOf('partner: It was great! How about yours?')
+            const message3Index = result.indexOf('me: Pretty good, thanks for asking')
 
             expect(message1Index).toBeLessThan(message2Index)
             expect(message2Index).toBeLessThan(message3Index)
@@ -109,7 +109,7 @@ describe('prompts', () => {
         it('should have consistent format sections in both functions', () => {
             const openAiResult = openAiPrompt('gentle', 'test context')
             const khojResult = khojPrompt(
-                [{ sender: 'me', content: 'test' }],
+                [{ sender: 'me', text: 'test', timestamp: '1' }],
                 'gentle',
                 'test context'
             )
