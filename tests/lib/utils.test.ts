@@ -4,6 +4,7 @@ import {
     formatMessagesAsText,
     hasPartnerMessages,
     safeCompare,
+    isoToAppleNanoseconds,
 } from '$lib/utils'
 import { describe, expect, it } from 'vitest'
 
@@ -157,5 +158,19 @@ describe('safeCompare', () => {
         const special = '!@#$%^&*()_+-=[]{}|;:,.<>?'
         expect(safeCompare(special, special)).toBe(true)
         expect(safeCompare(special, special + 'x')).toBe(false)
+    })
+})
+
+describe('isoToAppleNanoseconds', () => {
+    it('converts ISO date to Apple epoch nanoseconds', () => {
+        const iso = '2001-01-02T00:00:00Z'
+        const expected = 86400 * 1_000_000_000
+        expect(isoToAppleNanoseconds(iso)).toBe(expected)
+    })
+
+    it('handles dates before the epoch', () => {
+        const iso = '2000-12-31T23:59:59Z'
+        const result = isoToAppleNanoseconds(iso)
+        expect(result).toBeLessThan(0)
     })
 })
