@@ -50,9 +50,8 @@ export const actions: Actions = {
 
                 const token = jwt.sign(tokenPayload, JWT_SECRET, { algorithm: 'HS256' })
 
-                logger.debug('[LOGIN ACTION] Setting auth_token cookie with JWT')
                 cookies.set('auth_token', token, cookieOptions)
-                logger.debug('[LOGIN ACTION] Successfully set auth_token cookie')
+                logger.info(`[LOGIN ACTION] User '${username}' authenticated successfully`)
 
                 // Redirect to home page on successful login
                 throw redirect(303, '/')
@@ -63,19 +62,6 @@ export const actions: Actions = {
 
             return fail(401, { error: 'nope' })
         } catch (error) {
-            // Debug what type of error we're getting
-            logger.debug(
-                `[LOGIN ACTION] Caught error type: ${typeof error}, instanceof Response: ${error instanceof Response}, instanceof Error: ${error instanceof Error}`
-            )
-            if (error && typeof error === 'object') {
-                logger.debug(`[LOGIN ACTION] Error constructor: ${error.constructor.name}`)
-                if ('status' in error) {
-                    logger.debug(
-                        `[LOGIN ACTION] Error status: ${(error as { status: number }).status}`
-                    )
-                }
-            }
-
             // Check if this is a SvelteKit redirect (constructor name is 'Redirect')
             const isRedirect =
                 error && typeof error === 'object' && error.constructor.name === 'Redirect'
@@ -88,8 +74,7 @@ export const actions: Actions = {
                 return fail(500, { error: 'An unexpected error occurred' })
             }
 
-            // Re-throw redirects
-            logger.debug('[LOGIN ACTION] Re-throwing redirect')
+            // Re-throw redirects (successful login)
             throw error
         }
     },

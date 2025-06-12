@@ -30,6 +30,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     try {
         jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] })
         // Token is valid, continue with the request
+        logger.debug(`Authenticated user accessing ${url.pathname}`)
         return resolve(event)
     } catch (err) {
         logger.warn(

@@ -1,13 +1,8 @@
 <script lang="ts">
-    import { page } from '$app/state'
     import type { Snippet } from 'svelte'
     import '../app.css'
-    import type { LayoutData } from './$types'
 
-    const { children, data }: { children: Snippet; data: LayoutData } = $props()
-
-    const authenticated = $derived(data.authenticated)
-    const currentPath = $derived(page.url.pathname)
+    const { children }: { children: Snippet } = $props()
 </script>
 
 {@render children()}
