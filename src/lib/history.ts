@@ -20,7 +20,7 @@ export const fetchRelevantHistory = async (messages: Message[]): Promise<string>
             return ''
         }
 
-        const earliestTimestampMs = new Date(messages[0].timestamp).getTime() - 60 * 60 * 7000
+        const earliestTimestampMs = new Date(messages[0].timestamp).getTime()
         const end = new Date(earliestTimestampMs - 1) // exclude the current message
         const start = new Date(end.getTime() - lookbackHours * 60 * 60 * 1000)
 
