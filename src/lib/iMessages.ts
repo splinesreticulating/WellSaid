@@ -9,76 +9,69 @@ import { hasPartnerMessages } from './utils'
 
 const CHAT_DB_PATH = path.join(os.homedir(), 'Library', 'Messages', 'chat.db')
 
-export const queryMessagesDb = async (startDate: string, endDate: string) => {
-    const PARTNER_HANDLE_ID = PARTNER_PHONE
-    if (!PARTNER_HANDLE_ID) {
-        logger.warn('PARTNER_PHONE env var not set -- make sure it is set in your .env file')
+const isoToAppleNanoseconds = (isoDate: string): number => {
+    const appleEpoch = new Date('2001-01-01T00:00:00Z').getTime()
+    const targetTime = new Date(isoDate).getTime()
+    return (targetTime - appleEpoch) * 1000000
+}
 
+const buildQuery = (startDate: string, endDate: string) => {
+    const params = [
+        PARTNER_PHONE,
+        isoToAppleNanoseconds(startDate),
+        isoToAppleNanoseconds(endDate)
+    ]
+
+    const query = `
+        SELECT
+            datetime(message.date / 1000000000 + strftime('%s', '2001-01-01'), 'unixepoch') AS timestamp,
+            message.text AS text,
+            handle.id AS contact_id,
+            message.is_from_me
+        FROM message
+        JOIN handle ON message.handle_id = handle.ROWID
+        WHERE message.text IS NOT NULL
+            AND handle.id = ?
+            AND message.date >= ?
+            AND message.date <= ?
+        ORDER BY message.date DESC`
+
+    return { query, params }
+}
+
+const formatMessages = (rows: MessageRow[]) => {
+    return rows
+        .map((row) => ({
+            sender: row.is_from_me ? 'me' : row.contact_id === PARTNER_PHONE ? 'partner' : 'unknown',
+            text: row.text,
+            timestamp: row.timestamp
+        }))
+        .reverse() // Reverse to get chronological order
+}
+
+export const queryMessagesDb = async (startDate: string, endDate: string) => {
+    if (!PARTNER_PHONE) {
+        logger.warn('PARTNER_PHONE env var not set -- make sure it is set in your .env file')
         return { messages: [] }
     }
 
     const db = await open({ filename: CHAT_DB_PATH, driver: sqlite3.Database })
-    const isoToAppleNs = (iso: string): number => {
-        const appleEpoch = new Date('2001-01-01T00:00:00Z').getTime()
-        const targetTime = new Date(iso).getTime()
-
-        return (targetTime - appleEpoch) * 1000000
-    }
-
-    let dateWhere = ''
-    const params: (string | number)[] = [PARTNER_HANDLE_ID]
-
-    dateWhere += ' AND message.date >= ?'
-    params.push(isoToAppleNs(startDate))
-
-    dateWhere += ' AND message.date <= ?'
-    params.push(isoToAppleNs(endDate))
-
-    const query = `
-        SELECT
-        datetime(message.date / 1000000000 + strftime('%s', '2001-01-01'), 'unixepoch') AS timestamp,
-        message.text AS text,
-        handle.id AS contact_id,
-        message.handle_id,
-        handle.ROWID as handle_rowid,
-        message.is_from_me,
-        message.account
-        FROM message
-        JOIN handle ON message.handle_id = handle.ROWID
-        WHERE message.text IS NOT NULL
-        AND handle.id = ?
-        ${dateWhere}
-        ORDER BY message.date DESC`
+    const { query, params } = buildQuery(startDate, endDate)
 
     logger.debug({ query, params }, 'Querying messages database')
 
-    let rows: MessageRow[] = []
-
     try {
-        try {
-            rows = (await db.all(query, params)) as MessageRow[]
-        } catch (error) {
-            logger.error({ error }, 'Error querying messages database')
-            return { messages: [] }
-        }
+        const rows = (await db.all(query, params)) as MessageRow[]
+        logger.info({ count: rows.length, handleId: PARTNER_PHONE }, 'Fetched messages')
+
+        const formattedMessages = formatMessages(rows)
+
+        // Return empty array if all messages are from me (no partner messages)
+        return { messages: hasPartnerMessages(formattedMessages) ? formattedMessages : [] }
+    } catch (error) {
+        logger.error({ error }, 'Error querying messages database')
+        return { messages: [] }
     } finally {
         await db.close()
     }
-
-    logger.info({ count: rows.length, handleId: PARTNER_HANDLE_ID }, 'fetched messages')
-
-    const formattedRows = rows
-        .map((row: MessageRow) => ({
-            sender: row.is_from_me
-                ? 'me'
-                : row.contact_id === PARTNER_HANDLE_ID
-                    ? 'partner'
-                    : 'unknown',
-            text: row.text,
-            timestamp: row.timestamp,
-        }))
-        .reverse()
-
-    // Return empty array if all messages are mine
-    return { messages: hasPartnerMessages(formattedRows) ? formattedRows : [] }
 }
