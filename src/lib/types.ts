@@ -20,7 +20,7 @@ export interface PageData {
 export const TONES = ['gentle', 'funny', 'reassuring', 'concise'] as const
 export type ToneType = (typeof TONES)[number]
 
-export interface ChatMessage {
+export interface OpenAIChatMessage {
     role: 'user' | 'assistant'
     content: string
 }

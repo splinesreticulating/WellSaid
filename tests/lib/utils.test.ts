@@ -1,4 +1,4 @@
-import { extractReplies, formatAsUserAndAssistant, parseSummaryToHumanReadable } from '$lib/utils'
+import { extractReplies, formatForOpenAi, parseSummaryToHumanReadable } from '$lib/utils'
 import { describe, expect, it } from 'vitest'
 
 describe('parseSummaryToHumanReadable', () => {
@@ -64,11 +64,11 @@ describe('formatMessages', () => {
             { sender: 'partner', text: 'Hi there', timestamp: '2' },
         ]
 
-        const formatted = formatAsUserAndAssistant(messages)
+        const formatted = formatForOpenAi(messages)
 
         expect(formatted).toEqual([
-            { role: 'user', content: 'Hello' },
-            { role: 'assistant', content: 'Hi there' },
+            { sender: 'me', content: 'Hello' },
+            { sender: 'partner', content: 'Hi there' },
         ])
     })
 })
