@@ -29,9 +29,9 @@ export const openAiPrompt = (tone: string, context: string): string =>
 
 export const khojPrompt = (messages: Message[], tone: ToneType, context: string): string =>
     `${systemContext}
-Here are some text messages between my partner and I:
-${formatMessagesAsText(messages)}
-${buildPrompt(tone, context)}
-${responseFormat}
+     Here are some text messages between my partner and I:\n
+     ${formatMessagesAsText(messages)}\n
+     ${buildPrompt(tone, context)}\n
+     ${responseFormat}\n
 `
 

@@ -59,3 +59,10 @@ export const safeCompare = (a: string, b: string): boolean => {
 
 export const formatMessagesAsText = (messages: Message[]): string =>
     messages.map((msg) => `${msg.sender}: ${msg.text}`).join('\n')
+
+export const isoToAppleNanoseconds = (isoDate: string): number => {
+    const appleEpoch = new Date('2001-01-01T00:00:00Z').getTime()
+    const targetTime = new Date(isoDate).getTime()
+
+    return (targetTime - appleEpoch) * 1000000
+}

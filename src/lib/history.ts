@@ -1,45 +1,42 @@
 import { HISTORY_LOOKBACK_HOURS } from '$env/static/private'
-import { queryMessagesDb } from '$lib/iMessages'
 import type { Message } from '$lib/types'
+import { queryMessagesDb } from './iMessages'
 import { logger } from './logger'
+import { formatMessagesAsText } from './utils'
 
 const lookbackHours = Number.parseInt(HISTORY_LOOKBACK_HOURS || '0')
 
-const formatMessage = ({ sender, text }: Message): string => 
-    `${sender === 'me' ? 'Me' : 'Partner'}: ${text}`
-
-const getTimeRange = (latestMessageTime: string, lookbackHours: number) => {
-    const end = new Date(latestMessageTime)
-    const start = new Date(Date.now() - lookbackHours * 60 * 60 * 1000)
-    return { start, end }
-}
-
 export const fetchRelevantHistory = async (messages: Message[]): Promise<string> => {
-    if (!lookbackHours || messages.length === 0) return ''
+
+    logger.debug({
+        original: messages[0].timestamp,
+        isoParsed: new Date(messages[0].timestamp).toISOString(),
+        localParsed: new Date(messages[0].timestamp).toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })
+    }, 'Timestamp interpretation test')
 
     try {
-        const { start, end } = getTimeRange(messages[0].timestamp, lookbackHours)
-        
-        logger.debug({ lookbackHours, start, end }, 'Fetching message history')
-        
+        if (!lookbackHours || messages.length === 0) {
+            logger.warn('No messages or invalid lookbackHours; skipping history fetch')
+            return ''
+        }
+
+        const earliestTimestampMs = new Date(messages[0].timestamp).getTime() - 60 * 60 * 7000
+        const end = new Date(earliestTimestampMs - 1) // exclude the current message
+        const start = new Date(end.getTime() - lookbackHours * 60 * 60 * 1000)
+
         const { messages: history } = await queryMessagesDb(
-            start.toISOString(), 
+            start.toISOString(),
             end.toISOString()
         )
-        
-        if (!history.length) return ''
 
-        const inputTexts = new Set(messages.map(m => m.text))
-        const filteredHistory = history.filter(m => !inputTexts.has(m.text))
-        
-        const historyText = filteredHistory.map(formatMessage).join('\n')
-        
-        logger.debug({
-            historyText,
-            filtered: history.length - filteredHistory.length,
-            total: history.length
-        }, 'Fetched message history')
-        
+        if (!history.length) {
+            logger.debug('No messages found in history window')
+            return ''
+        }
+
+        const historyText = formatMessagesAsText(history)
+
+        logger.debug({ count: history.length }, 'History messages found')
         return historyText
     } catch (error) {
         logger.error({ error }, 'Failed to fetch history context')

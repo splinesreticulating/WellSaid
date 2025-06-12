@@ -5,17 +5,12 @@ import path from 'node:path'
 import { open } from 'sqlite'
 import sqlite3 from 'sqlite3'
 import { logger } from './logger'
-import { hasPartnerMessages } from './utils'
+import { hasPartnerMessages, isoToAppleNanoseconds } from './utils'
 
 const CHAT_DB_PATH = path.join(os.homedir(), 'Library', 'Messages', 'chat.db')
 
-const isoToAppleNanoseconds = (isoDate: string): number => {
-    const appleEpoch = new Date('2001-01-01T00:00:00Z').getTime()
-    const targetTime = new Date(isoDate).getTime()
-    return (targetTime - appleEpoch) * 1000000
-}
-
 const buildQuery = (startDate: string, endDate: string) => {
+    logger.debug({ startDate, endDate }, 'Getting messages')
     const params = [
         PARTNER_PHONE,
         isoToAppleNanoseconds(startDate),
@@ -44,7 +39,7 @@ const formatMessages = (rows: MessageRow[]) => {
         .map((row) => ({
             sender: row.is_from_me ? 'me' : row.contact_id === PARTNER_PHONE ? 'partner' : 'unknown',
             text: row.text,
-            timestamp: row.timestamp
+            timestamp: new Date(row.timestamp).toISOString()
         }))
         .reverse() // Reverse to get chronological order
 }
@@ -57,8 +52,6 @@ export const queryMessagesDb = async (startDate: string, endDate: string) => {
 
     const db = await open({ filename: CHAT_DB_PATH, driver: sqlite3.Database })
     const { query, params } = buildQuery(startDate, endDate)
-
-    logger.debug({ query, params }, 'Querying messages database')
 
     try {
         const rows = (await db.all(query, params)) as MessageRow[]

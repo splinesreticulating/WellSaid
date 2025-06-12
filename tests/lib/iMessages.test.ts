@@ -1,7 +1,7 @@
 import { queryMessagesDb } from '$lib/iMessages'
-import { open } from 'sqlite'
 import type { Database } from 'sqlite'
-import { beforeAll, afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { open } from 'sqlite'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock the sqlite module
 vi.mock('sqlite', () => ({
@@ -44,13 +44,13 @@ describe('queryMessagesDb', () => {
         const mockDb = {
             all: vi.fn().mockResolvedValue([
                 {
-                    timestamp: '2025-05-23 12:01:00',
+                    timestamp: '2025-05-23T12:01:00.000Z',
                     text: 'Hello from me',
                     contact_id: '+1234567890',
                     is_from_me: 1,
                 },
                 {
-                    timestamp: '2025-05-23 12:00:00',
+                    timestamp: '2025-05-23T12:00:00.000Z',
                     text: 'Hello from partner',
                     contact_id: '+1234567890',
                     is_from_me: 0,
@@ -72,11 +72,11 @@ describe('queryMessagesDb', () => {
         // we'll just check that the text and timestamp match what we expect
         expect(result.messages[0]).toMatchObject({
             text: 'Hello from partner',
-            timestamp: '2025-05-23 12:00:00',
+            timestamp: '2025-05-23T12:00:00.000Z',
         })
         expect(result.messages[1]).toMatchObject({
             text: 'Hello from me',
-            timestamp: '2025-05-23 12:01:00',
+            timestamp: '2025-05-23T12:01:00.000Z',
         })
 
         // Just verify that the database query was called
@@ -89,7 +89,7 @@ describe('queryMessagesDb', () => {
         const mockDb = {
             all: vi.fn().mockResolvedValue([
                 {
-                    timestamp: '2025-05-23 12:01:00',
+                    timestamp: '2025-05-23T12:01:00.000Z',
                     text: 'Hello from me',
                     contact_id: '+1234567890',
                     is_from_me: 1,
@@ -106,7 +106,7 @@ describe('queryMessagesDb', () => {
 
         vi.mocked(open).mockResolvedValue(mockDb as unknown as Database)
 
-        const result = await queryMessagesDb()
+        const result = await queryMessagesDb('2025-05-23 12:01:00', '2025-05-23 12:02:00')
 
         // Should return empty array since all messages are from 'me'
         expect(result.messages).toEqual([])
@@ -116,7 +116,7 @@ describe('queryMessagesDb', () => {
         // Temporarily unset the environment variable for this test
         vi.stubEnv('PARTNER_PHONE', '')
 
-        const result = await queryMessagesDb()
+        const result = await queryMessagesDb('2025-05-23 12:01:00', '2025-05-23 12:02:00')
 
         // Just verify that the result is an empty array
         expect(result.messages).toEqual([])
@@ -136,7 +136,7 @@ describe('queryMessagesDb', () => {
 
         vi.mocked(open).mockResolvedValue(mockDb as unknown as Database)
 
-        const result = await queryMessagesDb()
+        const result = await queryMessagesDb('2025-05-23 12:01:00', '2025-05-23 12:02:00')
 
         // Should return empty array on error
         expect(result.messages).toEqual([])
