@@ -104,7 +104,7 @@ export const getOpenaiReply = async (
 
         if (!response.ok) {
             logger.error({ status: response.status }, 'OpenAI API error')
-            throw new Error(`OpenAI API error: ${response.status}`)
+            throw new Error(`OpenAI API error code ${response.status}: ${response.statusText}`)
         }
 
         const { choices } = await response.json()
