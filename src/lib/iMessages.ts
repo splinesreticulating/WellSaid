@@ -39,7 +39,9 @@ const formatMessages = (rows: MessageRow[]) => {
         .map((row) => ({
             sender: row.is_from_me ? 'me' : row.contact_id === PARTNER_PHONE ? 'partner' : 'unknown',
             text: row.text,
-            timestamp: new Date(row.timestamp).toISOString()
+            timestamp: new Date(
+                row.timestamp.endsWith('Z') ? row.timestamp : `${row.timestamp}Z`
+            ).toISOString()
         }))
         .reverse() // Reverse to get chronological order
 }
