@@ -10,7 +10,7 @@ import { fetchRelevantHistory } from './history'
 import { logger } from './logger'
 import { openAiPrompt, systemContext } from './prompts'
 import type { Message, OpenAIConfig, ToneType } from './types'
-import { formatAsUserAndAssistant } from './utils'
+import { formatMessagesAsText } from './utils'
 
 const API_URL = 'https://api.openai.com/v1/chat/completions'
 const DEFAULT_MODEL = 'gpt-4'
@@ -35,7 +35,7 @@ const summaryFunction = {
     function: {
         name: 'draft_replies',
         description:
-            'Generate a short summary and three suggested replies (short, medium, and long)',
+            'Generate a short summary and three suggested replies',
         parameters: {
             type: 'object',
             properties: {
@@ -46,7 +46,7 @@ const summaryFunction = {
                 replies: {
                     type: 'array',
                     items: { type: 'string' },
-                    description: 'Suggested replies for the user',
+                    description: 'Suggested replies for me',
                 },
             },
             required: ['summary', 'replies'],
@@ -68,11 +68,24 @@ export const getOpenaiReply = async (
         }
     }
 
-    const conversation = formatAsUserAndAssistant(messages)
     const historyContext = await fetchRelevantHistory(messages)
     const prompt = openAiPrompt(tone, historyContext) + '\n\n' + context
+    const body = {
+        model: config.model,
+        messages: [
+            { role: 'system', content: systemContext },
+            { role: 'user', content: formatMessagesAsText(messages) },
+            { role: 'user', content: prompt },
+        ],
+        temperature: config.temperature,
+        ...(config.topP && { top_p: config.topP }),
+        ...(config.frequencyPenalty && { frequency_penalty: config.frequencyPenalty }),
+        ...(config.presencePenalty && { presence_penalty: config.presencePenalty }),
+        tools: [summaryFunction],
+        tool_choice: { type: 'function', function: { name: 'draft_replies' } },
+    }
 
-    logger.debug({ prompt }, 'Sending prompt to OpenAI')
+    logger.debug({ body }, 'Sending request to OpenAI')
 
     try {
         const response = await fetch(API_URL, {
@@ -81,31 +94,18 @@ export const getOpenaiReply = async (
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${config.apiKey}`,
             },
-            body: JSON.stringify({
-                model: config.model,
-                messages: [
-                    { role: 'system', content: systemContext },
-                    ...conversation,
-                    { role: 'user', content: prompt },
-                ],
-                temperature: config.temperature,
-                ...(config.topP && { top_p: config.topP }),
-                ...(config.frequencyPenalty && { frequency_penalty: config.frequencyPenalty }),
-                ...(config.presencePenalty && { presence_penalty: config.presencePenalty }),
-                tools: [summaryFunction],
-                tool_choice: { type: 'function', function: { name: 'draft_replies' } },
-            }),
+            body: JSON.stringify(body),
         })
-
-        if (!response.ok) {
-            logger.error({ status: response.status }, 'OpenAI API error')
-            throw new Error(`OpenAI API error: ${response.status}`)
-        }
 
         logger.debug(
             { status: response.status, statusText: response.statusText },
             'OpenAI API response received'
         )
+
+        if (!response.ok) {
+            logger.error({ status: response.status }, 'OpenAI API error')
+            throw new Error(`OpenAI API error code ${response.status}: ${response.statusText}`)
+        }
 
         const { choices } = await response.json()
         const functionCall = choices[0]?.message?.tool_calls?.[0]?.function

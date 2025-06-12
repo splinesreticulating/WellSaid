@@ -1,5 +1,5 @@
 import { timingSafeEqual } from 'node:crypto'
-import type { ChatMessage, Message } from './types'
+import type { Message } from './types'
 
 export const parseSummaryToHumanReadable = (rawOutput: string): string => {
     const summaryRegex = /Summary:[ \t]*(\n+)?([\s\S]*?)(?=\s*Suggested replies:|$)/
@@ -15,13 +15,6 @@ export const parseSummaryToHumanReadable = (rawOutput: string): string => {
 
 export const hasPartnerMessages = (formattedRows: Message[]) =>
     formattedRows.some((msg) => msg.sender !== 'me')
-
-export const formatAsUserAndAssistant = (messages: Message[]): ChatMessage[] => {
-    return messages.map((m) => ({
-        role: m.sender === 'me' ? 'user' : 'assistant',
-        content: m.text,
-    }))
-}
 
 const cleanReplyText = (text: string): string => {
     let cleaned = text.trim()
@@ -64,5 +57,5 @@ export const safeCompare = (a: string, b: string): boolean => {
     return timingSafeEqual(aBuf, bBuf) && a.length === b.length
 }
 
-export const formatMessages = (conversation: ChatMessage[]): string =>
-    conversation.map((msg, idx) => `Message ${idx + 1}: ${msg.role}: ${msg.content}`).join('\n')
+export const formatMessagesAsText = (messages: Message[]): string =>
+    messages.map((msg) => `${msg.sender}: ${msg.text}`).join('\n')

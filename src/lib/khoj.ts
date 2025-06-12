@@ -1,7 +1,7 @@
 import { KHOJ_AGENT, KHOJ_API_URL } from '$env/static/private'
 import { khojPrompt } from '$lib/prompts'
 import type { Message, ToneType } from '$lib/types'
-import { extractReplies, formatAsUserAndAssistant, parseSummaryToHumanReadable } from '$lib/utils'
+import { extractReplies, parseSummaryToHumanReadable } from '$lib/utils'
 import { fetchRelevantHistory } from './history'
 import { logger } from './logger'
 
@@ -12,10 +12,9 @@ export const getKhojReply = async (
     tone: ToneType,
     context: string
 ): Promise<{ summary: string; replies: string[]; messageCount: number }> => {
-    const conversation = formatAsUserAndAssistant(messages)
     const historyContext = await fetchRelevantHistory(messages)
     const mergedContext = [historyContext, context].filter(Boolean).join('\n')
-    const prompt = khojPrompt(conversation, tone, mergedContext)
+    const prompt = khojPrompt(messages, tone, mergedContext)
     const body = {
         q: prompt,
         ...(KHOJ_AGENT ? { agent: KHOJ_AGENT } : {}),

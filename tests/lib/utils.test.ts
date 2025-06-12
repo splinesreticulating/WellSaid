@@ -1,4 +1,4 @@
-import { extractReplies, formatAsUserAndAssistant, parseSummaryToHumanReadable } from '$lib/utils'
+import { extractReplies, parseSummaryToHumanReadable, formatMessagesAsText, hasPartnerMessages, safeCompare } from '$lib/utils'
 import { describe, expect, it } from 'vitest'
 
 describe('parseSummaryToHumanReadable', () => {
@@ -57,18 +57,99 @@ Reply 3: *Third reply*`
     })
 })
 
-describe('formatMessages', () => {
-    it('formats messages with the correct tags', () => {
+describe('formatMessagesAsText', () => {
+    it('formats messages as text with sender labels', () => {
         const messages = [
             { sender: 'me', text: 'Hello', timestamp: '1' },
             { sender: 'partner', text: 'Hi there', timestamp: '2' },
         ]
 
-        const formatted = formatAsUserAndAssistant(messages)
+        const formatted = formatMessagesAsText(messages)
 
-        expect(formatted).toEqual([
-            { role: 'user', content: 'Hello' },
-            { role: 'assistant', content: 'Hi there' },
-        ])
+        expect(formatted).toBe('me: Hello\npartner: Hi there')
+    })
+
+    it('handles empty message array', () => {
+        const formatted = formatMessagesAsText([])
+        expect(formatted).toBe('')
+    })
+
+    it('handles single message', () => {
+        const messages = [{ sender: 'me', text: 'Hello world', timestamp: '1' }]
+        const formatted = formatMessagesAsText(messages)
+        expect(formatted).toBe('me: Hello world')
+    })
+
+    it('preserves message order', () => {
+        const messages = [
+            { sender: 'partner', text: 'First', timestamp: '1' },
+            { sender: 'me', text: 'Second', timestamp: '2' },
+            { sender: 'partner', text: 'Third', timestamp: '3' },
+        ]
+
+        const formatted = formatMessagesAsText(messages)
+        expect(formatted).toBe('partner: First\nme: Second\npartner: Third')
+    })
+})
+
+describe('hasPartnerMessages', () => {
+    it('returns true when partner messages exist', () => {
+        const messages = [
+            { sender: 'me', text: 'Hello', timestamp: '1' },
+            { sender: 'partner', text: 'Hi there', timestamp: '2' },
+        ]
+
+        expect(hasPartnerMessages(messages)).toBe(true)
+    })
+
+    it('returns false when only my messages exist', () => {
+        const messages = [
+            { sender: 'me', text: 'Hello', timestamp: '1' },
+            { sender: 'me', text: 'How are you?', timestamp: '2' },
+        ]
+
+        expect(hasPartnerMessages(messages)).toBe(false)
+    })
+
+    it('returns false for empty array', () => {
+        expect(hasPartnerMessages([])).toBe(false)
+    })
+
+    it('returns true when only partner messages exist', () => {
+        const messages = [
+            { sender: 'partner', text: 'Hello', timestamp: '1' },
+            { sender: 'partner', text: 'How are you?', timestamp: '2' },
+        ]
+
+        expect(hasPartnerMessages(messages)).toBe(true)
+    })
+})
+
+describe('safeCompare', () => {
+    it('returns true for identical strings', () => {
+        expect(safeCompare('hello', 'hello')).toBe(true)
+    })
+
+    it('returns false for different strings', () => {
+        expect(safeCompare('hello', 'world')).toBe(false)
+    })
+
+    it('returns false for strings of different lengths', () => {
+        expect(safeCompare('hello', 'hello world')).toBe(false)
+    })
+
+    it('returns true for empty strings', () => {
+        expect(safeCompare('', '')).toBe(true)
+    })
+
+    it('returns false when one string is empty', () => {
+        expect(safeCompare('hello', '')).toBe(false)
+        expect(safeCompare('', 'hello')).toBe(false)
+    })
+
+    it('handles special characters correctly', () => {
+        const special = '!@#$%^&*()_+-=[]{}|;:,.<>?'
+        expect(safeCompare(special, special)).toBe(true)
+        expect(safeCompare(special, special + 'x')).toBe(false)
     })
 })

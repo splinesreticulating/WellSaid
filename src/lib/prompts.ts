@@ -1,10 +1,10 @@
 import { CUSTOM_CONTEXT } from '$env/static/private'
-import type { ChatMessage, ToneType } from './types'
-import { formatMessages } from './utils'
+import type { Message, ToneType } from './types'
+import { formatMessagesAsText } from './utils'
 
 export const systemContext = `${CUSTOM_CONTEXT}
 
-Messages with role "user" are from me. Messages with role "assistant" are from my partner. Analyze my messages to mimic my vocabulary and tone when suggesting replies.
+Analyze messages attributed to "me:" to mimic my vocabulary and tone when suggesting replies.
 
 Additional context about recent conversation history is provided below. Use this to understand the current situation and tone, but focus your reply on the most recent messages. Do not summarize the history - it is only for context.`
 
@@ -23,7 +23,7 @@ export const openAiPrompt = (tone: string, context: string): string =>
     `\n${buildPrompt(tone, context)}\n`
 
 export const khojPrompt = (
-    conversation: ChatMessage[],
+    messages: Message[],
     tone: ToneType,
     context: string
 ): string => {
@@ -32,7 +32,7 @@ export const khojPrompt = (
         
         Here are some text messages between my partner and I:
         
-        ${formatMessages(conversation)}
+        ${formatMessagesAsText(messages)}
     
         ${buildPrompt(tone, context)}
         Please respond using this format:
