@@ -20,18 +20,23 @@ describe('prompts', () => {
             const result = openAiPrompt('gentle', '')
 
             expect(result).toContain('Given the conversation above')
-            expect(result).toContain('Suggest 3 gentle replies')
+            expect(result).toContain('Suggest 3 replies that I might send')
             expect(result).toContain('one short reply, one medium-length reply, and one long reply')
-            expect(result).not.toContain('Recent conversation context')
+            expect(result).toContain('Always use this tone when drafting replies: gentle')
+            expect(result).not.toContain('Extra context:')
+            expect(result).not.toContain('Summary:')
+            expect(result).not.toContain('Suggested replies:')
         })
 
         it('should generate prompt with tone and context', () => {
             const context = 'Previous conversation about weekend plans'
             const result = openAiPrompt('professional', context)
 
-            expect(result).toContain('Suggest 3 professional replies')
-            expect(result).toContain('Recent conversation context (for reference only):')
-            expect(result).toContain(context)
+            expect(result).toContain('Suggest 3 replies that I might send')
+            expect(result).toContain('Extra context: ' + context)
+            expect(result).toContain('Always use this tone when drafting replies: professional')
+            expect(result).not.toContain('Summary:')
+            expect(result).not.toContain('Suggested replies:')
         })
 
         it('should handle different tone types', () => {
@@ -39,7 +44,9 @@ describe('prompts', () => {
 
             tones.forEach((tone) => {
                 const result = openAiPrompt(tone, '')
-                expect(result).toContain(`Suggest 3 ${tone} replies`)
+                expect(result).toContain('Suggest 3 replies that I might send')
+                expect(result).toContain(`brief summary including the emotional tone`)
+                expect(result).toContain(`Always use this tone when drafting replies: ${tone}`)
             })
         })
     })
@@ -59,8 +66,13 @@ describe('prompts', () => {
             expect(result).toContain('me: Hey, how was your day?')
             expect(result).toContain('partner: It was great! How about yours?')
             expect(result).toContain('me: Pretty good, thanks for asking')
-            expect(result).toContain('Suggest 3 gentle replies')
-            expect(result).not.toContain('Recent conversation context')
+            expect(result).toContain('Suggest 3 replies that I might send')
+            expect(result).toContain('Summary:')
+            expect(result).toContain('Suggested replies:')
+            expect(result).toContain('Reply 1:')
+            expect(result).toContain('Reply 2:')
+            expect(result).toContain('Reply 3:')
+            expect(result).not.toContain('Extra context:')
         })
 
         it('should generate complete prompt with conversation and context', () => {
@@ -69,9 +81,13 @@ describe('prompts', () => {
 
             expect(result).toContain(systemContext)
             expect(result).toContain('me: Hey, how was your day?')
-            expect(result).toContain('Suggest 3 funny replies')
-            expect(result).toContain('Recent conversation context (for reference only):')
-            expect(result).toContain(context)
+            expect(result).toContain('Suggest 3 replies that I might send')
+            expect(result).toContain('Extra context: ' + context)
+            expect(result).toContain('Summary:')
+            expect(result).toContain('Suggested replies:')
+            expect(result).toContain('Reply 1:')
+            expect(result).toContain('Reply 2:')
+            expect(result).toContain('Reply 3:')
         })
 
         it('should handle empty conversation', () => {
@@ -79,7 +95,9 @@ describe('prompts', () => {
 
             expect(result).toContain(systemContext)
             expect(result).toContain('Here are some text messages between my partner and I:')
-            expect(result).toContain('Suggest 3 gentle replies')
+            expect(result).toContain('Suggest 3 replies that I might send')
+            expect(result).toContain('Summary:')
+            expect(result).toContain('Suggested replies:')
             // Check that there are no actual message lines (empty conversation)
             expect(result).not.toContain('\nme: ')
             expect(result).not.toContain('\npartner: ')
@@ -90,6 +108,11 @@ describe('prompts', () => {
             const result = khojPrompt(singleMessage, 'reassuring', '')
 
             expect(result).toContain('me: Hello there!')
+            expect(result).toContain('Summary:')
+            expect(result).toContain('Suggested replies:')
+            expect(result).toContain('Reply 1:')
+            expect(result).toContain('Reply 2:')
+            expect(result).toContain('Reply 3:')
             expect(result).not.toContain('partner:')
         })
 
@@ -114,15 +137,24 @@ describe('prompts', () => {
                 'test context'
             )
 
-            // khojPrompt should contain the format instructions
-            const formatSection = 'Please respond using this format:'
-            expect(khojResult).toContain(formatSection)
+            // Both should contain the core instructions
+            expect(openAiResult).toContain('Given the conversation above')
+            expect(khojResult).toContain('Given the conversation above')
 
-            // khojPrompt should contain the reply structure
-            expect(khojResult).toContain('Reply 1: <short reply>')
+            // Both should include the tone
+            expect(openAiResult).toContain('gentle')
+            expect(khojResult).toContain('gentle')
 
-            // openAiPrompt should not contain the format section
-            expect(openAiResult).not.toContain(formatSection)
+            // Only khojPrompt should include the full response format
+            expect(khojResult).toContain('Summary:')
+            expect(khojResult).toContain('Suggested replies:')
+            expect(khojResult).toContain('Reply 1:')
+            expect(khojResult).toContain('Reply 2:')
+            expect(khojResult).toContain('Reply 3:')
+
+            // Both should include the context when provided
+            expect(openAiResult).toContain('test context')
+            expect(khojResult).toContain('test context')
         })
     })
 })
