@@ -1,7 +1,7 @@
-import os from 'node:os'
-import path from 'node:path'
 import { PARTNER_PHONE } from '$env/static/private'
 import type { MessageRow } from '$lib/types'
+import os from 'node:os'
+import path from 'node:path'
 import { open } from 'sqlite'
 import sqlite3 from 'sqlite3'
 import { logger } from './logger'
@@ -9,7 +9,7 @@ import { hasPartnerMessages } from './utils'
 
 const CHAT_DB_PATH = path.join(os.homedir(), 'Library', 'Messages', 'chat.db')
 
-export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
+export const queryMessagesDb = async (startDate: string, endDate: string) => {
     const PARTNER_HANDLE_ID = PARTNER_PHONE
     if (!PARTNER_HANDLE_ID) {
         logger.warn('PARTNER_PHONE env var not set -- make sure it is set in your .env file')
@@ -28,15 +28,11 @@ export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
     let dateWhere = ''
     const params: (string | number)[] = [PARTNER_HANDLE_ID]
 
-    if (startDate) {
-        dateWhere += ' AND message.date >= ?'
-        params.push(isoToAppleNs(startDate))
-    }
+    dateWhere += ' AND message.date >= ?'
+    params.push(isoToAppleNs(startDate))
 
-    if (endDate) {
-        dateWhere += ' AND message.date <= ?'
-        params.push(isoToAppleNs(endDate))
-    }
+    dateWhere += ' AND message.date <= ?'
+    params.push(isoToAppleNs(endDate))
 
     const query = `
         SELECT
@@ -76,8 +72,8 @@ export const queryMessagesDb = async (startDate?: string, endDate?: string) => {
             sender: row.is_from_me
                 ? 'me'
                 : row.contact_id === PARTNER_HANDLE_ID
-                  ? 'partner'
-                  : 'unknown',
+                    ? 'partner'
+                    : 'unknown',
             text: row.text,
             timestamp: row.timestamp,
         }))
