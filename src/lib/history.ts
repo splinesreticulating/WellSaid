@@ -7,17 +7,6 @@ import { formatMessagesAsText } from './utils'
 const lookbackHours = Number.parseInt(HISTORY_LOOKBACK_HOURS || '0')
 
 export const fetchRelevantHistory = async (messages: Message[]): Promise<string> => {
-    logger.debug(
-        {
-            original: messages[0].timestamp,
-            isoParsed: new Date(messages[0].timestamp).toISOString(),
-            localParsed: new Date(messages[0].timestamp).toLocaleString('en-US', {
-                timeZone: 'America/Los_Angeles',
-            }),
-        },
-        'Timestamp interpretation test'
-    )
-
     try {
         if (!lookbackHours || messages.length === 0) {
             logger.warn('No messages or invalid lookbackHours; skipping history fetch')

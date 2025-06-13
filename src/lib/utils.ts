@@ -45,6 +45,7 @@ export const extractReplies = (rawOutput: string): string[] => {
             return cleanReplyText(currentMatch[1] || currentMatch[2] || '')
         })
         .filter(Boolean)
+
     return replies
 }
 
@@ -52,8 +53,10 @@ export const safeCompare = (a: string, b: string): boolean => {
     const len = Math.max(a.length, b.length)
     const aBuf = Buffer.alloc(len, 0)
     const bBuf = Buffer.alloc(len, 0)
+
     Buffer.from(a).copy(aBuf)
     Buffer.from(b).copy(bBuf)
+
     return timingSafeEqual(aBuf, bBuf) && a.length === b.length
 }
 
