@@ -245,24 +245,18 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
 
 ## Screenshots
 
-<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; margin: 20px 0;">
-  <div style="flex: 1; min-width: 300px; max-width: 600px; text-align: center;">
-    <h4>Desktop</h4>
-    <img 
-      src="./screenshots/desktop.png" 
-      alt="WellSaid Desktop View" 
-      style="width: 100%; max-width: 100%; height: auto; box-shadow: 0 4px 8px rgba(0,0,0,0.2); border-radius: 8px;"
-    />
-  </div>
-  <div style="flex: 0 0 auto; text-align: center; margin: 0 auto;">
-    <h4>Mobile</h4>
-    <img 
-      src="./screenshots/mobile.png" 
-      alt="WellSaid Mobile View" 
-      style="width: 200px; max-width: 100%; height: auto; box-shadow: 0 4px 8px rgba(0,0,0,0.2); border-radius: 8px;"
-    />
-  </div>
-</div>
+<table>
+  <tr>
+    <td align="center">
+      <h4>Desktop</h4>
+      <img src="./screenshots/desktop.png" alt="WellSaid Desktop View" width="600" />
+    </td>
+    <td align="center">
+      <h4>Mobile</h4>
+      <img src="./screenshots/mobile.png" alt="WellSaid Mobile View" width="200" />
+    </td>
+  </tr>
+</table>
 
 ## License
 
