@@ -94,7 +94,7 @@ Update the values in the `.env` file. The following variables are needed:
 
 - **Remote Access**
 
-    - `ALLOWED_HOST`: For remote access via Tailscale (see 'Accessing from Anywhere' section)
+    - `ALLOWED_HOST`: For remote access via Tailscale (see 'Accessing from Anywhere' below) -- leave blank or set to 'all' if you don't need access from outside your local network
 
 - **Security**
     - `APP_USERNAME`: Your username
@@ -171,9 +171,9 @@ yarn test:coverage
 
 ## Accessing from Anywhere
 
-If you'd like to securely access WellSaid remotely, consider using a service like [Tailscale](https://tailscale.com) to set up a secure private network that connects your devices.
+If you'd like to securely access WellSaid remotely, use [Tailscale](https://tailscale.com) to set up a secure private network that connects your devices.
 
-All that's required in the app is that you set the `ALLOWED_HOST` variable in your `.env` file to the address provided by Tailscale. For more details, visit [Tailscale's documentation](https://tailscale.com/kb/).
+Once your Tailscale network is set up, all that's required in the app is that you set the `ALLOWED_HOST` variable in your `.env` file to the address provided by Tailscale. For more details, visit [Tailscale's documentation](https://tailscale.com/kb/).
 
 ### iOS Home Screen Icons (and HTTPS Gotchas)
 
