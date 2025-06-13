@@ -53,7 +53,7 @@ export const actions: Actions = {
                 cookies.set('auth_token', token, cookieOptions)
                 logger.info(`[LOGIN ACTION] User '${username}' authenticated successfully`)
 
-                // Redirect to home page on successful login and include default lookBackHours
+                // Redirect to default page on successful login
                 throw redirect(303, '/?lookBackHours=1')
             }
 
