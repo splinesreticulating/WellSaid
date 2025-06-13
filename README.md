@@ -223,9 +223,10 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
 
 ### Common Issues
 
-- **Messages Not Loading**: Ensure you've set the correct `PARTNER_PHONE` in your `.env` file
-- **Permission Issues**: WellSaid needs access to your Messages database. Make sure Terminal/your editor has Full Disk Access in System Preferences > Security & Privacy
-- **No Partner Messages**: The app will only show conversations where your partner has responded
+- **0 Messages Found**: Open the Messages app on your Mac and sign in if you haven't already. Summaries and replies will be available once you've signed in and your partner has sent at least one message.
+- **Messages Not Loading**: Ensure you've set the correct `PARTNER_PHONE` in your `.env` file.
+- **Permission Issues**: WellSaid needs access to your Messages database. Make sure Terminal/your editor has Full Disk Access in System Preferences > Security & Privacy.
+- **Go Button Disabled**: Conversation summaries are only available when your partner has responded in the selected time frame.
 
 ## Acknowledgements
 
