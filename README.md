@@ -1,11 +1,42 @@
-<h1><img src="static/apple-touch-icon.png" alt="WellSaid Logo" width="60" height="60"> WellSaid</h1>
-<h3>Empathy. Upgraded.</h3>
+<div align="center">
+  <img src="static/apple-touch-icon.png" alt="WellSaid Logo" width="60" height="60">
+  <h1 align="center">WellSaid</h1>
+  <h3 align="center">Empathy. Upgraded.</h3>
+  <p align="center">
 
-WellSaid helps you communicate with more empathy and clarity by offering conversation summaries and tone-based reply suggestions.
+  ![GitHub release](https://img.shields.io/github/v/release/splinesreticulating/WellSaid)
+  ![GitHub](https://img.shields.io/github/license/splinesreticulating/WellSaid)
+  ![GitHub](https://img.shields.io/github/issues/splinesreticulating/WellSaid)
+  ![GitHub](https://img.shields.io/github/commit-activity/w/splinesreticulating/WellSaid)
+  ![GitHub](https://img.shields.io/github/last-commit/splinesreticulating/WellSaid)
+      
+  </p>
+
+  <p align="center">WellSaid helps you communicate with more empathy and clarity by offering conversation summaries and tone-based reply suggestions.</p>
+
+  <hr>
+</div>
+
+## Table of Contents
+
+- [Features](#features)
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [How It Works](#how-it-works)
+- [Technical Details](#technical-details)
+- [Development and Local Usage](#development-and-local-usage)
+- [Accessing from Anywhere](#accessing-from-anywhere)
+- [iOS Home Screen Icons (and HTTPS Gotchas)](#ios-home-screen-icons-and-https-gotchas)
+- [Troubleshooting](#troubleshooting)
+- [Acknowledgements](#acknowledgements)
+- [Box Art](#box-art)
+- [Screenshots](#screenshots)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Features
 
-- **Conversation Summaries**: Analyze your Messages app conversations with a partner from the last 1-24 hours
+- **Conversation Summaries**: Analyze your Apple iMessages app conversations with a partner from the last 1-24 hours
 - **Smart Reply Suggestions**: Get short, medium, and long AI-generated reply options based on recent and and historical conversation context
 - **Tone Selection**: Set the tone for your replies with (eg: gentle, funny, reassuring, concise)
 - **Context Addition**: Add additional context to help generate more relevant replies
@@ -257,6 +288,10 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
     </td>
   </tr>
 </table>
+
+## Contributing
+
+Feel free to submit a pull request or open an issue if you find a bug or have a feature you'd like to add.
 
 ## License
 
