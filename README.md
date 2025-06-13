@@ -245,14 +245,14 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
 
 ## Screenshots
 
-<p align="center" style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
-  <div style="text-align: center;">
+<p align="center" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 20px 0;">
+  <div style="width: 100%; max-width: 800px; text-align: center;">
     <h4>Desktop View</h4>
-    <img src="./screenshots/desktop.png" alt="WellSaid Desktop View" style="max-width: 80%; box-shadow: 0 4px 8px rgba(0,0,0,0.2); border-radius: 8px;"/>
+    <img src="./screenshots/desktop.png" alt="WellSaid Desktop View" style="width: 100%; max-width: 800px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); border-radius: 8px;"/>
   </div>
-  <div style="text-align: center;">
+  <div style="width: 100%; max-width: 320px; text-align: center;">
     <h4>Mobile View</h4>
-    <img src="./screenshots/mobile.png" alt="WellSaid Mobile View" style="max-width: 40%; min-width: 300px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); border-radius: 8px;"/>
+    <img src="./screenshots/mobile.png" alt="WellSaid Mobile View" style="width: 100%; max-width: 320px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); border-radius: 8px;"/>
   </div>
 </p>
 
