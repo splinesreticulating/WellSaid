@@ -243,6 +243,19 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
   <img src="./box-art/back.png" alt="WellSaid Back Cover" width="45%" style="box-shadow: 0 4px 8px rgba(0,0,0,0.3); border-radius: 8px;"/>
 </p>
 
+## Screenshots
+
+<p align="center" style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+  <div style="text-align: center;">
+    <h4>Desktop View</h4>
+    <img src="./screenshots/desktop.png" alt="WellSaid Desktop View" style="max-width: 80%; box-shadow: 0 4px 8px rgba(0,0,0,0.2); border-radius: 8px;"/>
+  </div>
+  <div style="text-align: center;">
+    <h4>Mobile View</h4>
+    <img src="./screenshots/mobile.png" alt="WellSaid Mobile View" style="max-width: 40%; min-width: 300px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); border-radius: 8px;"/>
+  </div>
+</p>
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
