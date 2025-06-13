@@ -112,6 +112,10 @@ Update the values in the `.env` file. The following variables are needed:
 yarn dev
 ```
 
+The server will run over HTTP by default. If you place `cert.pem` and
+`key.pem` in a `.certs` directory at the project root (see the HTTPS section
+below), it will automatically use those files and start with HTTPS.
+
 ## Usage
 
 1. Select a time frame to analyze
@@ -177,7 +181,7 @@ Once your Tailscale network is set up, all that's required in the app is that yo
 
 ### iOS Home Screen Icons (and HTTPS Gotchas)
 
-To make your WellSaid app look great when saved to your iPhone's Home Screen, iOS requires a **valid HTTPS certificate**:
+To make your WellSaid app look great when saved to your iPhone's Home Screen, iOS requires a **valid HTTPS certificate**. This step is optional—if you just want to run the app locally in a browser, you can skip it and use plain HTTP.
 
 1. **Install mkcert (if not already installed)**
 
@@ -193,6 +197,8 @@ mkcert <your-tailscale-hostname>.<tailscale-subdomain>.ts.net localhost
 ```
 
 This will create a cert/key pair like `rootCA.pem` and `rootCA-key.pem`.
+Move the generated certificate files into a `.certs` directory at the project
+root so the development server can automatically find them.
 
 3. **Trust the cert on your iPhone**
 
