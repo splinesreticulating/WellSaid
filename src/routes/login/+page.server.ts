@@ -1,4 +1,4 @@
-import { BASIC_AUTH_PASSWORD, BASIC_AUTH_USERNAME, JWT_SECRET } from '$env/static/private'
+import { APP_PASSWORD, APP_USERNAME, JWT_SECRET } from '$env/static/private'
 import { logger } from '$lib/logger'
 import { safeCompare } from '$lib/utils'
 import { type Actions, fail, redirect } from '@sveltejs/kit'
@@ -26,10 +26,7 @@ export const actions: Actions = {
             }
 
             // Validate credentials
-            if (
-                safeCompare(username, BASIC_AUTH_USERNAME) &&
-                safeCompare(password, BASIC_AUTH_PASSWORD)
-            ) {
+            if (safeCompare(username, APP_USERNAME) && safeCompare(password, APP_PASSWORD)) {
                 // Create authentication cookie (session-based authentication)
                 const cookieOptions = {
                     path: '/' as const,

@@ -93,8 +93,8 @@ Create a `.env` file in the root directory by copying the `.env.example` file (`
     - `ALLOWED_HOST`: For remote access via Tailscale (see 'Accessing from Anywhere' section)
 
 - **Security**
-    - `BASIC_AUTH_USERNAME`: Your username
-    - `BASIC_AUTH_PASSWORD`: Your password
+    - `APP_USERNAME`: Your username
+    - `APP_PASSWORD`: Your password
     - `JWT_SECRET`: Should be a long, random, and unpredictable string.
       You can generate one using OpenSSL with the following command in your terminal:
     ```bash

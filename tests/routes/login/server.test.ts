@@ -1,10 +1,10 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { RequestEvent } from '@sveltejs/kit'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import * as serverModule from '../../../src/routes/login/+page.server'
 
 vi.mock('$env/static/private', () => ({
-    BASIC_AUTH_USERNAME: 'user',
-    BASIC_AUTH_PASSWORD: 'pass',
+    APP_USERNAME: 'user',
+    APP_PASSWORD: 'pass',
     JWT_SECRET: 'secret',
 }))
 
