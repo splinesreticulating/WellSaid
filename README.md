@@ -81,8 +81,8 @@ Create a `.env` file in the root directory by copying the `.env.example` file (`
 
 - **Khoj**
 
-    - `KHOJ_API_URL`: Your khoj server API URL if you have one
-    - `KHOJ_AGENT`: The khoj agent to use if you have one
+    - `KHOJ_API_URL`: Your [Khoj](https://khoj.dev/) server API URL if you have one, otherwise leave this out or leave it blank
+    - `KHOJ_AGENT`: The [Khoj agent](https://docs.khoj.dev/features/agents/) to use if you have one, otherwise leave this out or leave it blank
 
 - **Logging**
 
