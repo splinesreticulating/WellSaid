@@ -62,7 +62,11 @@ yarn prepare
 
 4. Configure environment variables
 
-Create a `.env` file in the root directory by copying the `.env.example` file (`cp .env.example .env`) and then update the values. The following variables are needed:
+```bash
+cp .env.example .env
+```
+
+Update the values in the `.env` file. The following variables are needed:
 
 - **Customization**
 
