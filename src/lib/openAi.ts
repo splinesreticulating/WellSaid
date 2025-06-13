@@ -85,6 +85,7 @@ export const getOpenaiReply = async (
     }
 
     logger.debug({ body }, 'Sending request to OpenAI')
+    logger.info('Sending request to OpenAI')
 
     try {
         const response = await fetch(API_URL, {

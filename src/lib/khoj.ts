@@ -21,6 +21,7 @@ export const getKhojReply = async (
     }
 
     logger.debug({ body }, 'Khoj body')
+    logger.info('Sending request to Khoj')
 
     try {
         const khojRes = await fetch(khojApiUrl, {
