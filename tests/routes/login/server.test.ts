@@ -21,9 +21,13 @@ vi.mock('jsonwebtoken', () => ({
     default: { sign: vi.fn().mockReturnValue('token') },
 }))
 
-function createMockEvent(url: URL, formData: FormData): RequestEvent {
+function createMockEvent(
+    url: URL,
+    formData: FormData,
+    headers: Record<string, string> = {}
+): RequestEvent {
     return {
-        request: new Request(url, { method: 'POST', body: formData }),
+        request: new Request(url, { method: 'POST', body: formData, headers }),
         cookies: {
             get: vi.fn(),
             getAll: vi.fn().mockReturnValue([]),
@@ -61,5 +65,22 @@ describe('login page server action', () => {
             location: '/?lookBackHours=1',
         })
         expect(event.cookies.set).toHaveBeenCalled()
+    })
+
+    it('sets secure cookie when x-forwarded-proto indicates https', async () => {
+        const formData = new FormData()
+        formData.append('username', 'user')
+        formData.append('password', 'pass')
+
+        const event = createMockEvent(new URL('http://example.com/login'), formData, {
+            'x-forwarded-proto': 'https',
+        })
+
+        await expect(serverModule.actions.default(event)).rejects.toMatchObject({
+            status: 303,
+            location: '/?lookBackHours=1',
+        })
+        const call = event.cookies.set.mock.calls[0]
+        expect(call[2]).toMatchObject({ secure: true })
     })
 })

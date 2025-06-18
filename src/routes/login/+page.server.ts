@@ -28,10 +28,15 @@ export const actions: Actions = {
             // Validate credentials
             if (safeCompare(username, APP_USERNAME) && safeCompare(password, APP_PASSWORD)) {
                 // Create authentication cookie (session-based authentication)
+                const requestUrl = new URL(request.url)
+                const forwardedProto = request.headers.get('x-forwarded-proto')
+                const proto = forwardedProto?.split(',')[0].trim() || requestUrl.protocol
+                const isHttps = proto.toLowerCase().startsWith('https')
+
                 const cookieOptions = {
                     path: '/' as const,
                     httpOnly: true,
-                    secure: true,
+                    secure: isHttps,
                     sameSite: 'strict' as const,
                     maxAge: AUTH_COOKIE_MAX_AGE,
                 }
