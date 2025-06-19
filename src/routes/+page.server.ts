@@ -4,6 +4,7 @@ import { getKhojReply } from '$lib/khoj'
 import { logger } from '$lib/logger'
 import { getOpenaiReply } from '$lib/openAi'
 import { DEFAULT_PROVIDER } from '$lib/provider'
+import { getAvailableProviders, hasMultipleProviders } from '$lib/providers/registry'
 import type { Message, ToneType } from '$lib/types'
 import { fail } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
@@ -18,8 +19,9 @@ export const load: PageServerLoad = async ({ url }) => {
 
     return {
         messages,
-        multiProvider: !!(KHOJ_API_URL && OPENAI_API_KEY),
+        multiProvider: hasMultipleProviders(),
         defaultProvider: DEFAULT_PROVIDER,
+        availableProviders: getAvailableProviders(),
     }
 }
 

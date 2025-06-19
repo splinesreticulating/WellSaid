@@ -7,11 +7,16 @@
     import ReplySuggestions from '$lib/components/ReplySuggestions.svelte'
     import ToneSelector from '$lib/components/ToneSelector.svelte'
     import { type Message, type PageData, TONES, type ToneType } from '$lib/types'
+    import type { ProviderConfig } from '$lib/providers/registry'
 
     const LOCAL_STORAGE_CONTEXT_KEY = 'wellsaid_additional_context'
 
     const { data } = $props<{
-        data: PageData & { multiProvider: boolean; defaultProvider: 'khoj' | 'openai' }
+        data: PageData & { 
+            multiProvider: boolean
+            defaultProvider: string
+            availableProviders: ProviderConfig[]
+        }
     }>()
 
     const DEFAULT_PROVIDER = data.defaultProvider
@@ -218,7 +223,7 @@
             </section>
             <hr />
             {#if data.multiProvider}
-                <AiProviderSelector bind:value={formState.ai.provider} />
+                <AiProviderSelector bind:value={formState.ai.provider} providers={data.availableProviders} />
             {/if}
         </form>
     </div>

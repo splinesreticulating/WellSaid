@@ -1,11 +1,20 @@
 <script lang="ts">
-    let { value = $bindable('openai') }: { value: string } = $props()
+    import type { ProviderConfig } from '$lib/providers/registry'
+
+    let { 
+        value = $bindable('openai'), 
+        providers = [] 
+    }: { 
+        value: string
+        providers: ProviderConfig[]
+    } = $props()
 </script>
 
 <section>
     <select id="ai-provider-select" bind:value>
-        <option value="openai">openai</option>
-        <option value="khoj">khoj</option>
+        {#each providers as provider (provider.id)}
+            <option value={provider.id}>{provider.displayName}</option>
+        {/each}
     </select>
 </section>
 
