@@ -57,7 +57,7 @@ function createMockRequestEvent(
 describe('root page server', () => {
     beforeEach(() => {
         vi.resetAllMocks()
-        
+
         // Setup mocks for each test
         vi.mocked(registry.getAvailableProviders).mockReturnValue([
             {
@@ -66,7 +66,7 @@ describe('root page server', () => {
                 displayName: 'OpenAI (GPT)',
                 envVar: 'OPENAI_API_KEY',
                 isAvailable: true,
-            }
+            },
         ])
         vi.mocked(registry.hasMultipleProviders).mockReturnValue(false)
     })
@@ -90,7 +90,7 @@ describe('root page server', () => {
                     displayName: 'OpenAI (GPT)',
                     envVar: 'OPENAI_API_KEY',
                     isAvailable: true,
-                }
+                },
             ],
         })
     })

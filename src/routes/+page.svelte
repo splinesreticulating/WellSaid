@@ -12,7 +12,7 @@
     const LOCAL_STORAGE_CONTEXT_KEY = 'wellsaid_additional_context'
 
     const { data } = $props<{
-        data: PageData & { 
+        data: PageData & {
             multiProvider: boolean
             defaultProvider: string
             availableProviders: ProviderConfig[]
@@ -223,7 +223,10 @@
             </section>
             <hr />
             {#if data.multiProvider}
-                <AiProviderSelector bind:value={formState.ai.provider} providers={data.availableProviders} />
+                <AiProviderSelector
+                    bind:value={formState.ai.provider}
+                    providers={data.availableProviders}
+                />
             {/if}
         </form>
     </div>

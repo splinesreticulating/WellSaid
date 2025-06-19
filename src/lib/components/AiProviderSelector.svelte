@@ -1,10 +1,10 @@
 <script lang="ts">
     import type { ProviderConfig } from '$lib/providers/registry'
 
-    let { 
-        value = $bindable('openai'), 
-        providers = [] 
-    }: { 
+    let {
+        value = $bindable('openai'),
+        providers = [],
+    }: {
         value: string
         providers: ProviderConfig[]
     } = $props()

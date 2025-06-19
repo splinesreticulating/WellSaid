@@ -4,12 +4,12 @@
   <h3 align="center">Empathy. Upgraded.</h3>
   <p align="center">
 
-  ![GitHub release](https://img.shields.io/github/v/release/splinesreticulating/WellSaid)
-  ![GitHub](https://img.shields.io/github/license/splinesreticulating/WellSaid)
-  ![GitHub](https://img.shields.io/github/issues/splinesreticulating/WellSaid)
-  ![GitHub](https://img.shields.io/github/commit-activity/w/splinesreticulating/WellSaid)
-  ![GitHub](https://img.shields.io/github/last-commit/splinesreticulating/WellSaid)
-      
+![GitHub release](https://img.shields.io/github/v/release/splinesreticulating/WellSaid)
+![GitHub](https://img.shields.io/github/license/splinesreticulating/WellSaid)
+![GitHub](https://img.shields.io/github/issues/splinesreticulating/WellSaid)
+![GitHub](https://img.shields.io/github/commit-activity/w/splinesreticulating/WellSaid)
+![GitHub](https://img.shields.io/github/last-commit/splinesreticulating/WellSaid)
+
   </p>
 
   <p align="center">WellSaid helps you communicate with more empathy and clarity by offering conversation summaries and tone-based reply suggestions.</p>

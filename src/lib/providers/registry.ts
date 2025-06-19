@@ -11,17 +11,17 @@ export interface ProviderConfig {
 // Registry of all possible AI providers
 const PROVIDER_REGISTRY: Omit<ProviderConfig, 'isAvailable'>[] = [
     {
-        id: 'openai',
-        name: 'OpenAI',
-        displayName: 'OpenAI (GPT)',
-        envVar: 'OPENAI_API_KEY'
-    },
-    {
         id: 'khoj',
         name: 'Khoj',
         displayName: 'Khoj (Local)',
-        envVar: 'KHOJ_API_URL'
-    }
+        envVar: 'KHOJ_API_URL',
+    },
+    {
+        id: 'openai',
+        name: 'OpenAI',
+        displayName: 'OpenAI (GPT)',
+        envVar: 'OPENAI_API_KEY',
+    },
     // Future providers can be added here with their corresponding env vars
     // {
     //     id: 'anthropic',
@@ -40,7 +40,7 @@ const PROVIDER_REGISTRY: Omit<ProviderConfig, 'isAvailable'>[] = [
 // Environment variable lookup
 const ENV_VARS: Record<string, string | undefined> = {
     OPENAI_API_KEY,
-    KHOJ_API_URL
+    KHOJ_API_URL,
     // Add new env vars here as they become available
     // ANTHROPIC_API_KEY,
     // GOOGLE_API_KEY
@@ -50,10 +50,10 @@ const ENV_VARS: Record<string, string | undefined> = {
  * Get all available AI providers based on configured environment variables
  */
 export function getAvailableProviders(): ProviderConfig[] {
-    return PROVIDER_REGISTRY.map(provider => ({
+    return PROVIDER_REGISTRY.map((provider) => ({
         ...provider,
-        isAvailable: !!ENV_VARS[provider.envVar]
-    })).filter(provider => provider.isAvailable)
+        isAvailable: !!ENV_VARS[provider.envVar],
+    })).filter((provider) => provider.isAvailable)
 }
 
 /**
@@ -61,13 +61,15 @@ export function getAvailableProviders(): ProviderConfig[] {
  */
 export function getDefaultProvider(): string {
     const available = getAvailableProviders()
-    
+
     if (available.length === 0) {
-        throw new Error('No AI providers are configured. Please set at least one provider environment variable.')
+        throw new Error(
+            'No AI providers are configured. Please set at least one provider environment variable.'
+        )
     }
-    
+
     // Prefer Khoj if available, otherwise use the first available provider
-    const khojProvider = available.find(p => p.id === 'khoj')
+    const khojProvider = available.find((p) => p.id === 'khoj')
     return khojProvider ? 'khoj' : available[0].id
 }
 
@@ -83,10 +85,12 @@ export function hasMultipleProviders(): boolean {
  */
 export function validateProviders(): void {
     const available = getAvailableProviders()
-    
+
     if (available.length === 0) {
-        console.error('Error: No AI providers are configured. Set at least one of the following environment variables:')
-        PROVIDER_REGISTRY.forEach(provider => {
+        console.error(
+            'Error: No AI providers are configured. Set at least one of the following environment variables:'
+        )
+        PROVIDER_REGISTRY.forEach((provider) => {
             console.error(`  - ${provider.envVar} (for ${provider.displayName})`)
         })
         process.exit(1)
