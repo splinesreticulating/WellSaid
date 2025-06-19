@@ -15,6 +15,7 @@ export interface MessageRow {
 export interface PageData {
     messages?: Message[]
     multiProvider: boolean
+    defaultProvider: 'khoj' | 'openai'
 }
 
 export const TONES = ['gentle', 'funny', 'reassuring', 'concise'] as const

@@ -11,5 +11,6 @@ declare namespace App {
         OPENAI_FREQUENCY_PENALTY?: string
         OPENAI_PRESENCE_PENALTY?: string
         CUSTOM_CONTEXT?: string
+        DEFAULT_PROVIDER?: 'khoj' | 'openai'
     }
 }

@@ -8,10 +8,13 @@
     import ToneSelector from '$lib/components/ToneSelector.svelte'
     import { type Message, type PageData, TONES, type ToneType } from '$lib/types'
 
-    const DEFAULT_PROVIDER = 'openai'
     const LOCAL_STORAGE_CONTEXT_KEY = 'wellsaid_additional_context'
 
-    const { data } = $props<{ data: PageData & { multiProvider: boolean } }>()
+    const { data } = $props<{
+        data: PageData & { multiProvider: boolean; defaultProvider: 'khoj' | 'openai' }
+    }>()
+
+    const DEFAULT_PROVIDER = data.defaultProvider
 
     let formState = $state({
         ai: {

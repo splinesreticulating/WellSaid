@@ -62,6 +62,7 @@ describe('root page server', () => {
         expect(data).toEqual({
             messages: [{ text: 'hi', sender: 'partner', timestamp: '2025-01-01T00:00:00Z' }],
             multiProvider: false,
+            defaultProvider: 'openai',
         })
     })
 
