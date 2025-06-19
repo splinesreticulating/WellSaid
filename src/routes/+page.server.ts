@@ -1,8 +1,9 @@
-import { KHOJ_API_URL } from '$env/static/private'
 import { queryMessagesDb } from '$lib/iMessages'
 import { getKhojReply } from '$lib/khoj'
 import { logger } from '$lib/logger'
 import { getOpenaiReply } from '$lib/openAi'
+import { DEFAULT_PROVIDER } from '$lib/provider'
+import { getAvailableProviders, hasMultipleProviders } from '$lib/providers/registry'
 import type { Message, ToneType } from '$lib/types'
 import { fail } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
@@ -15,7 +16,12 @@ export const load: PageServerLoad = async ({ url }) => {
     const start = new Date(end.getTime() - lookBack * ONE_HOUR)
     const { messages } = await queryMessagesDb(start.toISOString(), end.toISOString())
 
-    return { messages, multiProvider: !!KHOJ_API_URL }
+    return {
+        messages,
+        multiProvider: hasMultipleProviders(),
+        defaultProvider: DEFAULT_PROVIDER,
+        availableProviders: getAvailableProviders(),
+    }
 }
 
 export const actions: Actions = {

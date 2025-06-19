@@ -1,13 +1,21 @@
 import * as queryDb from '$lib/iMessages'
-import * as openai from '$lib/openAi'
 import * as khoj from '$lib/khoj'
+import * as openai from '$lib/openAi'
+import * as registry from '$lib/providers/registry'
+import type { RequestEvent } from '@sveltejs/kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import * as serverModule from '../../../src/routes/+page.server'
-import type { RequestEvent } from '@sveltejs/kit'
 
 vi.mock('$lib/iMessages', () => ({ queryMessagesDb: vi.fn() }))
 vi.mock('$lib/openAi', () => ({ getOpenaiReply: vi.fn() }))
 vi.mock('$lib/khoj', () => ({ getKhojReply: vi.fn() }))
+vi.mock('$lib/providers/registry', () => ({
+    getAvailableProviders: vi.fn(),
+    hasMultipleProviders: vi.fn(),
+}))
+vi.mock('$lib/provider', () => ({
+    DEFAULT_PROVIDER: 'openai',
+}))
 vi.mock('$lib/logger', () => ({
     logger: {
         error: vi.fn(),
@@ -49,6 +57,18 @@ function createMockRequestEvent(
 describe('root page server', () => {
     beforeEach(() => {
         vi.resetAllMocks()
+
+        // Setup mocks for each test
+        vi.mocked(registry.getAvailableProviders).mockReturnValue([
+            {
+                id: 'openai',
+                name: 'OpenAI',
+                displayName: 'OpenAI (GPT)',
+                envVar: 'OPENAI_API_KEY',
+                isAvailable: true,
+            },
+        ])
+        vi.mocked(registry.hasMultipleProviders).mockReturnValue(false)
     })
 
     it('load should return messages and multiProvider flag', async () => {
@@ -62,6 +82,16 @@ describe('root page server', () => {
         expect(data).toEqual({
             messages: [{ text: 'hi', sender: 'partner', timestamp: '2025-01-01T00:00:00Z' }],
             multiProvider: false,
+            defaultProvider: 'openai',
+            availableProviders: [
+                {
+                    id: 'openai',
+                    name: 'OpenAI',
+                    displayName: 'OpenAI (GPT)',
+                    envVar: 'OPENAI_API_KEY',
+                    isAvailable: true,
+                },
+            ],
         })
     })
 
@@ -180,8 +210,8 @@ describe('root page server', () => {
             isSubRequest: false,
         } as unknown as Parameters<typeof serverModule.actions.generate>[0])
 
-        expect(result.status).toBe(400)
-        expect(result.data.error).toBe(
+        expect((result as { status: number }).status).toBe(400)
+        expect((result as { data: { error: string } }).data.error).toBe(
             'Invalid messages format in FormData: Messages could not be parsed to an array.'
         )
     })
