@@ -1,4 +1,3 @@
-import { KHOJ_API_URL, OPENAI_API_KEY } from '$env/static/private'
 import { queryMessagesDb } from '$lib/iMessages'
 import { getKhojReply } from '$lib/khoj'
 import { logger } from '$lib/logger'
