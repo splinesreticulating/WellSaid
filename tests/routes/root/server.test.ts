@@ -1,10 +1,10 @@
 import * as queryDb from '$lib/iMessages'
-import * as openai from '$lib/openAi'
 import * as khoj from '$lib/khoj'
+import * as openai from '$lib/openAi'
 import * as registry from '$lib/providers/registry'
+import type { RequestEvent } from '@sveltejs/kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import * as serverModule from '../../../src/routes/+page.server'
-import type { RequestEvent } from '@sveltejs/kit'
 
 vi.mock('$lib/iMessages', () => ({ queryMessagesDb: vi.fn() }))
 vi.mock('$lib/openAi', () => ({ getOpenaiReply: vi.fn() }))
@@ -210,8 +210,8 @@ describe('root page server', () => {
             isSubRequest: false,
         } as unknown as Parameters<typeof serverModule.actions.generate>[0])
 
-        expect((result as any).status).toBe(400)
-        expect((result as any).data.error).toBe(
+        expect((result as { status: number }).status).toBe(400)
+        expect((result as { data: { error: string } }).data.error).toBe(
             'Invalid messages format in FormData: Messages could not be parsed to an array.'
         )
     })
