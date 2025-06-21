@@ -12,7 +12,7 @@
 
   </p>
 
-  <p align="center">WellSaid helps you communicate with more empathy and clarity by offering conversation summaries and tone-based reply suggestions.</p>
+  <p align="center">WellSaid helps you communicate with more empathy and clarity by offering iMessage conversation summaries and tone-based reply suggestions.</p>
 
   <hr>
 </div>
