@@ -171,7 +171,7 @@ WellSaid connects to your macOS Messages database to fetch your conversations wi
 - **State Management**: Svelte's built-in $state system
 - **Styling**: Custom CSS with variables for theming
 - **Database**: SQLite (connecting to macOS Messages database)
-- **AI Integration**: OpenAI API (GPT-4 or other models), Anthropic Claude models, and optional local [Khoj](https://khoj.dev/) server
+- **AI Integration**: OpenAI API (GPT-4 or other models), Anthropic Claude models, and/or local [Khoj](https://khoj.dev/) server
 - **Logging**: Pino for structured logging
 
 ## Development and Local Usage
