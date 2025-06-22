@@ -59,7 +59,7 @@ export const getAnthropicReply = async (
             throw new Error(`Anthropic API error code ${response.status}: ${response.statusText}`)
         }
 
-        const data = await response.json() as { content?: Array<{ text?: string }> }
+        const data = (await response.json()) as { content?: Array<{ text?: string }> }
         const rawOutput = data.content?.[0]?.text || ''
 
         logger.debug({ rawOutput }, 'Anthropic raw response')

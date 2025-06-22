@@ -1,10 +1,4 @@
-import {
-    GROK_API_KEY,
-    GROK_MODEL,
-    GROK_TEMPERATURE,
-    GROK_TRENDS_URL,
-    GROK_BEARER_TOKEN,
-} from '$env/static/private'
+import { GROK_API_KEY, GROK_MODEL, GROK_TEMPERATURE } from '$env/static/private'
 import { fetchRelevantHistory } from './history'
 import { logger } from './logger'
 import { openAiPrompt, systemContext } from './prompts'
@@ -21,26 +15,6 @@ const getConfig = () => ({
     apiKey: GROK_API_KEY,
 })
 
-const fetchTrends = async (): Promise<string> => {
-    if (!GROK_TRENDS_URL || !GROK_BEARER_TOKEN) return ''
-    try {
-        const res = await fetch(GROK_TRENDS_URL, {
-            headers: { Authorization: `Bearer ${GROK_BEARER_TOKEN}` },
-        })
-        if (!res.ok) {
-            logger.warn({ status: res.status }, 'Failed to fetch trends')
-            return ''
-        }
-        const data = (await res.json()) as { trends?: Array<{ name: string }> }
-        return data.trends && data.trends.length
-            ? `Trending topics: ${data.trends.map((t) => t.name).join(', ')}`
-            : ''
-    } catch (err) {
-        logger.error({ err }, 'Error fetching trends')
-        return ''
-    }
-}
-
 export const getGrokReply = async (
     messages: Message[],
     tone: ToneType,
@@ -55,14 +29,12 @@ export const getGrokReply = async (
     }
 
     const historyContext = await fetchRelevantHistory(messages)
-    const trends = await fetchTrends()
     const prompt = openAiPrompt(tone, historyContext) + '\n\n' + context
-    const trendContext = trends ? `\n\n${trends}` : ''
 
     const body = {
         model: config.model,
         messages: [
-            { role: 'system', content: systemContext + trendContext },
+            { role: 'system', content: systemContext },
             { role: 'user', content: formatMessagesAsText(messages) },
             { role: 'user', content: prompt },
         ],

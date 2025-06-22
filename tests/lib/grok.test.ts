@@ -18,8 +18,6 @@ vi.mock('$env/static/private', async (importOriginal) => {
         GROK_API_KEY: 'test-api-key',
         GROK_MODEL: 'test-model',
         GROK_TEMPERATURE: '0.5',
-        GROK_TRENDS_URL: 'https://x.com/trends',
-        GROK_BEARER_TOKEN: 'token',
         LOG_LEVEL: 'info',
     }
 })
@@ -27,12 +25,7 @@ vi.mock('$env/static/private', async (importOriginal) => {
 describe('getGrokReply', () => {
     beforeEach(() => {
         vi.resetAllMocks()
-        global.fetch = vi.fn()
-        ;(global.fetch as unknown as vi.Mock).mockResolvedValueOnce({
-            ok: true,
-            json: vi.fn().mockResolvedValue({ trends: [{ name: 'x' }] }),
-        })
-        ;(global.fetch as unknown as vi.Mock).mockResolvedValue({
+        global.fetch = vi.fn().mockResolvedValue({
             ok: true,
             json: vi.fn().mockResolvedValue({
                 choices: [
@@ -68,10 +61,6 @@ describe('getGrokReply', () => {
     it('handles fetch failure gracefully', async () => {
         vi.resetAllMocks()
         global.fetch = vi.fn().mockResolvedValueOnce({
-            ok: true,
-            json: vi.fn().mockResolvedValue({ trends: [] }),
-        })
-        ;(global.fetch as unknown as vi.Mock).mockResolvedValueOnce({
             ok: false,
             status: 500,
             statusText: 'err',

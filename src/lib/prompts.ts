@@ -42,15 +42,10 @@ export const khojPrompt = (messages: Message[], tone: ToneType, context: string)
         responseFormat,
     ].join('\n')
 
-export const anthropicPrompt = (
-    messages: Message[],
-    tone: ToneType,
-    context: string
-): string =>
+export const anthropicPrompt = (messages: Message[], tone: ToneType, context: string): string =>
     [
         systemContext,
-        'Here are some text messages between my partner and I:\n' +
-            formatMessagesAsText(messages),
+        'Here are some text messages between my partner and I:\n' + formatMessagesAsText(messages),
         buildPrompt(tone, context),
         responseFormat,
     ].join('\n')

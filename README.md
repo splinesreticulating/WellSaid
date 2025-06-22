@@ -123,8 +123,6 @@ Update the values in the `.env` file. The following variables are needed:
     - `GROK_API_KEY`: Your Grok API key
     - `GROK_MODEL`: grok-1 or another Grok model
     - `GROK_TEMPERATURE`: Controls the randomness of Grok's responses
-    - `GROK_TRENDS_URL`: Optional URL to pull trending topics from X
-    - `GROK_BEARER_TOKEN`: Bearer token for the trends API
 
 - **Khoj**
 
@@ -276,7 +274,7 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
 - [Svelte](https://svelte.dev/) - The web framework used
 - [OpenAI](https://openai.com/) - AI model provider
 - [Anthropic](https://www.anthropic.com/) - Claude model provider
-- [Grok](https://x.ai/) - Provider with access to real-time trending data
+- [Grok](https://x.ai/) - Additional AI provider option
 - [Khoj](https://khoj.dev/) - Alternative local AI model provider and search
 - [SQLite](https://sqlite.org/) - Database engine
 - [Tailscale](https://tailscale.com/) - For making secure remote access easy
