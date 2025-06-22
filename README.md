@@ -160,7 +160,7 @@ below), it will automatically use those files and start with HTTPS.
 
 ## How It Works
 
-WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses an AI provider (OpenAI by default, but Claude via Anthropic or Khoj can also be used) to analyze the conversation and generate:
+WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses an AI provider (any combination of OpenAI, Anthropic, and/or Khoj) to analyze the conversation and generate:
 
 1. A summary of the conversation, including emotional tone and key topics
 1. Three suggested replies (short, medium, and long) in your chosen tone
