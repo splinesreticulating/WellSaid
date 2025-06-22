@@ -13,7 +13,10 @@ declare namespace App {
         ANTHROPIC_API_KEY?: string
         ANTHROPIC_MODEL?: string
         ANTHROPIC_TEMPERATURE?: string
+        GROK_API_KEY?: string
+        GROK_MODEL?: string
+        GROK_TEMPERATURE?: string
         CUSTOM_CONTEXT?: string
-        DEFAULT_PROVIDER?: 'khoj' | 'openai' | 'anthropic'
+        DEFAULT_PROVIDER?: 'khoj' | 'openai' | 'anthropic' | 'grok'
     }
 }

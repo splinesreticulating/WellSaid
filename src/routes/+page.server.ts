@@ -1,6 +1,7 @@
 import { queryMessagesDb } from '$lib/iMessages'
 import { getKhojReply } from '$lib/khoj'
 import { getAnthropicReply } from '$lib/anthropic'
+import { getGrokReply } from '$lib/grok'
 import { logger } from '$lib/logger'
 import { getOpenaiReply } from '$lib/openAi'
 import { DEFAULT_PROVIDER } from '$lib/provider'
@@ -42,8 +43,10 @@ export const actions: Actions = {
                 provider === 'khoj'
                     ? getKhojReply
                     : provider === 'anthropic'
-                    ? getAnthropicReply
-                    : getOpenaiReply
+                      ? getAnthropicReply
+                      : provider === 'grok'
+                        ? getGrokReply
+                        : getOpenaiReply
 
             let messages: Message[]
             try {
