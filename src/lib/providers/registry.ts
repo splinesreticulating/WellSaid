@@ -1,4 +1,4 @@
-import { KHOJ_API_URL, OPENAI_API_KEY } from '$env/static/private'
+import { ANTHROPIC_API_KEY, KHOJ_API_URL, OPENAI_API_KEY } from '$env/static/private'
 
 export interface ProviderConfig {
     id: string
@@ -22,13 +22,13 @@ const PROVIDER_REGISTRY: Omit<ProviderConfig, 'isAvailable'>[] = [
         displayName: 'OpenAI (GPT)',
         envVar: 'OPENAI_API_KEY',
     },
+    {
+        id: 'anthropic',
+        name: 'Anthropic',
+        displayName: 'Anthropic (Claude)',
+        envVar: 'ANTHROPIC_API_KEY',
+    },
     // Future providers can be added here with their corresponding env vars
-    // {
-    //     id: 'anthropic',
-    //     name: 'Anthropic',
-    //     displayName: 'Anthropic (Claude)',
-    //     envVar: 'ANTHROPIC_API_KEY'
-    // },
     // {
     //     id: 'gemini',
     //     name: 'Google',
@@ -41,8 +41,8 @@ const PROVIDER_REGISTRY: Omit<ProviderConfig, 'isAvailable'>[] = [
 const ENV_VARS: Record<string, string | undefined> = {
     OPENAI_API_KEY,
     KHOJ_API_URL,
+    ANTHROPIC_API_KEY,
     // Add new env vars here as they become available
-    // ANTHROPIC_API_KEY,
     // GOOGLE_API_KEY
 }
 

@@ -7,7 +7,6 @@
 ![GitHub release](https://img.shields.io/github/v/release/splinesreticulating/WellSaid?cache-bust=1)
 ![GitHub](https://img.shields.io/github/license/splinesreticulating/WellSaid)
 ![GitHub](https://img.shields.io/github/issues/splinesreticulating/WellSaid)
-![GitHub](https://img.shields.io/github/commit-activity/w/splinesreticulating/WellSaid)
 ![GitHub](https://img.shields.io/github/last-commit/splinesreticulating/WellSaid)
 
   </p>
@@ -47,8 +46,7 @@
 ### Requirements
 
 - iMessages database access -- designed to run from a Mac logged into your iCloud
-- OpenAI API key
-- (optional) Local [Khoj](https://khoj.dev/) instance, for a second opinion
+- API key from OpenAI or Anthropic, or a local [Khoj](https://khoj.dev/) instance
 
 ### Obtaining an OpenAI API Key
 
@@ -114,6 +112,12 @@ Update the values in the `.env` file. The following variables are needed:
     - `OPENAI_FREQUENCY_PENALTY`: Keeps the suggestions from repeating themselves
     - `OPENAI_PRESENCE_PENALTY`: Nudges the AI to bring up fresh ideas
 
+- **Anthropic**
+
+    - `ANTHROPIC_API_KEY`: Your Anthropic API key
+    - `ANTHROPIC_MODEL`: claude-3-opus-20240229 or another Anthropic model
+    - `ANTHROPIC_TEMPERATURE`: Controls the randomness of Claude's responses
+
 - **Khoj**
 
     - `KHOJ_API_URL`: Your [Khoj](https://khoj.dev/) server API URL if you have one, otherwise leave this out or leave it blank
@@ -156,7 +160,7 @@ below), it will automatically use those files and start with HTTPS.
 
 ## How It Works
 
-WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses an AI provider (OpenAI's API by default) to analyze the conversation and generate:
+WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses an AI provider (any combination of OpenAI, Anthropic, and/or Khoj) to analyze the conversation and generate:
 
 1. A summary of the conversation, including emotional tone and key topics
 1. Three suggested replies (short, medium, and long) in your chosen tone
@@ -167,7 +171,7 @@ WellSaid connects to your macOS Messages database to fetch your conversations wi
 - **State Management**: Svelte's built-in $state system
 - **Styling**: Custom CSS with variables for theming
 - **Database**: SQLite (connecting to macOS Messages database)
-- **AI Integration**: OpenAI API (GPT-4 or other models) plus optional local [Khoj](https://khoj.dev/) server
+- **AI Integration**: OpenAI API (GPT-4 or other models), Anthropic Claude models, and/or local [Khoj](https://khoj.dev/) server
 - **Logging**: Pino for structured logging
 
 ## Development and Local Usage
@@ -248,7 +252,7 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
 
 ## Privacy and Security Considerations
 
-- All conversation analysis happens through OpenAI's API, so your data is subject to their privacy policy.
+- All conversation analysis happens through the selected AI provider (OpenAI, Anthropic, or Khoj), so your data is subject to that provider's privacy policy.
 
 ## Troubleshooting
 
@@ -263,6 +267,7 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
 
 - [Svelte](https://svelte.dev/) - The web framework used
 - [OpenAI](https://openai.com/) - AI model provider
+- [Anthropic](https://www.anthropic.com/) - Claude model provider
 - [Khoj](https://khoj.dev/) - Alternative local AI model provider and search
 - [SQLite](https://sqlite.org/) - Database engine
 - [Tailscale](https://tailscale.com/) - For making secure remote access easy

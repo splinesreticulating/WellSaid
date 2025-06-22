@@ -1,5 +1,6 @@
 import { queryMessagesDb } from '$lib/iMessages'
 import { getKhojReply } from '$lib/khoj'
+import { getAnthropicReply } from '$lib/anthropic'
 import { logger } from '$lib/logger'
 import { getOpenaiReply } from '$lib/openAi'
 import { DEFAULT_PROVIDER } from '$lib/provider'
@@ -37,7 +38,12 @@ export const actions: Actions = {
                 return fail(400, { error: 'Invalid request format: Missing messages or tone.' })
             }
 
-            const getReplies = provider === 'khoj' ? getKhojReply : getOpenaiReply
+            const getReplies =
+                provider === 'khoj'
+                    ? getKhojReply
+                    : provider === 'anthropic'
+                    ? getAnthropicReply
+                    : getOpenaiReply
 
             let messages: Message[]
             try {
