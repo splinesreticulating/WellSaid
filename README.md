@@ -47,9 +47,7 @@
 ### Requirements
 
 - iMessages database access -- designed to run from a Mac logged into your iCloud
-- OpenAI API key
-- (optional) Anthropic API key if you prefer Claude models
-- (optional) Local [Khoj](https://khoj.dev/) instance, for a second opinion
+- API key from OpenAI or Anthropic, or a local [Khoj](https://khoj.dev/) instance
 
 ### Obtaining an OpenAI API Key
 
