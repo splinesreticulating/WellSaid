@@ -28,7 +28,10 @@ describe('getAnthropicReply', () => {
             ok: true,
             json: vi.fn().mockResolvedValue({
                 content: [
-                    { type: 'text', text: 'Summary: hi\n\nSuggested replies:\nReply 1: r1\nReply 2: r2' },
+                    {
+                        type: 'text',
+                        text: 'Summary: hi\n\nSuggested replies:\nReply 1: r1\nReply 2: r2',
+                    },
                 ],
             }),
         })

@@ -14,6 +14,9 @@ process.env.OPENAI_PRESENCE_PENALTY = '0.2'
 process.env.ANTHROPIC_API_KEY = 'anthropic-api-key'
 process.env.ANTHROPIC_MODEL = 'claude-test'
 process.env.ANTHROPIC_TEMPERATURE = '0.5'
+process.env.GROK_API_KEY = 'grok-api-key'
+process.env.GROK_MODEL = 'grok-test'
+process.env.GROK_TEMPERATURE = '0.5'
 
 // Reset mocks before each test
 beforeEach(() => {

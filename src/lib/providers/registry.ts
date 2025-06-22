@@ -1,4 +1,4 @@
-import { ANTHROPIC_API_KEY, KHOJ_API_URL, OPENAI_API_KEY } from '$env/static/private'
+import { ANTHROPIC_API_KEY, KHOJ_API_URL, OPENAI_API_KEY, GROK_API_KEY } from '$env/static/private'
 
 export interface ProviderConfig {
     id: string
@@ -28,6 +28,12 @@ const PROVIDER_REGISTRY: Omit<ProviderConfig, 'isAvailable'>[] = [
         displayName: 'Anthropic (Claude)',
         envVar: 'ANTHROPIC_API_KEY',
     },
+    {
+        id: 'grok',
+        name: 'Grok',
+        displayName: 'Grok (X.ai)',
+        envVar: 'GROK_API_KEY',
+    },
     // Future providers can be added here with their corresponding env vars
     // {
     //     id: 'gemini',
@@ -42,6 +48,7 @@ const ENV_VARS: Record<string, string | undefined> = {
     OPENAI_API_KEY,
     KHOJ_API_URL,
     ANTHROPIC_API_KEY,
+    GROK_API_KEY,
     // Add new env vars here as they become available
     // GOOGLE_API_KEY
 }

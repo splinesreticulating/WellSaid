@@ -1,6 +1,7 @@
 import * as queryDb from '$lib/iMessages'
 import * as khoj from '$lib/khoj'
 import * as openai from '$lib/openAi'
+import * as grok from '$lib/grok'
 import * as registry from '$lib/providers/registry'
 import type { RequestEvent } from '@sveltejs/kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -9,6 +10,7 @@ import * as serverModule from '../../../src/routes/+page.server'
 vi.mock('$lib/iMessages', () => ({ queryMessagesDb: vi.fn() }))
 vi.mock('$lib/openAi', () => ({ getOpenaiReply: vi.fn() }))
 vi.mock('$lib/khoj', () => ({ getKhojReply: vi.fn() }))
+vi.mock('$lib/grok', () => ({ getGrokReply: vi.fn() }))
 vi.mock('$lib/providers/registry', () => ({
     getAvailableProviders: vi.fn(),
     hasMultipleProviders: vi.fn(),
@@ -183,6 +185,41 @@ describe('root page server', () => {
 
         expect(result).toEqual(mockResponse)
         expect(khoj.getKhojReply).toHaveBeenCalled()
+    })
+
+    it('uses Grok provider when specified', async () => {
+        const mockResponse = { summary: 'sum', replies: ['r1'] }
+        vi.mocked(grok.getGrokReply).mockResolvedValue(mockResponse)
+
+        const formData = new FormData()
+        formData.append(
+            'messages',
+            JSON.stringify([{ text: 'hi', sender: 'me', timestamp: '2025-01-01T00:00:00Z' }])
+        )
+        formData.append('tone', 'gentle')
+        formData.append('context', '')
+        formData.append('provider', 'grok')
+
+        const request = new Request('https://example.com/', { method: 'POST', body: formData })
+        const event = { ...createMockRequestEvent(new URL('https://example.com/')), request }
+
+        const result = await serverModule.actions.generate({
+            request: event.request,
+            cookies: event.cookies,
+            fetch: event.fetch,
+            getClientAddress: event.getClientAddress,
+            locals: {},
+            params: {},
+            platform: undefined,
+            route: { id: '/' },
+            setHeaders: vi.fn(),
+            url: event.url,
+            isDataRequest: false,
+            isSubRequest: false,
+        } as unknown as Parameters<typeof serverModule.actions.generate>[0])
+
+        expect(result).toEqual(mockResponse)
+        expect(grok.getGrokReply).toHaveBeenCalled()
     })
 
     it('returns 400 when messages JSON is invalid', async () => {

@@ -46,7 +46,7 @@
 ### Requirements
 
 - iMessages database access -- designed to run from a Mac logged into your iCloud
-- API key from OpenAI or Anthropic, or a local [Khoj](https://khoj.dev/) instance
+- API key from OpenAI, Anthropic, or Grok, or a local [Khoj](https://khoj.dev/) instance
 
 ### Obtaining an OpenAI API Key
 
@@ -118,6 +118,14 @@ Update the values in the `.env` file. The following variables are needed:
     - `ANTHROPIC_MODEL`: claude-3-opus-20240229 or another Anthropic model
     - `ANTHROPIC_TEMPERATURE`: Controls the randomness of Claude's responses
 
+- **Grok**
+
+    - `GROK_API_KEY`: Your Grok API key
+    - `GROK_MODEL`: grok-1 or another Grok model
+    - `GROK_TEMPERATURE`: Controls the randomness of Grok's responses
+    - `GROK_TRENDS_URL`: Optional URL to pull trending topics from X
+    - `GROK_BEARER_TOKEN`: Bearer token for the trends API
+
 - **Khoj**
 
     - `KHOJ_API_URL`: Your [Khoj](https://khoj.dev/) server API URL if you have one, otherwise leave this out or leave it blank
@@ -160,7 +168,7 @@ below), it will automatically use those files and start with HTTPS.
 
 ## How It Works
 
-WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses an AI provider (any combination of OpenAI, Anthropic, and/or Khoj) to analyze the conversation and generate:
+WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses an AI provider (any combination of OpenAI, Anthropic, Grok, and/or Khoj) to analyze the conversation and generate:
 
 1. A summary of the conversation, including emotional tone and key topics
 1. Three suggested replies (short, medium, and long) in your chosen tone
@@ -171,7 +179,7 @@ WellSaid connects to your macOS Messages database to fetch your conversations wi
 - **State Management**: Svelte's built-in $state system
 - **Styling**: Custom CSS with variables for theming
 - **Database**: SQLite (connecting to macOS Messages database)
-- **AI Integration**: OpenAI API (GPT-4 or other models), Anthropic Claude models, and/or local [Khoj](https://khoj.dev/) server
+- **AI Integration**: OpenAI API (GPT-4 or other models), Anthropic Claude models, Grok, and/or local [Khoj](https://khoj.dev/) server
 - **Logging**: Pino for structured logging
 
 ## Development and Local Usage
@@ -252,7 +260,7 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
 
 ## Privacy and Security Considerations
 
-- All conversation analysis happens through the selected AI provider (OpenAI, Anthropic, or Khoj), so your data is subject to that provider's privacy policy.
+- All conversation analysis happens through the selected AI provider (OpenAI, Anthropic, Grok, or Khoj), so your data is subject to that provider's privacy policy.
 
 ## Troubleshooting
 
@@ -268,6 +276,7 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
 - [Svelte](https://svelte.dev/) - The web framework used
 - [OpenAI](https://openai.com/) - AI model provider
 - [Anthropic](https://www.anthropic.com/) - Claude model provider
+- [Grok](https://x.ai/) - Provider with access to real-time trending data
 - [Khoj](https://khoj.dev/) - Alternative local AI model provider and search
 - [SQLite](https://sqlite.org/) - Database engine
 - [Tailscale](https://tailscale.com/) - For making secure remote access easy
