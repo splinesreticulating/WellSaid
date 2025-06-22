@@ -7,7 +7,6 @@
 ![GitHub release](https://img.shields.io/github/v/release/splinesreticulating/WellSaid?cache-bust=1)
 ![GitHub](https://img.shields.io/github/license/splinesreticulating/WellSaid)
 ![GitHub](https://img.shields.io/github/issues/splinesreticulating/WellSaid)
-![GitHub](https://img.shields.io/github/commit-activity/w/splinesreticulating/WellSaid)
 ![GitHub](https://img.shields.io/github/last-commit/splinesreticulating/WellSaid)
 
   </p>
