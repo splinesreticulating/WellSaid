@@ -251,7 +251,7 @@
             {/if}
         </form>
         {:else}
-        <form method="POST" use:enhance class="settings-form">
+        <form method="POST" use:enhance>
             <section class="settings-section">
                 <h2>settings:</h2>
                 {#each data.settings as setting}
@@ -404,6 +404,8 @@
     /* ===== Settings Styling ===== */
     .settings-section {
         padding: 0;
+        display: flex;
+        flex-direction: column;
     }
 
     .settings-section h2 {
@@ -415,44 +417,50 @@
     }
 
     .setting-row {
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
     }
 
     .setting-row label {
         font-family: var(--label-font);
         font-weight: bold;
         display: block;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.25rem;
         color: var(--primary-dark);
+        font-size: 0.9rem;
     }
 
     .setting-row input {
         width: 100%;
-        padding: 0.5rem;
+        max-width: 100%;
+        box-sizing: border-box;
+        padding: 0.4rem;
         border: 1px solid var(--light);
         border-radius: var(--border-radius);
         font-family: var(--body-font);
         background-color: var(--white);
+        font-size: 0.9rem;
     }
 
     .setting-row .description {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         color: var(--gray);
-        margin-top: 0.25rem;
+        margin-top: 0.2rem;
         margin-bottom: 0;
         font-style: italic;
+        line-height: 1.3;
     }
 
     .save-button {
         background-color: var(--primary-dark);
         color: var(--white);
         border: none;
-        padding: 0.75rem 1.5rem;
+        padding: 0.5rem 1rem;
         border-radius: var(--border-radius);
         cursor: pointer;
         font-family: var(--body-font);
         font-weight: bold;
-        margin-top: 1rem;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
     }
 
     .save-button:hover {
