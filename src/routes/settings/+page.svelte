@@ -8,9 +8,11 @@
     }>()
 
     let formState = $state({
-        loading: false,
-        success: false
+        loading: false
     })
+    
+    // Use updated settings from form response if available, otherwise use initial data
+    let currentSettings = $derived(form?.success && form?.settings ? form.settings : data.settings)
 </script>
 
 <svelte:head>
@@ -36,24 +38,16 @@
         method="POST" 
         use:enhance={() => {
             formState.loading = true
-            formState.success = false
             
             return async ({ result, update }) => {
                 formState.loading = false
                 
-                if (result.type === 'success') {
-                    formState.success = true
-                    // Clear success message after 3 seconds
-                    setTimeout(() => {
-                        formState.success = false
-                    }, 3000)
-                }
-                
-                await update()
+                // Always update to get the latest form state from server
+                await update({ reset: false })
             }
         }}
     >
-        {#each data.settings as setting}
+        {#each currentSettings as setting}
             <div class="setting-row">
                 <label for={setting.key}>{setting.key}</label>
                 <input 

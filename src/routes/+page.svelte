@@ -26,7 +26,7 @@
 
     let formState = $state({
         ai: {
-            provider: DEFAULT_PROVIDER,
+            provider: DEFAULT_PROVIDER || (data.availableProviders[0]?.id || ''),
         },
         ui: {
             loading: false,
@@ -48,6 +48,7 @@
     // Derived values
     const hasMessages = $derived(formState.form.messages.length > 0)
     const canGenerateReplies = $derived(hasMessages && !formState.ui.loading)
+    const hasProviders = $derived(data.availableProviders.length > 0)
     const showLoadingIndicators = $derived(formState.ui.loading)
     const summaryContent = $derived(
         formState.ui.loading
@@ -204,53 +205,63 @@
     <div class="content-container">
         <div class="tab-content">
             {#if activeTab === 'main'}
-            <form onsubmit={handleSubmit}>
-                <ControlBar
-                    bind:lookBackHours={formState.form.lookBackHours}
-                    messageCount={formState.form.messages.length}
-                    onclick={queryAI}
-                    canGenerate={canGenerateReplies}
-                    isLoading={showLoadingIndicators}
-                />
-
-                <!-- Additional context (collapsible) -->
-                <AdditionalContext
-                    bind:additionalContext={formState.form.additionalContext}
-                    bind:expanded={additionalContextExpanded}
-                />
-
-                <!-- Conversation summary -->
-                <section class="conversation">
-                    <div class="summary">
-                        {#if showLoadingIndicators}
-                            <div class="loading-indicator">{summaryContent}</div>
-                        {:else}
-                            {summaryContent}
-                        {/if}
-                    </div>
-                </section>
-
-                <hr />
-
-                <!-- Reply suggestions section -->
-                <section class="reply-section">
-                    <h2>suggested replies:</h2>
-
-                    <ToneSelector bind:selectedTone={formState.form.tone} tones={TONES} />
-
-                    <ReplySuggestions
-                        replies={formState.form.suggestedReplies}
-                        loading={showLoadingIndicators}
+                {#if hasProviders}
+                <form onsubmit={handleSubmit}>
+                    <ControlBar
+                        bind:lookBackHours={formState.form.lookBackHours}
+                        messageCount={formState.form.messages.length}
+                        onclick={queryAI}
+                        canGenerate={canGenerateReplies}
+                        isLoading={showLoadingIndicators}
                     />
-                </section>
-                <hr />
-                {#if data.multiProvider}
-                    <AiProviderSelector
-                        bind:value={formState.ai.provider}
-                        providers={data.availableProviders}
+
+                    <!-- Additional context (collapsible) -->
+                    <AdditionalContext
+                        bind:additionalContext={formState.form.additionalContext}
+                        bind:expanded={additionalContextExpanded}
                     />
+
+                    <!-- Conversation summary -->
+                    <section class="conversation">
+                        <div class="summary">
+                            {#if showLoadingIndicators}
+                                <div class="loading-indicator">{summaryContent}</div>
+                            {:else}
+                                {summaryContent}
+                            {/if}
+                        </div>
+                    </section>
+
+                    <hr />
+
+                    <!-- Reply suggestions section -->
+                    <section class="reply-section">
+                        <h2>suggested replies:</h2>
+
+                        <ToneSelector bind:selectedTone={formState.form.tone} tones={TONES} />
+
+                        <ReplySuggestions
+                            replies={formState.form.suggestedReplies}
+                            loading={showLoadingIndicators}
+                        />
+                    </section>
+                    <hr />
+                    {#if data.multiProvider}
+                        <AiProviderSelector
+                            bind:value={formState.ai.provider}
+                            providers={data.availableProviders}
+                        />
+                    {/if}
+                </form>
+                {:else}
+                <div class="no-providers-message">
+                    <h2>No AI providers are configured</h2>
+                    <p>Please set at least one provider in settings to use WellSaid.</p>
+                    <button onclick={() => (activeTab = 'settings')} class="settings-link-button">
+                        Go to Settings
+                    </button>
+                </div>
                 {/if}
-            </form>
             {:else}
             <form method="POST" use:enhance>
                 <section class="settings-section">
@@ -480,6 +491,43 @@
     }
 
     .save-button:hover {
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
+    }
+
+    /* ===== No Providers Message ===== */
+    .no-providers-message {
+        text-align: center;
+        padding: 2rem;
+        color: var(--primary-dark);
+    }
+
+    .no-providers-message h2 {
+        color: var(--primary-dark);
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .no-providers-message p {
+        margin-bottom: 1.5rem;
+        color: var(--gray);
+        line-height: 1.4;
+    }
+
+    .settings-link-button {
+        background-color: var(--primary-dark);
+        color: var(--white);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        font-family: var(--body-font);
+        font-weight: bold;
+        font-size: 1rem;
+        transition: background-color 0.2s ease;
+    }
+
+    .settings-link-button:hover {
         background-color: var(--primary-light);
         color: var(--primary-dark);
     }

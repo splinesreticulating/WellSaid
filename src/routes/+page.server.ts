@@ -19,12 +19,13 @@ export const load: PageServerLoad = async ({ url }) => {
     const start = new Date(end.getTime() - lookBack * ONE_HOUR)
     const { messages } = await queryMessagesDb(start.toISOString(), end.toISOString())
     const settings = await getAllSettings()
+    const availableProviders = getAvailableProviders()
 
     return {
         messages,
         multiProvider: hasMultipleProviders(),
-        defaultProvider: DEFAULT_PROVIDER,
-        availableProviders: getAvailableProviders(),
+        defaultProvider: DEFAULT_PROVIDER || '', // Handle null case
+        availableProviders,
         settings,
     }
 }

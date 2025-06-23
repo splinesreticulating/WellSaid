@@ -22,7 +22,13 @@ export const actions: Actions = {
                 await updateSetting(key, String(value))
             }
             
-            return { success: true }
+            // Reload settings to get the updated values
+            const settings = await getAllSettings()
+            
+            return { 
+                success: true,
+                settings 
+            }
         } catch (error) {
             console.error('Error saving settings:', error)
             return fail(500, { 

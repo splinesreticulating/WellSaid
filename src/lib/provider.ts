@@ -1,6 +1,21 @@
-import { getDefaultProvider, validateProviders } from './providers/registry'
+import { getDefaultProvider, validateProviders, getAvailableProviders } from './providers/registry'
 
-export const DEFAULT_PROVIDER = getDefaultProvider()
+// Safe initialization - don't throw errors during module load
+let DEFAULT_PROVIDER: string | null = null
 
-// Validate that at least one provider is configured
-validateProviders()
+try {
+    DEFAULT_PROVIDER = getDefaultProvider()
+} catch (error) {
+    // No providers configured - this is handled gracefully in the UI
+    DEFAULT_PROVIDER = null
+}
+
+export { DEFAULT_PROVIDER }
+
+// Only validate providers in production or when explicitly requested
+// This allows development to continue even without providers configured
+export function ensureProvidersConfigured(): void {
+    if (process.env.NODE_ENV === 'production') {
+        validateProviders()
+    }
+}
