@@ -11,7 +11,7 @@
             <p class="description">{setting.description}</p>
         </div>
     {/each}
-    <button type="submit" formaction="/settings/save" class="save">Save</button>
+    <button type="submit" formaction="/settings" class="save">Save</button>
 </form>
 
 <style>
