@@ -299,9 +299,13 @@
         border: 1px solid var(--light);
         border-radius: 0 var(--border-radius) var(--border-radius) var(--border-radius);
         background-color: var(--primary-light);
-        height: 500px;
-        overflow-y: auto;
         margin: 0;
+        min-height: calc(100vh - 200px);
+    }
+
+    /* Home tab doesn't need scrollbar, settings tab does */
+    .tab-content:has(form[method="POST"]) {
+        overflow-y: auto;
     }
 
     /* ===== Header ===== */
