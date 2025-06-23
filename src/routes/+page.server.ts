@@ -6,6 +6,7 @@ import { logger } from '$lib/logger'
 import { getOpenaiReply } from '$lib/openAi'
 import { DEFAULT_PROVIDER } from '$lib/provider'
 import { getAvailableProviders, hasMultipleProviders } from '$lib/providers/registry'
+import { getAllSettings } from '$lib/config'
 import type { Message, ToneType } from '$lib/types'
 import { fail } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
@@ -17,12 +18,14 @@ export const load: PageServerLoad = async ({ url }) => {
     const end = new Date()
     const start = new Date(end.getTime() - lookBack * ONE_HOUR)
     const { messages } = await queryMessagesDb(start.toISOString(), end.toISOString())
+    const settings = await getAllSettings()
 
     return {
         messages,
         multiProvider: hasMultipleProviders(),
         defaultProvider: DEFAULT_PROVIDER,
         availableProviders: getAvailableProviders(),
+        settings,
     }
 }
 
