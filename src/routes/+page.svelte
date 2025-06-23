@@ -187,13 +187,13 @@
         <nav class="tab-bar">
             <button
                 class:active={activeTab === 'main'}
-                on:click={() => (activeTab = 'main')}
+                onclick={() => (activeTab = 'main')}
             >
                 home
             </button>
             <button
                 class:active={activeTab === 'settings'}
-                on:click={() => (activeTab = 'settings')}
+                onclick={() => (activeTab = 'settings')}
             >
                 settings
             </button>
