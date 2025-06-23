@@ -1,11 +1,4 @@
-import {
-    OPENAI_API_KEY,
-    OPENAI_FREQUENCY_PENALTY,
-    OPENAI_MODEL,
-    OPENAI_PRESENCE_PENALTY,
-    OPENAI_TEMPERATURE,
-    OPENAI_TOP_P,
-} from '$env/static/private'
+import { settings } from '$lib/config'
 import { fetchRelevantHistory } from './history'
 import { logger } from './logger'
 import { openAiPrompt, systemContext } from './prompts'
@@ -17,16 +10,16 @@ const DEFAULT_MODEL = 'gpt-4'
 const DEFAULT_TEMPERATURE = 0.5
 
 const getConfig = (): OpenAIConfig => ({
-    model: OPENAI_MODEL || DEFAULT_MODEL,
-    temperature: Number(OPENAI_TEMPERATURE || DEFAULT_TEMPERATURE),
-    topP: OPENAI_TOP_P ? Number(OPENAI_TOP_P) : undefined,
-    frequencyPenalty: OPENAI_FREQUENCY_PENALTY ? Number(OPENAI_FREQUENCY_PENALTY) : undefined,
-    presencePenalty: OPENAI_PRESENCE_PENALTY ? Number(OPENAI_PRESENCE_PENALTY) : undefined,
+    model: settings.OPENAI_MODEL || DEFAULT_MODEL,
+    temperature: Number(settings.OPENAI_TEMPERATURE || DEFAULT_TEMPERATURE),
+    topP: settings.OPENAI_TOP_P ? Number(settings.OPENAI_TOP_P) : undefined,
+    frequencyPenalty: settings.OPENAI_FREQUENCY_PENALTY ? Number(settings.OPENAI_FREQUENCY_PENALTY) : undefined,
+    presencePenalty: settings.OPENAI_PRESENCE_PENALTY ? Number(settings.OPENAI_PRESENCE_PENALTY) : undefined,
     apiUrl: API_URL,
-    apiKey: OPENAI_API_KEY,
+    apiKey: settings.OPENAI_API_KEY,
 })
 
-if (!OPENAI_API_KEY) {
+if (!settings.OPENAI_API_KEY) {
     logger.warn('⚠️ OPENAI_API_KEY is not set. OpenAI integration will not work.')
 }
 
@@ -72,7 +65,7 @@ export const getOpenaiReply = async (
     const body = {
         model: config.model,
         messages: [
-            { role: 'system', content: systemContext },
+            { role: 'system', content: systemContext() },
             { role: 'user', content: formatMessagesAsText(messages) },
             { role: 'user', content: prompt },
         ],

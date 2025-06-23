@@ -10,16 +10,13 @@ vi.mock('$lib/prompts', () => ({
     anthropicPrompt: vi.fn().mockReturnValue('prompt'),
 }))
 
-vi.mock('$env/static/private', async (importOriginal) => {
-    const actual = (await importOriginal()) as Record<string, string | undefined>
-    return {
-        ...actual,
+vi.mock('$lib/config', () => ({
+    settings: {
         ANTHROPIC_API_KEY: 'test-api-key',
         ANTHROPIC_MODEL: 'test-model',
         ANTHROPIC_TEMPERATURE: '0.5',
-        LOG_LEVEL: 'info',
-    }
-})
+    },
+}))
 
 describe('getAnthropicReply', () => {
     beforeEach(() => {

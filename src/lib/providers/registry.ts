@@ -1,4 +1,4 @@
-import { ANTHROPIC_API_KEY, KHOJ_API_URL, OPENAI_API_KEY, GROK_API_KEY } from '$env/static/private'
+import { settings } from '$lib/config'
 
 export interface ProviderConfig {
     id: string
@@ -43,23 +43,14 @@ const PROVIDER_REGISTRY: Omit<ProviderConfig, 'isAvailable'>[] = [
     // }
 ]
 
-// Environment variable lookup
-const ENV_VARS: Record<string, string | undefined> = {
-    OPENAI_API_KEY,
-    KHOJ_API_URL,
-    ANTHROPIC_API_KEY,
-    GROK_API_KEY,
-    // Add new env vars here as they become available
-    // GOOGLE_API_KEY
-}
 
 /**
- * Get all available AI providers based on configured environment variables
+ * Get all available AI providers based on configured settings
  */
 export function getAvailableProviders(): ProviderConfig[] {
     return PROVIDER_REGISTRY.map((provider) => ({
         ...provider,
-        isAvailable: !!ENV_VARS[provider.envVar],
+        isAvailable: !!settings[provider.envVar],
     })).filter((provider) => provider.isAvailable)
 }
 
@@ -71,7 +62,7 @@ export function getDefaultProvider(): string {
 
     if (available.length === 0) {
         throw new Error(
-            'No AI providers are configured. Please set at least one provider environment variable.'
+            'No AI providers are configured. Please set at least one provider in settings.'
         )
     }
 
@@ -95,7 +86,7 @@ export function validateProviders(): void {
 
     if (available.length === 0) {
         console.error(
-            'Error: No AI providers are configured. Set at least one of the following environment variables:'
+            'Error: No AI providers are configured. Set at least one of the following settings:'
         )
         PROVIDER_REGISTRY.forEach((provider) => {
             console.error(`  - ${provider.envVar} (for ${provider.displayName})`)

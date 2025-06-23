@@ -18,9 +18,9 @@ vi.mock('$lib/logger', () => ({
     },
 }))
 
-// Mock the SvelteKit environment variables
-vi.mock('$env/static/private', () => ({
-    PARTNER_PHONE: '+1234567890',
+// Mock configuration settings
+vi.mock('$lib/config', () => ({
+    settings: { PARTNER_PHONE: '+1234567890' },
 }))
 
 describe('queryMessagesDb', () => {

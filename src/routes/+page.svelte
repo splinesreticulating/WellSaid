@@ -6,8 +6,10 @@
     import ControlBar from '$lib/components/ControlBar.svelte'
     import ReplySuggestions from '$lib/components/ReplySuggestions.svelte'
     import ToneSelector from '$lib/components/ToneSelector.svelte'
+    import SettingsForm from '$lib/components/SettingsForm.svelte'
     import { type Message, type PageData, TONES, type ToneType } from '$lib/types'
     import type { ProviderConfig } from '$lib/providers/registry'
+    import type { Setting } from '$lib/config'
 
     const LOCAL_STORAGE_CONTEXT_KEY = 'wellsaid_additional_context'
 
@@ -16,6 +18,7 @@
             multiProvider: boolean
             defaultProvider: string
             availableProviders: ProviderConfig[]
+            settings: Setting[]
         }
     }>()
 
@@ -37,6 +40,8 @@
             suggestedReplies: [] as string[],
         },
     })
+
+    let activeTab = $state<'main' | 'settings'>('main')
 
     let additionalContextExpanded = $state(false)
 
@@ -179,9 +184,24 @@
     <header>
         <h1>WellSaid</h1>
         <i>Empathy. Upgraded.</i>
+        <nav class="tab-bar">
+            <button
+                class:active={activeTab === 'main'}
+                on:click={() => (activeTab = 'main')}
+            >
+                home
+            </button>
+            <button
+                class:active={activeTab === 'settings'}
+                on:click={() => (activeTab = 'settings')}
+            >
+                settings
+            </button>
+        </nav>
     </header>
 
     <div class="content-container">
+        {#if activeTab === 'main'}
         <form onsubmit={handleSubmit}>
             <ControlBar
                 bind:lookBackHours={formState.form.lookBackHours}
@@ -229,6 +249,9 @@
                 />
             {/if}
         </form>
+        {:else}
+        <SettingsForm settings={data.settings} action="/settings?/save" />
+        {/if}
     </div>
 </main>
 
@@ -259,6 +282,7 @@
     /* ===== Header ===== */
     header {
         text-align: center;
+        position: relative;
     }
 
     header h1 {
@@ -274,6 +298,29 @@
         font-size: 1rem;
         display: block;
         margin-bottom: 1.25rem;
+    }
+
+    .tab-bar {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .tab-bar button {
+        font-size: 0.9rem;
+        background-color: var(--primary-dark);
+        color: var(--white);
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--border-radius);
+        border: none;
+        cursor: pointer;
+        opacity: 0.6;
+    }
+
+    .tab-bar button.active {
+        opacity: 1;
     }
 
     /* ===== Conversation Section ===== */

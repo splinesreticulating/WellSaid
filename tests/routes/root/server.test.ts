@@ -3,6 +3,7 @@ import * as khoj from '$lib/khoj'
 import * as openai from '$lib/openAi'
 import * as grok from '$lib/grok'
 import * as registry from '$lib/providers/registry'
+import * as config from '$lib/config'
 import type { RequestEvent } from '@sveltejs/kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import * as serverModule from '../../../src/routes/+page.server'
@@ -17,6 +18,9 @@ vi.mock('$lib/providers/registry', () => ({
 }))
 vi.mock('$lib/provider', () => ({
     DEFAULT_PROVIDER: 'openai',
+}))
+vi.mock('$lib/config', () => ({
+    getAllSettings: vi.fn(),
 }))
 vi.mock('$lib/logger', () => ({
     logger: {
@@ -71,6 +75,7 @@ describe('root page server', () => {
             },
         ])
         vi.mocked(registry.hasMultipleProviders).mockReturnValue(false)
+        vi.mocked(config.getAllSettings).mockResolvedValue([])
     })
 
     it('load should return messages and multiProvider flag', async () => {
@@ -94,6 +99,7 @@ describe('root page server', () => {
                     isAvailable: true,
                 },
             ],
+            settings: [],
         })
     })
 

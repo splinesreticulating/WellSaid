@@ -1,4 +1,4 @@
-import { PARTNER_PHONE } from '$env/static/private'
+import { settings } from '$lib/config'
 import type { MessageRow } from '$lib/types'
 import os from 'node:os'
 import path from 'node:path'
@@ -11,7 +11,7 @@ const CHAT_DB_PATH = path.join(os.homedir(), 'Library', 'Messages', 'chat.db')
 
 const buildQuery = (startDate: string, endDate: string) => {
     logger.debug({ startDate, endDate }, 'Getting messages')
-    const params = [PARTNER_PHONE, isoToAppleNanoseconds(startDate), isoToAppleNanoseconds(endDate)]
+    const params = [settings.PARTNER_PHONE, isoToAppleNanoseconds(startDate), isoToAppleNanoseconds(endDate)]
 
     const query = `
         SELECT
@@ -35,7 +35,7 @@ const formatMessages = (rows: MessageRow[]) => {
         .map((row) => ({
             sender: row.is_from_me
                 ? 'me'
-                : row.contact_id === PARTNER_PHONE
+                : row.contact_id === settings.PARTNER_PHONE
                   ? 'partner'
                   : 'unknown',
             text: row.text,
@@ -47,8 +47,8 @@ const formatMessages = (rows: MessageRow[]) => {
 }
 
 export const queryMessagesDb = async (startDate: string, endDate: string) => {
-    if (!PARTNER_PHONE) {
-        logger.warn('PARTNER_PHONE env var not set -- make sure it is set in your .env file')
+    if (!settings.PARTNER_PHONE) {
+        logger.warn('PARTNER_PHONE setting not configured')
         return { messages: [] }
     }
 
@@ -57,7 +57,7 @@ export const queryMessagesDb = async (startDate: string, endDate: string) => {
 
     try {
         const rows = (await db.all(query, params)) as MessageRow[]
-        logger.info({ count: rows.length, handleId: PARTNER_PHONE }, 'Fetched messages')
+        logger.info({ count: rows.length, handleId: settings.PARTNER_PHONE }, 'Fetched messages')
 
         const formattedMessages = formatMessages(rows)
 
