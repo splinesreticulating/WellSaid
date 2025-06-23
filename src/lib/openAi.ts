@@ -19,10 +19,6 @@ const getConfig = (): OpenAIConfig => ({
     apiKey: settings.OPENAI_API_KEY,
 })
 
-if (!settings.OPENAI_API_KEY) {
-    logger.warn('⚠️ OPENAI_API_KEY is not set. OpenAI integration will not work.')
-}
-
 const summaryFunction = {
     type: 'function',
     function: {
