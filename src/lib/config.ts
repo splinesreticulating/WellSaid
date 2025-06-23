@@ -10,7 +10,7 @@ export interface Setting {
     description: string
 }
 
-const DB_PATH = path.join(os.homedir(), '.wellsaid_settings.db')
+const DB_PATH = path.join(process.cwd(), 'settings.db')
 
 const db = await open({ filename: DB_PATH, driver: sqlite3.Database })
 
