@@ -10,15 +10,12 @@ vi.mock('$lib/prompts', () => ({
     khojPrompt: vi.fn().mockReturnValue('prompt'),
 }))
 
-vi.mock('$env/static/private', async (importOriginal) => {
-    const actual = (await importOriginal()) as Record<string, string | undefined>
-    return {
-        ...actual,
+vi.mock('$lib/config', () => ({
+    settings: {
         KHOJ_API_URL: 'http://khoj.test/api',
         KHOJ_AGENT: '',
-        LOG_LEVEL: 'info',
-    }
-})
+    },
+}))
 
 describe('getKhojReply', () => {
     beforeEach(() => {

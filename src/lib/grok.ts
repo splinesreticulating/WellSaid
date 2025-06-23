@@ -1,4 +1,4 @@
-import { GROK_API_KEY, GROK_MODEL, GROK_TEMPERATURE } from '$env/static/private'
+import { settings } from '$lib/config'
 import { fetchRelevantHistory } from './history'
 import { logger } from './logger'
 import { openAiPrompt, systemContext } from './prompts'
@@ -10,9 +10,9 @@ const DEFAULT_MODEL = 'grok-1'
 const DEFAULT_TEMPERATURE = 0.5
 
 const getConfig = () => ({
-    model: GROK_MODEL || DEFAULT_MODEL,
-    temperature: Number(GROK_TEMPERATURE || DEFAULT_TEMPERATURE),
-    apiKey: GROK_API_KEY,
+    model: settings.GROK_MODEL || DEFAULT_MODEL,
+    temperature: Number(settings.GROK_TEMPERATURE || DEFAULT_TEMPERATURE),
+    apiKey: settings.GROK_API_KEY,
 })
 
 export const getGrokReply = async (
@@ -34,7 +34,7 @@ export const getGrokReply = async (
     const body = {
         model: config.model,
         messages: [
-            { role: 'system', content: systemContext },
+            { role: 'system', content: systemContext() },
             { role: 'user', content: formatMessagesAsText(messages) },
             { role: 'user', content: prompt },
         ],

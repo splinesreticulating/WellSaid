@@ -179,6 +179,7 @@
     <header>
         <h1>WellSaid</h1>
         <i>Empathy. Upgraded.</i>
+        <a href="/settings" class="settings-link">settings</a>
     </header>
 
     <div class="content-container">
@@ -259,6 +260,7 @@
     /* ===== Header ===== */
     header {
         text-align: center;
+        position: relative;
     }
 
     header h1 {
@@ -274,6 +276,18 @@
         font-size: 1rem;
         display: block;
         margin-bottom: 1.25rem;
+    }
+
+    .settings-link {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        font-size: 0.9rem;
+        text-decoration: none;
+        background-color: var(--primary-dark);
+        color: var(--white);
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--border-radius);
     }
 
     /* ===== Conversation Section ===== */

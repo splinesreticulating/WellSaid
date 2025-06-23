@@ -6,9 +6,8 @@ vi.mock('$lib/iMessages', () => ({
     queryMessagesDb: vi.fn(),
 }))
 
-vi.mock('$env/static/private', () => ({
-    HISTORY_LOOKBACK_HOURS: '1',
-    LOG_LEVEL: 'info',
+vi.mock('$lib/config', () => ({
+    settings: { HISTORY_LOOKBACK_HOURS: '1' },
 }))
 
 const { queryMessagesDb } = await import('$lib/iMessages')

@@ -1,13 +1,13 @@
-import { HISTORY_LOOKBACK_HOURS } from '$env/static/private'
+import { settings } from '$lib/config'
 import type { Message } from '$lib/types'
 import { queryMessagesDb } from './iMessages'
 import { logger } from './logger'
 import { formatMessagesAsText } from './utils'
 
-const lookbackHours = Number.parseInt(HISTORY_LOOKBACK_HOURS || '0')
 
 export const fetchRelevantHistory = async (messages: Message[]): Promise<string> => {
     try {
+        const lookbackHours = Number.parseInt(settings.HISTORY_LOOKBACK_HOURS || '0')
         if (!lookbackHours || messages.length === 0) {
             logger.warn('No messages or invalid lookbackHours; skipping history fetch')
             return ''

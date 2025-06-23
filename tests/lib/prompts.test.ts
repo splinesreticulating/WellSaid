@@ -2,16 +2,16 @@ import { khojPrompt, openAiPrompt, systemContext } from '$lib/prompts'
 import type { Message } from '$lib/types'
 import { describe, expect, it, vi } from 'vitest'
 
-// Mock the environment variable
-vi.mock('$env/static/private', () => ({
-    CUSTOM_CONTEXT: 'Test custom context for prompts',
+// Mock configuration setting
+vi.mock('$lib/config', () => ({
+    settings: { CUSTOM_CONTEXT: 'Test custom context for prompts' },
 }))
 
 describe('prompts', () => {
     describe('PERMANENT_CONTEXT', () => {
         it('should include custom context and instructions', () => {
-            expect(systemContext).toContain('Test custom context for prompts')
-            expect(systemContext).toContain('mimic my vocabulary and tone when suggesting replies')
+            expect(systemContext()).toContain('Test custom context for prompts')
+            expect(systemContext()).toContain('mimic my vocabulary and tone when suggesting replies')
         })
     })
 
@@ -61,7 +61,7 @@ describe('prompts', () => {
         it('should generate complete prompt with conversation and no context', () => {
             const result = khojPrompt(mockConversation, 'gentle', '')
 
-            expect(result).toContain(systemContext)
+            expect(result).toContain(systemContext())
             expect(result).toContain('Here are some text messages between my partner and I:')
             expect(result).toContain('me: Hey, how was your day?')
             expect(result).toContain('partner: It was great! How about yours?')
@@ -79,7 +79,7 @@ describe('prompts', () => {
             const context = 'They mentioned being stressed about work earlier'
             const result = khojPrompt(mockConversation, 'funny', context)
 
-            expect(result).toContain(systemContext)
+            expect(result).toContain(systemContext())
             expect(result).toContain('me: Hey, how was your day?')
             expect(result).toContain('Suggest 3 replies that I might send')
             expect(result).toContain('Extra context: ' + context)
@@ -93,7 +93,7 @@ describe('prompts', () => {
         it('should handle empty conversation', () => {
             const result = khojPrompt([], 'gentle', '')
 
-            expect(result).toContain(systemContext)
+            expect(result).toContain(systemContext())
             expect(result).toContain('Here are some text messages between my partner and I:')
             expect(result).toContain('Suggest 3 replies that I might send')
             expect(result).toContain('Summary:')

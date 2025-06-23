@@ -1,4 +1,4 @@
-import { CUSTOM_CONTEXT } from '$env/static/private'
+import { settings } from '$lib/config'
 import type { Message, ToneType } from './types'
 import { formatMessagesAsText } from './utils'
 
@@ -24,7 +24,7 @@ const responseFormat = [
     'Reply 3: <long reply>',
 ].join('\n')
 
-export const systemContext = [CUSTOM_CONTEXT, coreContext].join('\n\n')
+export const systemContext = () => [settings.CUSTOM_CONTEXT || '', coreContext].join('\n\n')
 
 const buildPrompt = (tone: string, context: string): string => {
     const lines = [`${instructions} ${tone}`]
@@ -36,7 +36,7 @@ export const openAiPrompt = (tone: string, context: string): string => buildProm
 
 export const khojPrompt = (messages: Message[], tone: ToneType, context: string): string =>
     [
-        systemContext,
+        systemContext(),
         'Here are some text messages between my partner and I:\n' + formatMessagesAsText(messages),
         buildPrompt(tone, context),
         responseFormat,
@@ -44,7 +44,7 @@ export const khojPrompt = (messages: Message[], tone: ToneType, context: string)
 
 export const anthropicPrompt = (messages: Message[], tone: ToneType, context: string): string =>
     [
-        systemContext,
+        systemContext(),
         'Here are some text messages between my partner and I:\n' + formatMessagesAsText(messages),
         buildPrompt(tone, context),
         responseFormat,
