@@ -1,12 +1,12 @@
 <script lang="ts">
     import { browser } from '$app/environment'
     import { goto } from '$app/navigation'
+    import { enhance } from '$app/forms'
     import AdditionalContext from '$lib/components/AdditionalContext.svelte'
     import AiProviderSelector from '$lib/components/AiProviderSelector.svelte'
     import ControlBar from '$lib/components/ControlBar.svelte'
     import ReplySuggestions from '$lib/components/ReplySuggestions.svelte'
     import ToneSelector from '$lib/components/ToneSelector.svelte'
-    import SettingsForm from '$lib/components/SettingsForm.svelte'
     import { type Message, type PageData, TONES, type ToneType } from '$lib/types'
     import type { ProviderConfig } from '$lib/providers/registry'
     import type { Setting } from '$lib/config'
@@ -251,7 +251,26 @@
             {/if}
         </form>
         {:else}
-        <SettingsForm settings={data.settings} />
+        <form method="POST" use:enhance class="settings-form">
+            <section class="settings-section">
+                <h2>settings:</h2>
+                {#each data.settings as setting}
+                    <div class="setting-row">
+                        <label for={setting.key}>{setting.key}</label>
+                        <input 
+                            id={setting.key} 
+                            name={setting.key} 
+                            type="text" 
+                            value={setting.value} 
+                        />
+                        <p class="description">{setting.description}</p>
+                    </div>
+                {/each}
+                <button type="submit" formaction="/settings/save" class="save-button">
+                    Save Settings
+                </button>
+            </section>
+        </form>
         {/if}
     </div>
 </main>
@@ -309,6 +328,7 @@
         margin-bottom: -1px;
         position: relative;
         z-index: 1;
+        justify-content: flex-end;
     }
 
     .tab-bar button {
@@ -321,7 +341,7 @@
         border-bottom: none;
         cursor: pointer;
         opacity: 0.8;
-        margin-right: 2px;
+        margin-left: 2px;
     }
 
     .tab-bar button.active {
@@ -381,19 +401,62 @@
         padding: 1rem;
     }
 
-    /* ===== Animations ===== */
-    @keyframes pulse {
-        0% {
-            transform: scale(0.8);
-            opacity: 0.5;
-        }
-        50% {
-            transform: scale(1.2);
-            opacity: 1;
-        }
-        100% {
-            transform: scale(0.8);
-            opacity: 0.5;
-        }
+    /* ===== Settings Styling ===== */
+    .settings-section {
+        padding: 0;
+    }
+
+    .settings-section h2 {
+        font-family: var(--label-font);
+        font-size: 1.1rem;
+        color: var(--primary-dark);
+        margin-bottom: 1rem;
+        margin-top: 0;
+    }
+
+    .setting-row {
+        margin-bottom: 1.5rem;
+    }
+
+    .setting-row label {
+        font-family: var(--label-font);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--primary-dark);
+    }
+
+    .setting-row input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid var(--light);
+        border-radius: var(--border-radius);
+        font-family: var(--body-font);
+        background-color: var(--white);
+    }
+
+    .setting-row .description {
+        font-size: 0.8rem;
+        color: var(--gray);
+        margin-top: 0.25rem;
+        margin-bottom: 0;
+        font-style: italic;
+    }
+
+    .save-button {
+        background-color: var(--primary-dark);
+        color: var(--white);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        font-family: var(--body-font);
+        font-weight: bold;
+        margin-top: 1rem;
+    }
+
+    .save-button:hover {
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
     }
 </style>
