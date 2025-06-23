@@ -202,76 +202,78 @@
     </nav>
 
     <div class="content-container">
-        {#if activeTab === 'main'}
-        <form onsubmit={handleSubmit}>
-            <ControlBar
-                bind:lookBackHours={formState.form.lookBackHours}
-                messageCount={formState.form.messages.length}
-                onclick={queryAI}
-                canGenerate={canGenerateReplies}
-                isLoading={showLoadingIndicators}
-            />
-
-            <!-- Additional context (collapsible) -->
-            <AdditionalContext
-                bind:additionalContext={formState.form.additionalContext}
-                bind:expanded={additionalContextExpanded}
-            />
-
-            <!-- Conversation summary -->
-            <section class="conversation">
-                <div class="summary">
-                    {#if showLoadingIndicators}
-                        <div class="loading-indicator">{summaryContent}</div>
-                    {:else}
-                        {summaryContent}
-                    {/if}
-                </div>
-            </section>
-
-            <hr />
-
-            <!-- Reply suggestions section -->
-            <section class="reply-section">
-                <h2>suggested replies:</h2>
-
-                <ToneSelector bind:selectedTone={formState.form.tone} tones={TONES} />
-
-                <ReplySuggestions
-                    replies={formState.form.suggestedReplies}
-                    loading={showLoadingIndicators}
+        <div class="tab-content">
+            {#if activeTab === 'main'}
+            <form onsubmit={handleSubmit}>
+                <ControlBar
+                    bind:lookBackHours={formState.form.lookBackHours}
+                    messageCount={formState.form.messages.length}
+                    onclick={queryAI}
+                    canGenerate={canGenerateReplies}
+                    isLoading={showLoadingIndicators}
                 />
-            </section>
-            <hr />
-            {#if data.multiProvider}
-                <AiProviderSelector
-                    bind:value={formState.ai.provider}
-                    providers={data.availableProviders}
+
+                <!-- Additional context (collapsible) -->
+                <AdditionalContext
+                    bind:additionalContext={formState.form.additionalContext}
+                    bind:expanded={additionalContextExpanded}
                 />
-            {/if}
-        </form>
-        {:else}
-        <form method="POST" use:enhance>
-            <section class="settings-section">
-                <h2>settings:</h2>
-                {#each data.settings as setting}
-                    <div class="setting-row">
-                        <label for={setting.key}>{setting.key}</label>
-                        <input 
-                            id={setting.key} 
-                            name={setting.key} 
-                            type="text" 
-                            value={setting.value} 
-                        />
-                        <p class="description">{setting.description}</p>
+
+                <!-- Conversation summary -->
+                <section class="conversation">
+                    <div class="summary">
+                        {#if showLoadingIndicators}
+                            <div class="loading-indicator">{summaryContent}</div>
+                        {:else}
+                            {summaryContent}
+                        {/if}
                     </div>
-                {/each}
-                <button type="submit" formaction="/settings/save" class="save-button">
-                    Save Settings
-                </button>
-            </section>
-        </form>
-        {/if}
+                </section>
+
+                <hr />
+
+                <!-- Reply suggestions section -->
+                <section class="reply-section">
+                    <h2>suggested replies:</h2>
+
+                    <ToneSelector bind:selectedTone={formState.form.tone} tones={TONES} />
+
+                    <ReplySuggestions
+                        replies={formState.form.suggestedReplies}
+                        loading={showLoadingIndicators}
+                    />
+                </section>
+                <hr />
+                {#if data.multiProvider}
+                    <AiProviderSelector
+                        bind:value={formState.ai.provider}
+                        providers={data.availableProviders}
+                    />
+                {/if}
+            </form>
+            {:else}
+            <form method="POST" use:enhance>
+                <section class="settings-section">
+                    <h2>settings:</h2>
+                    {#each data.settings as setting}
+                        <div class="setting-row">
+                            <label for={setting.key}>{setting.key}</label>
+                            <input 
+                                id={setting.key} 
+                                name={setting.key} 
+                                type="text" 
+                                value={setting.value} 
+                            />
+                            <p class="description">{setting.description}</p>
+                        </div>
+                    {/each}
+                    <button type="submit" formaction="/settings/save" class="save-button">
+                        Save Settings
+                    </button>
+                </section>
+            </form>
+            {/if}
+        </div>
     </div>
 </main>
 
@@ -281,22 +283,25 @@
         padding-bottom: 1rem;
     }
 
-    @media (min-width: 768px) {
-        .content-container > form {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-    }
-
-    form {
+    .content-container {
         display: flex;
         flex-direction: column;
-        border: none;
-        border-radius: 0;
+        align-items: center;
         padding: 0;
-        margin-bottom: 0;
-        box-shadow: none;
-        background-color: transparent;
+    }
+
+    .tab-content {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 600px;
+        padding: 1rem;
+        border: 1px solid var(--light);
+        border-radius: 0 var(--border-radius) var(--border-radius) var(--border-radius);
+        background-color: var(--primary-light);
+        height: 500px;
+        overflow-y: auto;
+        margin: 0;
     }
 
     /* ===== Header ===== */
@@ -323,12 +328,16 @@
     .tab-bar {
         display: flex;
         gap: 0;
-        padding: 0 1rem;
+        padding: 0;
         background-color: transparent;
         margin-bottom: -1px;
         position: relative;
         z-index: 1;
         justify-content: flex-end;
+        width: 100%;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .tab-bar button {
@@ -351,13 +360,15 @@
         border-color: var(--light);
     }
 
-    /* ===== Content Container ===== */
-    .content-container {
-        border: 1px solid var(--light);
-        border-radius: 0 var(--border-radius) var(--border-radius) var(--border-radius);
-        background-color: var(--primary-light);
-        padding: 1rem;
-        position: relative;
+    /* ===== Form Consistency ===== */
+    form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+        background-color: transparent;
     }
 
     /* ===== Conversation Section ===== */
@@ -406,6 +417,8 @@
         padding: 0;
         display: flex;
         flex-direction: column;
+        width: 100%;
+        justify-content: flex-start;
     }
 
     .settings-section h2 {
@@ -431,8 +444,6 @@
 
     .setting-row input {
         width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
         padding: 0.4rem;
         border: 1px solid var(--light);
         border-radius: var(--border-radius);
@@ -459,8 +470,9 @@
         cursor: pointer;
         font-family: var(--body-font);
         font-weight: bold;
-        margin-top: 0.5rem;
+        margin-top: 1rem;
         font-size: 0.9rem;
+        align-self: flex-start;
     }
 
     .save-button:hover {
