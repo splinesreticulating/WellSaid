@@ -184,21 +184,22 @@
     <header>
         <h1>WellSaid</h1>
         <i>Empathy. Upgraded.</i>
-        <nav class="tab-bar">
-            <button
-                class:active={activeTab === 'main'}
-                onclick={() => (activeTab = 'main')}
-            >
-                home
-            </button>
-            <button
-                class:active={activeTab === 'settings'}
-                onclick={() => (activeTab = 'settings')}
-            >
-                settings
-            </button>
-        </nav>
     </header>
+
+    <nav class="tab-bar">
+        <button
+            class:active={activeTab === 'main'}
+            onclick={() => (activeTab = 'main')}
+        >
+            home
+        </button>
+        <button
+            class:active={activeTab === 'settings'}
+            onclick={() => (activeTab = 'settings')}
+        >
+            settings
+        </button>
+    </nav>
 
     <div class="content-container">
         {#if activeTab === 'main'}
@@ -271,18 +272,17 @@
     form {
         display: flex;
         flex-direction: column;
-        border: 1px solid var(--light);
-        border-radius: var(--border-radius);
-        padding: 1rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        background-color: var(--primary-light);
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        margin-bottom: 0;
+        box-shadow: none;
+        background-color: transparent;
     }
 
     /* ===== Header ===== */
     header {
         text-align: center;
-        position: relative;
     }
 
     header h1 {
@@ -300,27 +300,44 @@
         margin-bottom: 1.25rem;
     }
 
+    /* ===== Tab Bar ===== */
     .tab-bar {
-        position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
         display: flex;
-        gap: 0.5rem;
+        gap: 0;
+        padding: 0 1rem;
+        background-color: transparent;
+        margin-bottom: -1px;
+        position: relative;
+        z-index: 1;
     }
 
     .tab-bar button {
         font-size: 0.9rem;
-        background-color: var(--primary-dark);
+        background-color: var(--gray);
         color: var(--white);
-        padding: 0.25rem 0.5rem;
-        border-radius: var(--border-radius);
-        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+        border: 1px solid var(--light);
+        border-bottom: none;
         cursor: pointer;
-        opacity: 0.6;
+        opacity: 0.8;
+        margin-right: 2px;
     }
 
     .tab-bar button.active {
         opacity: 1;
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
+        border-color: var(--light);
+    }
+
+    /* ===== Content Container ===== */
+    .content-container {
+        border: 1px solid var(--light);
+        border-radius: 0 var(--border-radius) var(--border-radius) var(--border-radius);
+        background-color: var(--primary-light);
+        padding: 1rem;
+        position: relative;
     }
 
     /* ===== Conversation Section ===== */
