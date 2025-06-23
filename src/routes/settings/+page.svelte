@@ -1,18 +1,13 @@
 <script lang="ts">
-    import { enhance } from '$app/forms'
     import type { ActionData } from './$types'
     
     const { data, form } = $props<{
         data: { settings: { key: string; value: string; description: string }[] }
         form?: ActionData
     }>()
-
-    let formState = $state({
-        loading: false
-    })
     
-    // Use updated settings from form response if available, otherwise use initial data
-    let currentSettings = $derived(form?.success && form?.settings ? form.settings : data.settings)
+    // Use server response settings if available (after successful save), otherwise use initial data
+    const currentSettings = (form?.success && form?.settings) ? form.settings : data.settings
 </script>
 
 <svelte:head>
@@ -34,19 +29,7 @@
         </div>
     {/if}
     
-    <form 
-        method="POST" 
-        use:enhance={() => {
-            formState.loading = true
-            
-            return async ({ result, update }) => {
-                formState.loading = false
-                
-                // Always update to get the latest form state from server
-                await update({ reset: false })
-            }
-        }}
-    >
+    <form method="POST">
         {#each currentSettings as setting}
             <div class="setting-row">
                 <label for={setting.key}>{setting.key}</label>
@@ -55,13 +38,12 @@
                     name={setting.key} 
                     type="text" 
                     value={setting.value}
-                    disabled={formState.loading}
                 />
                 <p class="description">{setting.description}</p>
             </div>
         {/each}
-        <button type="submit" class="save-button" disabled={formState.loading}>
-            {formState.loading ? 'Saving...' : 'Save Settings'}
+        <button type="submit" class="save-button">
+            Save Settings
         </button>
     </form>
     <a href="/">Back</a>
