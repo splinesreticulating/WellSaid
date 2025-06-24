@@ -285,4 +285,4 @@ Feel free to submit a pull request or open an issue if you find a bug or have a 
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License. [See?](LICENSE)
