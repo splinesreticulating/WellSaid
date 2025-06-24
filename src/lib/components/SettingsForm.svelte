@@ -53,10 +53,10 @@
         box-sizing: border-box;
         font-family: inherit;
         font-size: 1rem;
+        width: 100%; /* Full width by default */
     }
 
     textarea {
-        width: 100%;
         min-height: 100px;
         resize: vertical;
     }
@@ -69,6 +69,13 @@
     input[name='HISTORY_LOOKBACK_HOURS'] {
         width: 60px; /* Only needs room for up to 3 digits */
         text-align: center;
+    }
+    
+    /* Model selection fields */
+    input[name='OPENAI_MODEL'],
+    input[name='ANTHROPIC_MODEL'],
+    input[name='GROK_MODEL'] {
+        width: 300px; /* For model names like 'gpt-4-turbo-preview' */
     }
     .description {
         font-size: 0.8rem;
