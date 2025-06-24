@@ -1,17 +1,24 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
-    export let settings: { key: string; value: string; description: string }[]
+
+    let { settings, form = null } = $props<{
+        settings: { key: string; value: string; description: string }[]
+        form?: any
+    }>()
+
+    // Use updated settings from form response if available, otherwise use props
+    let currentSettings = $derived(form?.settings || settings)
 
     // Group settings by provider/type
-    $: settingsGroups = {
-        general: formSettings.filter((setting) =>
+    let settingsGroups = $derived({
+        general: currentSettings.filter((setting: any) =>
             ['HISTORY_LOOKBACK_HOURS', 'PARTNER_PHONE', 'CUSTOM_CONTEXT'].includes(setting.key)
         ),
-        khoj: formSettings.filter((setting) => setting.key.startsWith('KHOJ_')),
-        openai: formSettings.filter((setting) => setting.key.startsWith('OPENAI_')),
-        anthropic: formSettings.filter((setting) => setting.key.startsWith('ANTHROPIC_')),
-        grok: formSettings.filter((setting) => setting.key.startsWith('GROK_')),
-    }
+        khoj: currentSettings.filter((setting: any) => setting.key.startsWith('KHOJ_')),
+        openai: currentSettings.filter((setting: any) => setting.key.startsWith('OPENAI_')),
+        anthropic: currentSettings.filter((setting: any) => setting.key.startsWith('ANTHROPIC_')),
+        grok: currentSettings.filter((setting: any) => setting.key.startsWith('GROK_')),
+    })
 
     const envKeyToHumanReadable = (envKey: string): string => {
         // Convert SNAKE_CASE to Title Case and remove provider prefixes
@@ -24,13 +31,10 @@
         return cleanKey === 'Api Key' ? 'API Key' : cleanKey
     }
 
-    // Create a local copy of settings to bind to the form
-    $: formSettings = [...settings]
-
     const formatSectionTitle = (key: string): string => {
         return (
             {
-                general: 'General Settings',
+                general: 'General',
                 openai: 'OpenAI',
                 anthropic: 'Anthropic',
                 grok: 'Grok',
@@ -38,9 +42,44 @@
             }[key] || key
         )
     }
+
+    // Auto-hide messages after 3 seconds
+    let showMessage = $state(false)
+    let messageTimeout: ReturnType<typeof setTimeout> | undefined
+
+    $effect(() => {
+        if (form && (form.success || form.error)) {
+            showMessage = true
+
+            // Clear any existing timeout
+            if (messageTimeout) {
+                clearTimeout(messageTimeout)
+            }
+
+            // Set new timeout to hide message after 3 seconds
+            messageTimeout = setTimeout(() => {
+                showMessage = false
+            }, 3000)
+        }
+
+        // Cleanup function
+        return () => {
+            if (messageTimeout) {
+                clearTimeout(messageTimeout)
+            }
+        }
+    })
 </script>
 
-<form method="POST" use:enhance class="settings-form">
+<form
+    method="POST"
+    use:enhance={() => {
+        return async ({ result, update }) => {
+            await update({ reset: false })
+        }
+    }}
+    class="settings-form"
+>
     {#each Object.entries(settingsGroups) as [section, sectionSettings]}
         {#if sectionSettings.length > 0}
             <div class="settings-section">
@@ -78,7 +117,12 @@
         {/if}
     {/each}
     <div class="form-actions">
-        <button type="submit" formaction="/settings" class="save">Save Settings</button>
+        <button type="submit" formaction="?/settings" class="save">Update</button>
+        {#if showMessage && form.success}
+            <span class="status-message success">✓ Updated</span>
+        {:else if showMessage && form.error}
+            <span class="status-message error">✗ {form.error}</span>
+        {/if}
     </div>
 </form>
 
@@ -178,7 +222,9 @@
 
     .form-actions {
         margin-top: 1.5rem;
-        text-align: right;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
     }
 
     .save {
@@ -201,5 +247,14 @@
 
     .save:active {
         transform: translateY(1px);
+    }
+
+    .status-message {
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .status-message.error {
+        color: var(--error);
     }
 </style>

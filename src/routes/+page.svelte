@@ -13,13 +13,14 @@
 
     const LOCAL_STORAGE_CONTEXT_KEY = 'wellsaid_additional_context'
 
-    const { data } = $props<{
+    const { data, form } = $props<{
         data: PageData & {
             multiProvider: boolean
             defaultProvider: string
             availableProviders: ProviderConfig[]
             settings: Setting[]
         }
+        form?: any
     }>()
 
     const DEFAULT_PROVIDER = data.defaultProvider
@@ -261,7 +262,7 @@
                 {/if}
             {:else}
                 <section class="settings-section">
-                    <SettingsForm settings={data.settings} />
+                    <SettingsForm settings={data.settings} form={form} />
                 </section>
             {/if}
         </div>

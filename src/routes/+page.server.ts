@@ -6,7 +6,7 @@ import { logger } from '$lib/logger'
 import { getOpenaiReply } from '$lib/openAi'
 import { DEFAULT_PROVIDER } from '$lib/provider'
 import { getAvailableProviders, hasMultipleProviders } from '$lib/providers/registry'
-import { getAllSettings } from '$lib/config'
+import { getAllSettings, updateSetting } from '$lib/config'
 import type { Message, ToneType } from '$lib/types'
 import { fail } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
@@ -79,6 +79,34 @@ export const actions: Actions = {
             return fail(500, {
                 error: 'Failed to generate suggestions',
                 details: err instanceof Error ? err.message : String(err),
+            })
+        }
+    },
+    settings: async ({ request }) => {
+        try {
+            const data = await request.formData()
+            
+            // Validate that we have some data to save
+            if (data.entries().next().done) {
+                return fail(400, { error: 'No settings data provided' })
+            }
+            
+            // Update each setting
+            for (const [key, value] of data.entries()) {
+                await updateSetting(key, String(value))
+            }
+            
+            // Reload settings to get the updated values
+            const settings = await getAllSettings()
+            
+            return { 
+                success: true,
+                settings 
+            }
+        } catch (error) {
+            console.error('Error saving settings:', error)
+            return fail(500, { 
+                error: 'Failed to save settings. Please try again.' 
             })
         }
     },
