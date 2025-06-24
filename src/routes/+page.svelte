@@ -288,7 +288,7 @@
         max-width: 600px;
         padding: 1rem;
         border: 1px solid var(--light);
-        border-radius: 0 var(--border-radius) var(--border-radius) var(--border-radius);
+        border-radius: var(--border-radius) 0 var(--border-radius) var(--border-radius);
         background-color: var(--primary-light);
         margin: 0;
         min-height: calc(100vh - 200px);
