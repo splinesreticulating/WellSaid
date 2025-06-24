@@ -74,7 +74,7 @@
 <form
     method="POST"
     use:enhance={() => {
-        return async ({ result, update }) => {
+        return async ({ update }) => {
             await update({ reset: false })
         }
     }}
