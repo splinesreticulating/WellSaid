@@ -66,8 +66,12 @@
         width: 200px; /* For phone numbers */
     }
 
-    input[name='HISTORY_LOOKBACK_HOURS'] {
-        width: 60px; /* Only needs room for up to 3 digits */
+    /* Numeric input fields */
+    input[name='HISTORY_LOOKBACK_HOURS'],
+    input[id$='_TEMPERATURE'],
+    input[id$='_TOP_P'],
+    input[id$='_PENALTY'] {
+        width: 60px;
         text-align: center;
     }
     
