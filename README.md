@@ -16,8 +16,6 @@
   <hr>
 </div>
 
-## Table of Contents
-
 - [Features](#features)
 - [Getting Started](#getting-started)
 - [Usage](#usage)
