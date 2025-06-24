@@ -1,67 +1,48 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
 
-    let { settings: initialSettings, form = null } = $props<{
+    let { settings, form = null } = $props<{
         settings: { key: string; value: string; description: string }[]
         form?: any
     }>()
 
-    // Create reactive state for settings
-    let settingsState = $state({
-        settings: [...initialSettings],
-        lastUpdated: Date.now()
-    });
+    // Simple reactive state for form values
+    let settingValues = $state<Record<string, string>>({})
 
-    // Update settings when props change
+    // Initialize form values once on mount
     $effect(() => {
-        if (form?.settings) {
-            settingsState = {
-                settings: [...form.settings],
-                lastUpdated: Date.now()
-            };
-        } else if (initialSettings) {
-            settingsState = {
-                settings: [...initialSettings],
-                lastUpdated: Date.now()
-            };
+        if (Object.keys(settingValues).length === 0) {
+            const values: Record<string, string> = {}
+            for (const setting of settings) {
+                values[setting.key] = setting.value
+            }
+            settingValues = values
         }
-    });
-
-    // Get current settings from state
-    let currentSettings = $derived(settingsState.settings);
-
-    // Helper function to handle bindings
-    const getSettingValue = (key: string) => {
-        return settingsState.settings.find(s => s.key === key)?.value || '';
-    };
-
-    const setSettingValue = (key: string, value: string) => {
-        const index = settingsState.settings.findIndex(s => s.key === key);
-        if (index !== -1) {
-            const newSettings = [...settingsState.settings];
-            newSettings[index] = { ...newSettings[index], value };
-            settingsState = {
-                settings: newSettings,
-                lastUpdated: Date.now()
-            };
-        }
-    };
-
-    // Group settings by provider/type
-    let settingsGroups = $derived({
-        general: currentSettings.filter((setting: any) =>
-            ['HISTORY_LOOKBACK_HOURS', 'PARTNER_PHONE', 'CUSTOM_CONTEXT'].includes(setting.key)
-        ),
-        khoj: currentSettings.filter((setting: any) => setting.key.startsWith('KHOJ_')),
-        openai: currentSettings.filter((setting: any) => setting.key.startsWith('OPENAI_')),
-        anthropic: currentSettings.filter((setting: any) => setting.key.startsWith('ANTHROPIC_')),
-        grok: currentSettings.filter((setting: any) => setting.key.startsWith('GROK_')),
     })
 
-    const envKeyToHumanReadable = (envKey: string): string => {
-        // Convert SNAKE_CASE to Title Case and remove provider prefixes
-        const cleanKey = envKey
-            .replace(/^(OPENAI|ANTHROPIC|GROK)_/, '')
+    // Group settings by provider
+    const settingsGroups = $derived({
+        general: settings.filter((s: { key: string; value: string; description: string }) =>
+            ['HISTORY_LOOKBACK_HOURS', 'PARTNER_PHONE', 'CUSTOM_CONTEXT'].includes(s.key)
+        ),
+        openai: settings.filter((s: { key: string; value: string; description: string }) =>
+            s.key.startsWith('OPENAI_')
+        ),
+        anthropic: settings.filter((s: { key: string; value: string; description: string }) =>
+            s.key.startsWith('ANTHROPIC_')
+        ),
+        grok: settings.filter((s: { key: string; value: string; description: string }) =>
+            s.key.startsWith('GROK_')
+        ),
+        khoj: settings.filter((s: { key: string; value: string; description: string }) =>
+            s.key.startsWith('KHOJ_')
+        ),
+    })
+
+    // Helper functions
+    const formatLabel = (key: string): string => {
+        const cleanKey = key
+            .replace(/^(OPENAI|ANTHROPIC|GROK|KHOJ)_/, '')
             .toLowerCase()
             .split('_')
             .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -69,43 +50,28 @@
         return cleanKey === 'Api Key' ? 'API Key' : cleanKey
     }
 
-    const formatSectionTitle = (key: string): string => {
-        return (
-            {
-                general: 'General',
-                openai: 'OpenAI',
-                anthropic: 'Anthropic',
-                grok: 'Grok',
-                khoj: 'Khoj',
-            }[key] || key
-        )
+    const getSectionTitle = (section: string): string => {
+        const titles: Record<string, string> = {
+            general: 'General',
+            openai: 'OpenAI',
+            anthropic: 'Anthropic',
+            grok: 'Grok',
+            khoj: 'Khoj',
+        }
+        return titles[section] || section
     }
 
-    // Auto-hide messages after 3 seconds
+    // Auto-hide success/error messages after 3 seconds
     let showMessage = $state(false)
     let messageTimeout: ReturnType<typeof setTimeout> | undefined
 
     $effect(() => {
-        if (form && (form.success || form.error)) {
+        if (form?.success || form?.error) {
             showMessage = true
-
-            // Clear any existing timeout
-            if (messageTimeout) {
-                clearTimeout(messageTimeout)
-            }
-
-            // Set new timeout to hide message after 3 seconds
-            messageTimeout = setTimeout(() => {
-                showMessage = false
-            }, 3000)
+            if (messageTimeout) clearTimeout(messageTimeout)
+            messageTimeout = setTimeout(() => (showMessage = false), 3000)
         }
-
-        // Cleanup function
-        return () => {
-            if (messageTimeout) {
-                clearTimeout(messageTimeout)
-            }
-        }
+        return () => messageTimeout && clearTimeout(messageTimeout)
     })
 </script>
 
@@ -118,32 +84,34 @@
     }}
     class="settings-form"
 >
-    {#each Object.entries(settingsGroups) as [section, sectionSettings]}
+    {#each Object.entries(settingsGroups) as [section, sectionSettings], index}
         {#if sectionSettings.length > 0}
+            {#if index > 0}
+                <hr />
+            {/if}
             <div class="settings-section">
-                <h3 class="section-title">{formatSectionTitle(section)}</h3>
+                <h3 class="section-title">{getSectionTitle(section)}</h3>
                 <div class="section-content">
                     {#each sectionSettings as setting}
                         <div class="setting-row">
                             <label for={setting.key} class="setting-label">
-                                {envKeyToHumanReadable(setting.key)}
+                                {formatLabel(setting.key)}
                                 <span class="description">{setting.description}</span>
                             </label>
                             {#if setting.key === 'CUSTOM_CONTEXT'}
                                 <textarea
                                     id={setting.key}
                                     name={setting.key}
-                                    oninput={(e) => setSettingValue(setting.key, (e.target as HTMLTextAreaElement).value)}
+                                    bind:value={settingValues[setting.key]}
                                     rows="4"
-                                    class="context-textarea">{getSettingValue(setting.key)}</textarea
-                                >
+                                    class="context-textarea"
+                                ></textarea>
                             {:else}
                                 <input
                                     id={setting.key}
                                     name={setting.key}
                                     type={setting.key.includes('KEY') ? 'password' : 'text'}
-                                    value={getSettingValue(setting.key)}
-                                    oninput={(e) => setSettingValue(setting.key, (e.target as HTMLInputElement).value)}
+                                    bind:value={settingValues[setting.key]}
                                     placeholder={setting.key.includes('KEY')
                                         ? '••••••••••••••••'
                                         : ''}
@@ -155,12 +123,15 @@
             </div>
         {/if}
     {/each}
+
     <div class="form-actions">
         <button type="submit" formaction="?/settings" class="save">Update</button>
-        {#if showMessage && form.success}
-            <span class="status-message success">✓ Updated</span>
-        {:else if showMessage && form.error}
-            <span class="status-message error">✗ {form.error}</span>
+        {#if showMessage}
+            {#if form?.success}
+                <span class="status-message success">✓ Updated</span>
+            {:else if form?.error}
+                <span class="status-message error">✗ {form.error}</span>
+            {/if}
         {/if}
     </div>
 </form>
@@ -171,14 +142,13 @@
         border-radius: var(--border-radius);
         margin-bottom: 1.5rem;
         overflow: hidden;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 
     .section-title {
         background: var(--primary);
         color: var(--primary-contrast);
         margin: 0;
-        padding: 0.75rem 1rem;
+        margin-top: 1rem;
         font-size: 1rem;
         font-weight: 600;
     }
@@ -227,7 +197,7 @@
     input:focus,
     textarea:focus {
         outline: none;
-        border-color: var(--primary);
+        border-color: var(--primary-dark);
         box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
     }
 
@@ -237,12 +207,11 @@
         line-height: 1.5;
     }
 
-    /* Make specific fields narrower */
+    /* Specific field widths */
     input[name='PARTNER_PHONE'] {
         width: 200px;
     }
 
-    /* Numeric input fields */
     input[name='HISTORY_LOOKBACK_HOURS'],
     input[id$='_TEMPERATURE'],
     input[id$='_TOP_P'],
@@ -252,7 +221,6 @@
         padding: 0.6rem 0.5rem;
     }
 
-    /* Model selection fields */
     input[name='OPENAI_MODEL'],
     input[name='ANTHROPIC_MODEL'],
     input[name='GROK_MODEL'] {
@@ -267,7 +235,7 @@
     }
 
     .save {
-        color: var(--primary-contrast);
+        color: var(--primary-dark);
         border: none;
         border-radius: var(--border-radius);
         padding: 0.7rem 1.5rem;
@@ -281,7 +249,7 @@
 
     .save:hover {
         background: var(--primary-dark);
-        color: var(--light);
+        color: var(--white);
     }
 
     .save:active {

@@ -262,7 +262,7 @@
                 {/if}
             {:else}
                 <section class="settings-section">
-                    <SettingsForm settings={data.settings} form={form} />
+                    <SettingsForm settings={data.settings} {form} />
                 </section>
             {/if}
         </div>
@@ -381,18 +381,6 @@
         line-height: 1.6;
         letter-spacing: 0.02em;
         overflow-wrap: break-word; /* Prevent long words from overflowing */
-    }
-
-    hr {
-        border: 0;
-        height: 1px;
-        background-image: linear-gradient(
-            to right,
-            hsla(var(--primary-hsl, 0, 0%, 20%), 0),
-            hsl(var(--primary-hsl, 0, 0%, 20%)),
-            hsla(var(--primary-hsl, 0, 0%, 20%), 0)
-        );
-        margin: 1rem 0;
     }
 
     /* ===== Loading Indicators ===== */
