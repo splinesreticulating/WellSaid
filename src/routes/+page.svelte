@@ -349,6 +349,7 @@
         background-color: var(--primary-light);
         color: var(--primary-dark);
         border-color: var(--light);
+        border-bottom: none;
     }
 
     /* ===== Form Consistency ===== */
@@ -408,10 +409,7 @@
         width: 100%;
         max-width: 800px;
         margin: 0 auto;
-        padding: 1rem;
-        background: var(--bg-secondary);
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 0;
     }
 
     /* ===== No Providers Message ===== */

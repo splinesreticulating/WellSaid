@@ -34,6 +34,13 @@
         font-weight: bold;
         display: block;
     }
+    input {
+        border: 1px solid var(--light);
+        border-radius: var(--border-radius);
+        padding: 0.5rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
     .description {
         font-size: 0.8rem;
         color: var(--gray);
