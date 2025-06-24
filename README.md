@@ -118,9 +118,9 @@ Update the values in the `.env` file. The following variables are needed:
     - `ALLOWED_HOST`: For remote access via Tailscale (see 'Accessing from Anywhere' below) -- leave blank or set to 'all' if you don't need access from outside your local network
 
 - **Security**
-    - `APP_USERNAME`: Your username
-    - `APP_PASSWORD`: Your password
-    - `JWT_SECRET`: Should be a long, random, and unpredictable string.
+    - `APP_USERNAME`: A name of your choosing
+    - `APP_PASSWORD`: A passowrd of your choice
+    - `JWT_SECRET`: A big, long, hard, random, and unpredictable string.
       You can generate one using OpenSSL with the following command in your terminal:
     ```bash
     openssl rand -base64 64
@@ -135,14 +135,14 @@ yarn dev
 
 The server will run over HTTP by default. If you place `cert.pem` and
 `key.pem` in a `.certs` directory at the project root (see the HTTPS section
-below), it will automatically use those files and start with HTTPS.
+below), it will automatically use those files and start with HTTPS. Pretty cool. 
 
 ## Usage
 
-1. Select a time frame to analyze
-1. Choose a tone for the reply suggestions
+1. Select a time frame to summarize
+1. Choose a tone for reply suggestions
 1. Click "go" to generate a conversation summary and some suggested replies of varying length
-1. Copy and paste a suggested reply into your conversation
+1. Copy your preferred reply to paste into the conversation
 
 ## How It Works
 
