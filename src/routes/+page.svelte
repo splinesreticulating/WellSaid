@@ -3,6 +3,7 @@
     import { goto } from '$app/navigation'
     import { enhance } from '$app/forms'
     import AdditionalContext from '$lib/components/AdditionalContext.svelte'
+    import SettingsForm from '$lib/components/SettingsForm.svelte'
     import AiProviderSelector from '$lib/components/AiProviderSelector.svelte'
     import ControlBar from '$lib/components/ControlBar.svelte'
     import ReplySuggestions from '$lib/components/ReplySuggestions.svelte'
@@ -263,26 +264,10 @@
                 </div>
                 {/if}
             {:else}
-            <form method="POST" use:enhance>
                 <section class="settings-section">
                     <h2>settings:</h2>
-                    {#each data.settings as setting}
-                        <div class="setting-row">
-                            <label for={setting.key}>{setting.key}</label>
-                            <input 
-                                id={setting.key} 
-                                name={setting.key} 
-                                type="text" 
-                                value={setting.value} 
-                            />
-                            <p class="description">{setting.description}</p>
-                        </div>
-                    {/each}
-                    <button type="submit" formaction="/settings" class="save-button">
-                        Save Settings
-                    </button>
+                    <SettingsForm settings={data.settings} />
                 </section>
-            </form>
             {/if}
         </div>
     </div>
@@ -312,10 +297,6 @@
         background-color: var(--primary-light);
         margin: 0;
         min-height: calc(100vh - 200px);
-    }
-
-    /* Home tab doesn't need scrollbar, settings tab does */
-    .tab-content:has(form[method="POST"]) {
         overflow-y: auto;
     }
 
@@ -429,70 +410,13 @@
 
     /* ===== Settings Styling ===== */
     .settings-section {
-        padding: 0;
-        display: flex;
-        flex-direction: column;
         width: 100%;
-        justify-content: flex-start;
-    }
-
-    .settings-section h2 {
-        font-family: var(--label-font);
-        font-size: 1.1rem;
-        color: var(--primary-dark);
-        margin-bottom: 1rem;
-        margin-top: 0;
-    }
-
-    .setting-row {
-        margin-bottom: 1rem;
-    }
-
-    .setting-row label {
-        font-family: var(--label-font);
-        font-weight: bold;
-        display: block;
-        margin-bottom: 0.25rem;
-        color: var(--primary-dark);
-        font-size: 0.9rem;
-    }
-
-    .setting-row input {
-        width: 100%;
-        padding: 0.4rem;
-        border: 1px solid var(--light);
-        border-radius: var(--border-radius);
-        font-family: var(--body-font);
-        background-color: var(--white);
-        font-size: 0.9rem;
-    }
-
-    .setting-row .description {
-        font-size: 0.75rem;
-        color: var(--gray);
-        margin-top: 0.2rem;
-        margin-bottom: 0;
-        font-style: italic;
-        line-height: 1.3;
-    }
-
-    .save-button {
-        background-color: var(--primary-dark);
-        color: var(--white);
-        border: none;
-        padding: 0.5rem 1rem;
-        border-radius: var(--border-radius);
-        cursor: pointer;
-        font-family: var(--body-font);
-        font-weight: bold;
-        margin-top: 1rem;
-        font-size: 0.9rem;
-        align-self: flex-start;
-    }
-
-    .save-button:hover {
-        background-color: var(--primary-light);
-        color: var(--primary-dark);
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 1rem;
+        background: var(--bg-secondary);
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     /* ===== No Providers Message ===== */
