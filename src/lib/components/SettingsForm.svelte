@@ -1,13 +1,51 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
 
-    let { settings, form = null } = $props<{
+    let { settings: initialSettings, form = null } = $props<{
         settings: { key: string; value: string; description: string }[]
         form?: any
     }>()
 
-    // Use updated settings from form response if available, otherwise use props
-    let currentSettings = $derived(form?.settings || settings)
+    // Create reactive state for settings
+    let settingsState = $state({
+        settings: [...initialSettings],
+        lastUpdated: Date.now()
+    });
+
+    // Update settings when props change
+    $effect(() => {
+        if (form?.settings) {
+            settingsState = {
+                settings: [...form.settings],
+                lastUpdated: Date.now()
+            };
+        } else if (initialSettings) {
+            settingsState = {
+                settings: [...initialSettings],
+                lastUpdated: Date.now()
+            };
+        }
+    });
+
+    // Get current settings from state
+    let currentSettings = $derived(settingsState.settings);
+
+    // Helper function to handle bindings
+    const getSettingValue = (key: string) => {
+        return settingsState.settings.find(s => s.key === key)?.value || '';
+    };
+
+    const setSettingValue = (key: string, value: string) => {
+        const index = settingsState.settings.findIndex(s => s.key === key);
+        if (index !== -1) {
+            const newSettings = [...settingsState.settings];
+            newSettings[index] = { ...newSettings[index], value };
+            settingsState = {
+                settings: newSettings,
+                lastUpdated: Date.now()
+            };
+        }
+    };
 
     // Group settings by provider/type
     let settingsGroups = $derived({
@@ -95,16 +133,17 @@
                                 <textarea
                                     id={setting.key}
                                     name={setting.key}
-                                    bind:value={setting.value}
+                                    oninput={(e) => setSettingValue(setting.key, (e.target as HTMLTextAreaElement).value)}
                                     rows="4"
-                                    class="context-textarea">{setting.value}</textarea
+                                    class="context-textarea">{getSettingValue(setting.key)}</textarea
                                 >
                             {:else}
                                 <input
                                     id={setting.key}
                                     name={setting.key}
                                     type={setting.key.includes('KEY') ? 'password' : 'text'}
-                                    bind:value={setting.value}
+                                    value={getSettingValue(setting.key)}
+                                    oninput={(e) => setSettingValue(setting.key, (e.target as HTMLInputElement).value)}
                                     placeholder={setting.key.includes('KEY')
                                         ? '••••••••••••••••'
                                         : ''}

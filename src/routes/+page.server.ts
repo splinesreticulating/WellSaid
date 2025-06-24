@@ -1,12 +1,12 @@
+import { getAnthropicReply } from '$lib/anthropic'
+import { getAllSettings, updateSetting } from '$lib/config'
+import { getGrokReply } from '$lib/grok'
 import { queryMessagesDb } from '$lib/iMessages'
 import { getKhojReply } from '$lib/khoj'
-import { getAnthropicReply } from '$lib/anthropic'
-import { getGrokReply } from '$lib/grok'
 import { logger } from '$lib/logger'
 import { getOpenaiReply } from '$lib/openAi'
 import { DEFAULT_PROVIDER } from '$lib/provider'
 import { getAvailableProviders, hasMultipleProviders } from '$lib/providers/registry'
-import { getAllSettings, updateSetting } from '$lib/config'
 import type { Message, ToneType } from '$lib/types'
 import { fail } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
@@ -47,10 +47,10 @@ export const actions: Actions = {
                 provider === 'khoj'
                     ? getKhojReply
                     : provider === 'anthropic'
-                      ? getAnthropicReply
-                      : provider === 'grok'
-                        ? getGrokReply
-                        : getOpenaiReply
+                        ? getAnthropicReply
+                        : provider === 'grok'
+                            ? getGrokReply
+                            : getOpenaiReply
 
             let messages: Message[]
             try {
@@ -85,28 +85,29 @@ export const actions: Actions = {
     settings: async ({ request }) => {
         try {
             const data = await request.formData()
-            
+
             // Validate that we have some data to save
             if (data.entries().next().done) {
                 return fail(400, { error: 'No settings data provided' })
             }
-            
+
             // Update each setting
             for (const [key, value] of data.entries()) {
                 await updateSetting(key, String(value))
             }
-            
+            logger.info('Settings updated')
+
             // Reload settings to get the updated values
             const settings = await getAllSettings()
-            
-            return { 
+
+            return {
                 success: true,
-                settings 
+                settings
             }
         } catch (error) {
-            console.error('Error saving settings:', error)
-            return fail(500, { 
-                error: 'Failed to save settings. Please try again.' 
+            logger.error('Error saving settings:', error)
+            return fail(500, {
+                error: 'Failed to save settings. Please try again.'
             })
         }
     },
