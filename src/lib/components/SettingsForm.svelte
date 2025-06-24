@@ -1,7 +1,7 @@
 <script lang="ts">
     import { enhance } from '$app/forms'
     export let settings: { key: string; value: string; description: string }[]
-    
+
     // Create a local copy of settings to bind to the form
     $: formSettings = [...settings]
 </script>
@@ -10,12 +10,7 @@
     {#each formSettings as setting}
         <div class="setting-row">
             <label for={setting.key}>{setting.key}</label>
-            <input 
-                id={setting.key} 
-                name={setting.key} 
-                type="text" 
-                bind:value={setting.value}
-            />
+            <input id={setting.key} name={setting.key} type="text" bind:value={setting.value} />
             <p class="description">{setting.description}</p>
         </div>
     {/each}

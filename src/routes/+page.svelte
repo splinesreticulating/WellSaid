@@ -1,16 +1,15 @@
 <script lang="ts">
     import { browser } from '$app/environment'
     import { goto } from '$app/navigation'
-    import { enhance } from '$app/forms'
     import AdditionalContext from '$lib/components/AdditionalContext.svelte'
-    import SettingsForm from '$lib/components/SettingsForm.svelte'
     import AiProviderSelector from '$lib/components/AiProviderSelector.svelte'
     import ControlBar from '$lib/components/ControlBar.svelte'
     import ReplySuggestions from '$lib/components/ReplySuggestions.svelte'
+    import SettingsForm from '$lib/components/SettingsForm.svelte'
     import ToneSelector from '$lib/components/ToneSelector.svelte'
-    import { type Message, type PageData, TONES, type ToneType } from '$lib/types'
-    import type { ProviderConfig } from '$lib/providers/registry'
     import type { Setting } from '$lib/config'
+    import type { ProviderConfig } from '$lib/providers/registry'
+    import { type Message, type PageData, TONES, type ToneType } from '$lib/types'
 
     const LOCAL_STORAGE_CONTEXT_KEY = 'wellsaid_additional_context'
 
@@ -27,7 +26,7 @@
 
     let formState = $state({
         ai: {
-            provider: DEFAULT_PROVIDER || (data.availableProviders[0]?.id || ''),
+            provider: DEFAULT_PROVIDER || data.availableProviders[0]?.id || '',
         },
         ui: {
             loading: false,
@@ -189,16 +188,10 @@
     </header>
 
     <nav class="tab-bar">
-        <button
-            class:active={activeTab === 'main'}
-            onclick={() => (activeTab = 'main')}
-        >
+        <button class:active={activeTab === 'main'} onclick={() => (activeTab = 'main')}>
             home
         </button>
-        <button
-            class:active={activeTab === 'settings'}
-            onclick={() => (activeTab = 'settings')}
-        >
+        <button class:active={activeTab === 'settings'} onclick={() => (activeTab = 'settings')}>
             settings
         </button>
     </nav>
@@ -207,65 +200,67 @@
         <div class="tab-content">
             {#if activeTab === 'main'}
                 {#if hasProviders}
-                <form onsubmit={handleSubmit}>
-                    <ControlBar
-                        bind:lookBackHours={formState.form.lookBackHours}
-                        messageCount={formState.form.messages.length}
-                        onclick={queryAI}
-                        canGenerate={canGenerateReplies}
-                        isLoading={showLoadingIndicators}
-                    />
-
-                    <!-- Additional context (collapsible) -->
-                    <AdditionalContext
-                        bind:additionalContext={formState.form.additionalContext}
-                        bind:expanded={additionalContextExpanded}
-                    />
-
-                    <!-- Conversation summary -->
-                    <section class="conversation">
-                        <div class="summary">
-                            {#if showLoadingIndicators}
-                                <div class="loading-indicator">{summaryContent}</div>
-                            {:else}
-                                {summaryContent}
-                            {/if}
-                        </div>
-                    </section>
-
-                    <hr />
-
-                    <!-- Reply suggestions section -->
-                    <section class="reply-section">
-                        <h2>suggested replies:</h2>
-
-                        <ToneSelector bind:selectedTone={formState.form.tone} tones={TONES} />
-
-                        <ReplySuggestions
-                            replies={formState.form.suggestedReplies}
-                            loading={showLoadingIndicators}
+                    <form onsubmit={handleSubmit}>
+                        <ControlBar
+                            bind:lookBackHours={formState.form.lookBackHours}
+                            messageCount={formState.form.messages.length}
+                            onclick={queryAI}
+                            canGenerate={canGenerateReplies}
+                            isLoading={showLoadingIndicators}
                         />
-                    </section>
-                    <hr />
-                    {#if data.multiProvider}
-                        <AiProviderSelector
-                            bind:value={formState.ai.provider}
-                            providers={data.availableProviders}
+
+                        <!-- Additional context (collapsible) -->
+                        <AdditionalContext
+                            bind:additionalContext={formState.form.additionalContext}
+                            bind:expanded={additionalContextExpanded}
                         />
-                    {/if}
-                </form>
+
+                        <!-- Conversation summary -->
+                        <section class="conversation">
+                            <div class="summary">
+                                {#if showLoadingIndicators}
+                                    <div class="loading-indicator">{summaryContent}</div>
+                                {:else}
+                                    {summaryContent}
+                                {/if}
+                            </div>
+                        </section>
+
+                        <hr />
+
+                        <!-- Reply suggestions section -->
+                        <section class="reply-section">
+                            <h2>suggested replies:</h2>
+
+                            <ToneSelector bind:selectedTone={formState.form.tone} tones={TONES} />
+
+                            <ReplySuggestions
+                                replies={formState.form.suggestedReplies}
+                                loading={showLoadingIndicators}
+                            />
+                        </section>
+                        <hr />
+                        {#if data.multiProvider}
+                            <AiProviderSelector
+                                bind:value={formState.ai.provider}
+                                providers={data.availableProviders}
+                            />
+                        {/if}
+                    </form>
                 {:else}
-                <div class="no-providers-message">
-                    <h2>No AI providers are configured</h2>
-                    <p>Please set at least one provider in settings to use WellSaid.</p>
-                    <button onclick={() => (activeTab = 'settings')} class="settings-link-button">
-                        Go to Settings
-                    </button>
-                </div>
+                    <div class="no-providers-message">
+                        <h2>No AI providers are configured</h2>
+                        <p>Please set at least one provider in settings to use WellSaid.</p>
+                        <button
+                            onclick={() => (activeTab = 'settings')}
+                            class="settings-link-button"
+                        >
+                            Go to Settings
+                        </button>
+                    </div>
                 {/if}
             {:else}
                 <section class="settings-section">
-                    <h2>settings:</h2>
                     <SettingsForm settings={data.settings} />
                 </section>
             {/if}
