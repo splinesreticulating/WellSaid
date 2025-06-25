@@ -33,7 +33,7 @@
 
 ## Features
 
-- **Conversation Summaries**: Analyze your Apple iMessages app conversations with a partner from the last 1-24 hours
+- **Conversation Summaries**: Analyze your Apple iMessage conversations with from the last 1-24 hours
 - **Smart Reply Suggestions**: Get short, medium, and long AI-generated reply options based on recent and and historical conversation context
 - **Tone Selection**: Set the tone for your replies with (eg: gentle, funny, reassuring, concise)
 - **Context Addition**: Add additional context to help generate more relevant replies
