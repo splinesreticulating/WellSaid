@@ -77,20 +77,3 @@ export function getDefaultProvider(): string {
 export function hasMultipleProviders(): boolean {
     return getAvailableProviders().length > 1
 }
-
-/**
- * Validate that at least one provider is configured
- */
-export function validateProviders(): void {
-    const available = getAvailableProviders()
-
-    if (available.length === 0) {
-        console.error(
-            'Error: No AI providers are configured. Set at least one of the following settings:'
-        )
-        PROVIDER_REGISTRY.forEach((provider) => {
-            console.error(`  - ${provider.envVar} (for ${provider.displayName})`)
-        })
-        process.exit(1)
-    }
-}
