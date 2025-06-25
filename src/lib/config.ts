@@ -22,7 +22,7 @@ await db.exec(`CREATE TABLE IF NOT EXISTS settings (
 const defaultSettings: Record<string, { value?: string; description: string }> = {
     PARTNER_PHONE: {
         value: env.PARTNER_PHONE,
-        description: "Your partner's phone number in the Messages app",
+        description: "Your conversation partner's phone number in the Messages app",
     },
     HISTORY_LOOKBACK_HOURS: {
         value: env.HISTORY_LOOKBACK_HOURS,
@@ -56,7 +56,7 @@ const defaultSettings: Record<string, { value?: string; description: string }> =
     },
     ANTHROPIC_API_KEY: {
         value: env.ANTHROPIC_API_KEY,
-        description: 'Available at https://console.anthropic.com/api-keys',
+        description: 'Available at https://console.anthropic.com',
     },
     ANTHROPIC_MODEL: {
         value: env.ANTHROPIC_MODEL,
@@ -68,7 +68,7 @@ const defaultSettings: Record<string, { value?: string; description: string }> =
     },
     GROK_API_KEY: {
         value: env.GROK_API_KEY,
-        description: 'Available at https://console.grok.ai/api-keys',
+        description: 'Available at https://x.ai',
     },
     GROK_MODEL: { value: env.GROK_MODEL, description: 'grok-1 or another Grok model' },
     GROK_TEMPERATURE: {
