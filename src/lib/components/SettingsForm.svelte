@@ -25,6 +25,9 @@
         general: settings.filter((s: { key: string; value: string; description: string }) =>
             ['HISTORY_LOOKBACK_HOURS', 'PARTNER_PHONE', 'CUSTOM_CONTEXT'].includes(s.key)
         ),
+        khoj: settings.filter((s: { key: string; value: string; description: string }) =>
+            s.key.startsWith('KHOJ_')
+        ),
         openai: settings.filter((s: { key: string; value: string; description: string }) =>
             s.key.startsWith('OPENAI_')
         ),
@@ -33,9 +36,6 @@
         ),
         grok: settings.filter((s: { key: string; value: string; description: string }) =>
             s.key.startsWith('GROK_')
-        ),
-        khoj: settings.filter((s: { key: string; value: string; description: string }) =>
-            s.key.startsWith('KHOJ_')
         ),
     })
 
@@ -112,9 +112,7 @@
                                     name={setting.key}
                                     type={setting.key.includes('KEY') ? 'password' : 'text'}
                                     bind:value={settingValues[setting.key]}
-                                    placeholder={setting.key.includes('KEY')
-                                        ? '••••••••••••••••'
-                                        : ''}
+                                    placeholder={''}
                                 />
                             {/if}
                         </div>
