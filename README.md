@@ -101,7 +101,7 @@ yarn dev
 
 The server will run over HTTP by default. If you place `cert.pem` and
 `key.pem` in a `.certs` directory at the project root (see the HTTPS section
-below), it will automatically use those files and start with HTTPS. Pretty cool. 
+below), it will automatically use those files and start with HTTPS. Pretty cool.
 
 ## Usage
 

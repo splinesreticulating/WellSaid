@@ -13,8 +13,12 @@ const getConfig = (): OpenAIConfig => ({
     model: settings.OPENAI_MODEL || DEFAULT_MODEL,
     temperature: Number(settings.OPENAI_TEMPERATURE || DEFAULT_TEMPERATURE),
     topP: settings.OPENAI_TOP_P ? Number(settings.OPENAI_TOP_P) : undefined,
-    frequencyPenalty: settings.OPENAI_FREQUENCY_PENALTY ? Number(settings.OPENAI_FREQUENCY_PENALTY) : undefined,
-    presencePenalty: settings.OPENAI_PRESENCE_PENALTY ? Number(settings.OPENAI_PRESENCE_PENALTY) : undefined,
+    frequencyPenalty: settings.OPENAI_FREQUENCY_PENALTY
+        ? Number(settings.OPENAI_FREQUENCY_PENALTY)
+        : undefined,
+    presencePenalty: settings.OPENAI_PRESENCE_PENALTY
+        ? Number(settings.OPENAI_PRESENCE_PENALTY)
+        : undefined,
     apiUrl: API_URL,
     apiKey: settings.OPENAI_API_KEY,
 })

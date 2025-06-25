@@ -43,7 +43,6 @@ const PROVIDER_REGISTRY: Omit<ProviderConfig, 'isAvailable'>[] = [
     // }
 ]
 
-
 /**
  * Get all available AI providers based on configured settings
  */

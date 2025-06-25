@@ -11,7 +11,9 @@ describe('prompts', () => {
     describe('PERMANENT_CONTEXT', () => {
         it('should include custom context and instructions', () => {
             expect(systemContext()).toContain('Test custom context for prompts')
-            expect(systemContext()).toContain('mimic my vocabulary and tone when suggesting replies')
+            expect(systemContext()).toContain(
+                'mimic my vocabulary and tone when suggesting replies'
+            )
         })
     })
 

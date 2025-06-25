@@ -47,10 +47,10 @@ export const actions: Actions = {
                 provider === 'khoj'
                     ? getKhojReply
                     : provider === 'anthropic'
-                        ? getAnthropicReply
-                        : provider === 'grok'
-                            ? getGrokReply
-                            : getOpenaiReply
+                      ? getAnthropicReply
+                      : provider === 'grok'
+                        ? getGrokReply
+                        : getOpenaiReply
 
             let messages: Message[]
             try {
@@ -102,12 +102,12 @@ export const actions: Actions = {
 
             return {
                 success: true,
-                settings
+                settings,
             }
         } catch (error) {
             logger.error('Error saving settings:', error)
             return fail(500, {
-                error: 'Failed to save settings. Please try again.'
+                error: 'Failed to save settings. Please try again.',
             })
         }
     },

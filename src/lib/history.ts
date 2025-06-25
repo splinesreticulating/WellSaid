@@ -4,7 +4,6 @@ import { queryMessagesDb } from './iMessages'
 import { logger } from './logger'
 import { formatMessagesAsText } from './utils'
 
-
 export const fetchRelevantHistory = async (messages: Message[]): Promise<string> => {
     try {
         const lookbackHours = Number.parseInt(settings.HISTORY_LOOKBACK_HOURS || '0')

@@ -11,7 +11,11 @@ const CHAT_DB_PATH = path.join(os.homedir(), 'Library', 'Messages', 'chat.db')
 
 const buildQuery = (startDate: string, endDate: string) => {
     logger.debug({ startDate, endDate }, 'Getting messages')
-    const params = [settings.PARTNER_PHONE, isoToAppleNanoseconds(startDate), isoToAppleNanoseconds(endDate)]
+    const params = [
+        settings.PARTNER_PHONE,
+        isoToAppleNanoseconds(startDate),
+        isoToAppleNanoseconds(endDate),
+    ]
 
     const query = `
         SELECT
