@@ -1,6 +1,13 @@
-import { getDefaultProvider, validateProviders } from './providers/registry'
+import { getDefaultProvider } from './providers/registry'
 
-export const DEFAULT_PROVIDER = getDefaultProvider()
+// Safe initialization - don't throw errors during module load
+let DEFAULT_PROVIDER: string | null = null
 
-// Validate that at least one provider is configured
-validateProviders()
+try {
+    DEFAULT_PROVIDER = getDefaultProvider()
+} catch {
+    // No providers configured - this is handled in the UI
+    DEFAULT_PROVIDER = null
+}
+
+export { DEFAULT_PROVIDER }

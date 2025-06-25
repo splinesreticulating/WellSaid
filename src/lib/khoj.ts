@@ -1,11 +1,11 @@
-import { KHOJ_AGENT, KHOJ_API_URL } from '$env/static/private'
+import { settings } from '$lib/config'
 import { khojPrompt } from '$lib/prompts'
 import type { Message, ToneType } from '$lib/types'
 import { extractReplies, parseSummaryToHumanReadable } from '$lib/utils'
 import { fetchRelevantHistory } from './history'
 import { logger } from './logger'
 
-const khojApiUrl = KHOJ_API_URL || 'http://localhost:42110/api/chat'
+const khojApiUrl = settings.KHOJ_API_URL || 'http://localhost:42110/api/chat'
 
 export const getKhojReply = async (
     messages: Message[],
@@ -17,7 +17,7 @@ export const getKhojReply = async (
     const prompt = khojPrompt(messages, tone, mergedContext)
     const body = {
         q: prompt,
-        ...(KHOJ_AGENT ? { agent: KHOJ_AGENT } : {}),
+        ...(settings.KHOJ_AGENT ? { agent: settings.KHOJ_AGENT } : {}),
     }
 
     logger.debug({ body }, 'Khoj body')

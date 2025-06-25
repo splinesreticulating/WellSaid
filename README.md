@@ -75,38 +75,6 @@ cp .env.example .env
 
 Update the values in the `.env` file. The following variables are needed:
 
-- **Customization**
-
-    - `PARTNER_PHONE`: Your partner's phone number in the Messages app
-    - `HISTORY_LOOKBACK_HOURS`: How many hours of prior conversation history to search for extra context
-    - `CUSTOM_CONTEXT`: To guide the AI's personality and behavior (Example: "Act as my therapist suggesting replies to my partner" or "You are a helpful assistant")
-
-- **Open AI**
-
-    - `OPENAI_API_KEY`: Your OpenAI API key
-    - `OPENAI_MODEL`: gpt-4 or any other OpenAI model
-    - `OPENAI_TEMPERATURE`: Controls the randomness of the responses
-    - `OPENAI_TOP_P`: Lets the responses be a little more adventurous
-    - `OPENAI_FREQUENCY_PENALTY`: Keeps the suggestions from repeating themselves
-    - `OPENAI_PRESENCE_PENALTY`: Nudges the AI to bring up fresh ideas
-
-- **Anthropic**
-
-    - `ANTHROPIC_API_KEY`: Your Anthropic API key
-    - `ANTHROPIC_MODEL`: claude-3-opus-20240229 or another Anthropic model
-    - `ANTHROPIC_TEMPERATURE`: Controls the randomness of Claude's responses
-
-- **Grok**
-
-    - `GROK_API_KEY`: Your Grok API key
-    - `GROK_MODEL`: grok-1 or another Grok model
-    - `GROK_TEMPERATURE`: Controls the randomness of Grok's responses
-
-- **Khoj**
-
-    - `KHOJ_API_URL`: Your [Khoj](https://khoj.dev/) server API URL if you have one, otherwise leave this out or leave it blank
-    - `KHOJ_AGENT`: The [Khoj agent](https://docs.khoj.dev/features/agents/) to use if you have one, otherwise leave this out or leave it blank
-
 - **Logging**
 
     - `LOG_LEVEL`: Logging level (info, debug, warn, error)

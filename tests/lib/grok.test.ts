@@ -8,19 +8,16 @@ vi.mock('$lib/history', () => ({
 
 vi.mock('$lib/prompts', () => ({
     openAiPrompt: vi.fn().mockReturnValue('prompt'),
-    systemContext: 'sys',
+    systemContext: () => 'sys',
 }))
 
-vi.mock('$env/static/private', async (importOriginal) => {
-    const actual = (await importOriginal()) as Record<string, string | undefined>
-    return {
-        ...actual,
+vi.mock('$lib/config', () => ({
+    settings: {
         GROK_API_KEY: 'test-api-key',
         GROK_MODEL: 'test-model',
         GROK_TEMPERATURE: '0.5',
-        LOG_LEVEL: 'info',
-    }
-})
+    },
+}))
 
 describe('getGrokReply', () => {
     beforeEach(() => {

@@ -5,25 +5,29 @@
     import AiProviderSelector from '$lib/components/AiProviderSelector.svelte'
     import ControlBar from '$lib/components/ControlBar.svelte'
     import ReplySuggestions from '$lib/components/ReplySuggestions.svelte'
+    import SettingsForm from '$lib/components/SettingsForm.svelte'
     import ToneSelector from '$lib/components/ToneSelector.svelte'
-    import { type Message, type PageData, TONES, type ToneType } from '$lib/types'
+    import type { Setting } from '$lib/config'
     import type { ProviderConfig } from '$lib/providers/registry'
+    import { type Message, type PageData, TONES, type ToneType } from '$lib/types'
 
     const LOCAL_STORAGE_CONTEXT_KEY = 'wellsaid_additional_context'
 
-    const { data } = $props<{
+    const { data, form } = $props<{
         data: PageData & {
             multiProvider: boolean
             defaultProvider: string
             availableProviders: ProviderConfig[]
+            settings: Setting[]
         }
+        form?: any
     }>()
 
     const DEFAULT_PROVIDER = data.defaultProvider
 
     let formState = $state({
         ai: {
-            provider: DEFAULT_PROVIDER,
+            provider: DEFAULT_PROVIDER || data.availableProviders[0]?.id || '',
         },
         ui: {
             loading: false,
@@ -38,11 +42,14 @@
         },
     })
 
+    let activeTab = $state<'main' | 'settings'>('main')
+
     let additionalContextExpanded = $state(false)
 
     // Derived values
     const hasMessages = $derived(formState.form.messages.length > 0)
     const canGenerateReplies = $derived(hasMessages && !formState.ui.loading)
+    const hasProviders = $derived(data.availableProviders.length > 0)
     const showLoadingIndicators = $derived(formState.ui.loading)
     const summaryContent = $derived(
         formState.ui.loading
@@ -181,54 +188,84 @@
         <i>Empathy. Upgraded.</i>
     </header>
 
+    <nav class="tab-bar">
+        <button class:active={activeTab === 'main'} onclick={() => (activeTab = 'main')}>
+            home
+        </button>
+        <button class:active={activeTab === 'settings'} onclick={() => (activeTab = 'settings')}>
+            settings
+        </button>
+    </nav>
+
     <div class="content-container">
-        <form onsubmit={handleSubmit}>
-            <ControlBar
-                bind:lookBackHours={formState.form.lookBackHours}
-                messageCount={formState.form.messages.length}
-                onclick={queryAI}
-                canGenerate={canGenerateReplies}
-                isLoading={showLoadingIndicators}
-            />
+        <div class="tab-content">
+            {#if activeTab === 'main'}
+                {#if hasProviders}
+                    <form onsubmit={handleSubmit}>
+                        <ControlBar
+                            bind:lookBackHours={formState.form.lookBackHours}
+                            messageCount={formState.form.messages.length}
+                            onclick={queryAI}
+                            canGenerate={canGenerateReplies}
+                            isLoading={showLoadingIndicators}
+                        />
 
-            <!-- Additional context (collapsible) -->
-            <AdditionalContext
-                bind:additionalContext={formState.form.additionalContext}
-                bind:expanded={additionalContextExpanded}
-            />
+                        <!-- Additional context (collapsible) -->
+                        <AdditionalContext
+                            bind:additionalContext={formState.form.additionalContext}
+                            bind:expanded={additionalContextExpanded}
+                        />
 
-            <!-- Conversation summary -->
-            <section class="conversation">
-                <div class="summary">
-                    {#if showLoadingIndicators}
-                        <div class="loading-indicator">{summaryContent}</div>
-                    {:else}
-                        {summaryContent}
-                    {/if}
-                </div>
-            </section>
+                        <!-- Conversation summary -->
+                        <section class="conversation">
+                            <div class="summary">
+                                {#if showLoadingIndicators}
+                                    <div class="loading-indicator">{summaryContent}</div>
+                                {:else}
+                                    {summaryContent}
+                                {/if}
+                            </div>
+                        </section>
 
-            <hr />
+                        <hr />
 
-            <!-- Reply suggestions section -->
-            <section class="reply-section">
-                <h2>suggested replies:</h2>
+                        <!-- Reply suggestions section -->
+                        <section class="reply-section">
+                            <h2>suggested replies:</h2>
 
-                <ToneSelector bind:selectedTone={formState.form.tone} tones={TONES} />
+                            <ToneSelector bind:selectedTone={formState.form.tone} tones={TONES} />
 
-                <ReplySuggestions
-                    replies={formState.form.suggestedReplies}
-                    loading={showLoadingIndicators}
-                />
-            </section>
-            <hr />
-            {#if data.multiProvider}
-                <AiProviderSelector
-                    bind:value={formState.ai.provider}
-                    providers={data.availableProviders}
-                />
+                            <ReplySuggestions
+                                replies={formState.form.suggestedReplies}
+                                loading={showLoadingIndicators}
+                            />
+                        </section>
+                        <hr />
+                        {#if data.multiProvider}
+                            <AiProviderSelector
+                                bind:value={formState.ai.provider}
+                                providers={data.availableProviders}
+                            />
+                        {/if}
+                    </form>
+                {:else}
+                    <div class="no-providers-message">
+                        <h2>No AI providers are configured</h2>
+                        <p>Please set at least one provider in settings to use WellSaid.</p>
+                        <button
+                            onclick={() => (activeTab = 'settings')}
+                            class="settings-link-button"
+                        >
+                            Go to Settings
+                        </button>
+                    </div>
+                {/if}
+            {:else}
+                <section class="settings-section">
+                    <SettingsForm settings={data.settings} {form} />
+                </section>
             {/if}
-        </form>
+        </div>
     </div>
 </main>
 
@@ -238,22 +275,25 @@
         padding-bottom: 1rem;
     }
 
-    @media (min-width: 768px) {
-        .content-container > form {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-    }
-
-    form {
+    .content-container {
         display: flex;
         flex-direction: column;
-        border: 1px solid var(--light);
-        border-radius: var(--border-radius);
+        align-items: center;
+        padding: 0;
+    }
+
+    .tab-content {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 600px;
         padding: 1rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--light);
+        border-radius: var(--border-radius) 0 var(--border-radius) var(--border-radius);
         background-color: var(--primary-light);
+        margin: 0;
+        min-height: calc(100vh - 200px);
+        overflow-y: auto;
     }
 
     /* ===== Header ===== */
@@ -276,6 +316,54 @@
         margin-bottom: 1.25rem;
     }
 
+    /* ===== Tab Bar ===== */
+    .tab-bar {
+        display: flex;
+        gap: 0;
+        padding: 0;
+        background-color: transparent;
+        margin-bottom: -1px;
+        position: relative;
+        z-index: 1;
+        justify-content: flex-end;
+        width: 100%;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .tab-bar button {
+        font-size: 0.9rem;
+        background-color: var(--gray);
+        color: var(--white);
+        padding: 0.5rem 1rem;
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+        border: 1px solid var(--light);
+        border-bottom: none;
+        cursor: pointer;
+        opacity: 0.8;
+        margin-left: 2px;
+    }
+
+    .tab-bar button.active {
+        opacity: 1;
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
+        border-color: var(--light);
+        border-bottom: none;
+    }
+
+    /* ===== Form Consistency ===== */
+    form {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+        background-color: transparent;
+    }
+
     /* ===== Conversation Section ===== */
     .conversation {
         background-color: var(--light);
@@ -295,18 +383,6 @@
         overflow-wrap: break-word; /* Prevent long words from overflowing */
     }
 
-    hr {
-        border: 0;
-        height: 1px;
-        background-image: linear-gradient(
-            to right,
-            hsla(var(--primary-hsl, 0, 0%, 20%), 0),
-            hsl(var(--primary-hsl, 0, 0%, 20%)),
-            hsla(var(--primary-hsl, 0, 0%, 20%), 0)
-        );
-        margin: 1rem 0;
-    }
-
     /* ===== Loading Indicators ===== */
     .loading-indicator {
         display: flex;
@@ -317,19 +393,48 @@
         padding: 1rem;
     }
 
-    /* ===== Animations ===== */
-    @keyframes pulse {
-        0% {
-            transform: scale(0.8);
-            opacity: 0.5;
-        }
-        50% {
-            transform: scale(1.2);
-            opacity: 1;
-        }
-        100% {
-            transform: scale(0.8);
-            opacity: 0.5;
-        }
+    /* ===== Settings Styling ===== */
+    .settings-section {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0;
+    }
+
+    /* ===== No Providers Message ===== */
+    .no-providers-message {
+        text-align: center;
+        padding: 2rem;
+        color: var(--primary-dark);
+    }
+
+    .no-providers-message h2 {
+        color: var(--primary-dark);
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .no-providers-message p {
+        margin-bottom: 1.5rem;
+        color: var(--gray);
+        line-height: 1.4;
+    }
+
+    .settings-link-button {
+        background-color: var(--primary-dark);
+        color: var(--white);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--border-radius);
+        cursor: pointer;
+        font-family: var(--body-font);
+        font-weight: bold;
+        font-size: 1rem;
+        transition: background-color 0.2s ease;
+    }
+
+    .settings-link-button:hover {
+        background-color: var(--primary-light);
+        color: var(--primary-dark);
     }
 </style>

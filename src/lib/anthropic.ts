@@ -1,4 +1,4 @@
-import { ANTHROPIC_API_KEY, ANTHROPIC_MODEL, ANTHROPIC_TEMPERATURE } from '$env/static/private'
+import { settings } from '$lib/config'
 import { anthropicPrompt } from '$lib/prompts'
 import type { Message, ToneType } from '$lib/types'
 import { extractReplies, parseSummaryToHumanReadable } from '$lib/utils'
@@ -10,9 +10,9 @@ const DEFAULT_MODEL = 'claude-3-opus-20240229'
 const DEFAULT_TEMPERATURE = 0.5
 
 const getConfig = () => ({
-    model: ANTHROPIC_MODEL || DEFAULT_MODEL,
-    temperature: Number(ANTHROPIC_TEMPERATURE || DEFAULT_TEMPERATURE),
-    apiKey: ANTHROPIC_API_KEY,
+    model: settings.ANTHROPIC_MODEL || DEFAULT_MODEL,
+    temperature: Number(settings.ANTHROPIC_TEMPERATURE || DEFAULT_TEMPERATURE),
+    apiKey: settings.ANTHROPIC_API_KEY,
 })
 
 export const getAnthropicReply = async (

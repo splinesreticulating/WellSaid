@@ -1,7 +1,8 @@
+import { getAnthropicReply } from '$lib/anthropic'
+import { getAllSettings, updateSetting } from '$lib/config'
+import { getGrokReply } from '$lib/grok'
 import { queryMessagesDb } from '$lib/iMessages'
 import { getKhojReply } from '$lib/khoj'
-import { getAnthropicReply } from '$lib/anthropic'
-import { getGrokReply } from '$lib/grok'
 import { logger } from '$lib/logger'
 import { getOpenaiReply } from '$lib/openAi'
 import { DEFAULT_PROVIDER } from '$lib/provider'
@@ -17,12 +18,15 @@ export const load: PageServerLoad = async ({ url }) => {
     const end = new Date()
     const start = new Date(end.getTime() - lookBack * ONE_HOUR)
     const { messages } = await queryMessagesDb(start.toISOString(), end.toISOString())
+    const settings = await getAllSettings()
+    const availableProviders = getAvailableProviders()
 
     return {
         messages,
         multiProvider: hasMultipleProviders(),
-        defaultProvider: DEFAULT_PROVIDER,
-        availableProviders: getAvailableProviders(),
+        defaultProvider: DEFAULT_PROVIDER || '', // Handle null case
+        availableProviders,
+        settings,
     }
 }
 
@@ -43,10 +47,10 @@ export const actions: Actions = {
                 provider === 'khoj'
                     ? getKhojReply
                     : provider === 'anthropic'
-                      ? getAnthropicReply
-                      : provider === 'grok'
-                        ? getGrokReply
-                        : getOpenaiReply
+                        ? getAnthropicReply
+                        : provider === 'grok'
+                            ? getGrokReply
+                            : getOpenaiReply
 
             let messages: Message[]
             try {
@@ -75,6 +79,35 @@ export const actions: Actions = {
             return fail(500, {
                 error: 'Failed to generate suggestions',
                 details: err instanceof Error ? err.message : String(err),
+            })
+        }
+    },
+    settings: async ({ request }) => {
+        try {
+            const data = await request.formData()
+
+            // Validate that we have some data to save
+            if (data.entries().next().done) {
+                return fail(400, { error: 'No settings data provided' })
+            }
+
+            // Update each setting
+            for (const [key, value] of data.entries()) {
+                await updateSetting(key, String(value))
+            }
+            logger.info('Settings updated')
+
+            // Reload settings to get the updated values
+            const settings = await getAllSettings()
+
+            return {
+                success: true,
+                settings
+            }
+        } catch (error) {
+            logger.error('Error saving settings:', error)
+            return fail(500, {
+                error: 'Failed to save settings. Please try again.'
             })
         }
     },

@@ -9,21 +9,18 @@ function getFetchRequestBody<T = unknown>(callIndex = 0): T {
     return JSON.parse(fetchCall.body as string) as T
 }
 
-// Mock the environment variables
-vi.mock('$env/static/private', async (importOriginal) => {
-    const actual = (await importOriginal()) as Record<string, string | undefined>
-    return {
-        ...actual,
+// Mock configuration settings
+vi.mock('$lib/config', () => ({
+    settings: {
         OPENAI_API_KEY: 'test-api-key',
         OPENAI_MODEL: 'test-model',
         OPENAI_TEMPERATURE: '0.5',
         OPENAI_TOP_P: '0.7',
         OPENAI_FREQUENCY_PENALTY: '0.1',
         OPENAI_PRESENCE_PENALTY: '0.2',
-        LOG_LEVEL: 'info',
         CUSTOM_CONTEXT: 'Act as my therapist suggesting replies to my partner',
-    }
-})
+    },
+}))
 
 vi.mock('$lib/history', () => ({
     fetchRelevantHistory: vi.fn().mockResolvedValue('old context'),
@@ -32,7 +29,7 @@ vi.mock('$lib/history', () => ({
 describe('getOpenaiReply', () => {
     beforeEach(async () => {
         vi.clearAllMocks()
-        vi.mocked(await import('$env/static/private')).OPENAI_API_KEY = 'test-api-key'
+        ;(await import('$lib/config')).settings.OPENAI_API_KEY = 'test-api-key'
         // Mock the fetch function
         global.fetch = vi.fn().mockResolvedValue({
             ok: true,
@@ -124,8 +121,8 @@ describe('getOpenaiReply', () => {
     })
 
     it('should handle case when OPENAI_API_KEY is not set', async () => {
-        // Mock the environment variables without the API key
-        vi.mocked(await import('$env/static/private')).OPENAI_API_KEY = ''
+        // Mock the setting without the API key
+        ;(await import('$lib/config')).settings.OPENAI_API_KEY = ''
 
         const messages: Message[] = [
             {
@@ -209,9 +206,9 @@ describe('getOpenaiReply', () => {
     })
 
     it('omits optional parameters when environment variables are empty', async () => {
-        vi.mocked(await import('$env/static/private')).OPENAI_TOP_P = ''
-        vi.mocked(await import('$env/static/private')).OPENAI_FREQUENCY_PENALTY = ''
-        vi.mocked(await import('$env/static/private')).OPENAI_PRESENCE_PENALTY = ''
+        ;(await import('$lib/config')).settings.OPENAI_TOP_P = ''
+        ;(await import('$lib/config')).settings.OPENAI_FREQUENCY_PENALTY = ''
+        ;(await import('$lib/config')).settings.OPENAI_PRESENCE_PENALTY = ''
         vi.resetModules()
         const { getOpenaiReply: getOpenaiReplyNoOpts } = await import('$lib/openAi')
 
