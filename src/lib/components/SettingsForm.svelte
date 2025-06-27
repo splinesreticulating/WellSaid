@@ -266,6 +266,12 @@
         margin: 0;
     }
 
+    @media (max-width: 768px) {
+        input[type='range'] {
+            accent-color: var(--primary-dark);
+        }
+    }
+
     .range-value {
         display: inline-block;
         min-width: 30px;
