@@ -8,7 +8,7 @@
 
     // Initialize form values from props
     let settingValues = $state<Record<string, string>>(
-        Object.fromEntries(settings.map(s => [s.key, s.value]))
+        Object.fromEntries(settings.map((s: { key: string; value: string }) => [s.key, s.value]))
     )
 
     const rangeSettings: Record<string, { min: number; max: number; step?: number }> = {
@@ -24,7 +24,7 @@
     // Update form values when settings change
     $effect(() => {
         if (form?.settings) {
-            settingValues = Object.fromEntries(form.settings.map(s => [s.key, s.value]));
+            settingValues = Object.fromEntries(form.settings.map((s: { key: string; value: string }) => [s.key, s.value]));
         }
     })
     
