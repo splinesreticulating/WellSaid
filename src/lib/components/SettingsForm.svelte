@@ -30,6 +30,17 @@
         }
     })
 
+    // Update local state when the form store returns fresh settings
+    $effect(() => {
+        if (form?.settings) {
+            const values: Record<string, string> = {}
+            for (const setting of form.settings) {
+                values[setting.key] = setting.value
+            }
+            settingValues = values
+        }
+    })
+
     // Group settings by provider
     const settingsGroups = $derived({
         general: settings.filter((s: { key: string; value: string; description: string }) =>
