@@ -9,6 +9,16 @@
     // Simple reactive state for form values
     let settingValues = $state<Record<string, string>>({})
 
+    const rangeSettings: Record<string, { min: number; max: number; step?: number }> = {
+        HISTORY_LOOKBACK_HOURS: { min: 0, max: 48, step: 1 },
+        OPENAI_TEMPERATURE: { min: 0, max: 1, step: 0.1 },
+        OPENAI_TOP_P: { min: 0, max: 1, step: 0.05 },
+        OPENAI_FREQUENCY_PENALTY: { min: -2, max: 2, step: 0.1 },
+        OPENAI_PRESENCE_PENALTY: { min: -2, max: 2, step: 0.1 },
+        ANTHROPIC_TEMPERATURE: { min: 0, max: 1, step: 0.1 },
+        GROK_TEMPERATURE: { min: 0, max: 1, step: 0.1 },
+    }
+
     // Initialize form values once on mount
     $effect(() => {
         if (Object.keys(settingValues).length === 0) {
@@ -106,6 +116,20 @@
                                     rows="4"
                                     class="context-textarea"
                                 ></textarea>
+                            {:else if rangeSettings[setting.key]}
+                                <div class="range-wrapper">
+                                    <input
+                                        id={setting.key}
+                                        name={setting.key}
+                                        type="range"
+                                        min={rangeSettings[setting.key].min}
+                                        max={rangeSettings[setting.key].max}
+                                        step={rangeSettings[setting.key].step ?? 1}
+                                        bind:value={settingValues[setting.key]}
+                                        class="range-input"
+                                    />
+                                    <span class="range-value">{settingValues[setting.key]}</span>
+                                </div>
                             {:else}
                                 <input
                                     id={setting.key}
@@ -210,13 +234,28 @@
         width: 200px;
     }
 
-    input[name='HISTORY_LOOKBACK_HOURS'],
-    input[id$='_TEMPERATURE'],
-    input[id$='_TOP_P'],
-    input[id$='_PENALTY'] {
+    input[type='text'][name='HISTORY_LOOKBACK_HOURS'],
+    input[type='text'][id$='_TEMPERATURE'],
+    input[type='text'][id$='_TOP_P'],
+    input[type='text'][id$='_PENALTY'] {
         width: 70px;
         text-align: center;
         padding: 0.6rem 0.5rem;
+    }
+
+    .range-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .range-input {
+        width: 200px;
+    }
+
+    .range-value {
+        width: 40px;
+        text-align: center;
     }
 
     input[name='OPENAI_MODEL'],
