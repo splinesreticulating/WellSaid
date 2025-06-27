@@ -19,25 +19,28 @@
         GROK_TEMPERATURE: { min: 0, max: 1, step: 0.1 },
     }
 
-    // Initialize form values once on mount
+    // Initialize and update form values when settings or form data changes
     $effect(() => {
-        if (Object.keys(settingValues).length === 0) {
-            const values: Record<string, string> = {}
-            for (const setting of settings) {
-                values[setting.key] = setting.value
+        // Always update from the latest settings or form data
+        const source = form?.settings || settings;
+        const values: Record<string, string> = {}
+        
+        // First, set all current values to preserve any user input
+        Object.assign(values, settingValues);
+        
+        // Then update with the latest settings from props or form
+        for (const setting of source) {
+            // Only update if the setting exists in the source but not in current values,
+            // or if it's different from the current value (but not empty)
+            if (!(setting.key in values) || 
+                (values[setting.key] === '' && setting.value !== '')) {
+                values[setting.key] = setting.value;
             }
-            settingValues = values
         }
-    })
-
-    // Update local state when the form store returns fresh settings
-    $effect(() => {
-        if (form?.settings) {
-            const values: Record<string, string> = {}
-            for (const setting of form.settings) {
-                values[setting.key] = setting.value
-            }
-            settingValues = values
+        
+        // Only update if there are actual changes to prevent infinite loops
+        if (JSON.stringify(settingValues) !== JSON.stringify(values)) {
+            settingValues = values;
         }
     })
 
