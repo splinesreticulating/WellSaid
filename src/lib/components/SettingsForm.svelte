@@ -6,19 +6,38 @@
         form?: any
     }>()
 
-    // Simple reactive state for form values
-    let settingValues = $state<Record<string, string>>({})
+    // Initialize form values from props
+    let settingValues = $state<Record<string, string>>(
+        Object.fromEntries(settings.map((s: { key: string; value: string }) => [s.key, s.value]))
+    )
 
-    // Initialize form values once on mount
+    const rangeSettings: Record<string, { min: number; max: number; step?: number }> = {
+        HISTORY_LOOKBACK_HOURS: { min: 0, max: 48, step: 1 },
+        OPENAI_TEMPERATURE: { min: 0, max: 1, step: 0.1 },
+        OPENAI_TOP_P: { min: 0, max: 1, step: 0.05 },
+        OPENAI_FREQUENCY_PENALTY: { min: -2, max: 2, step: 0.1 },
+        OPENAI_PRESENCE_PENALTY: { min: -2, max: 2, step: 0.1 },
+        ANTHROPIC_TEMPERATURE: { min: 0, max: 1, step: 0.1 },
+        GROK_TEMPERATURE: { min: 0, max: 1, step: 0.1 },
+    }
+
+    // Update form values when settings change
     $effect(() => {
-        if (Object.keys(settingValues).length === 0) {
-            const values: Record<string, string> = {}
-            for (const setting of settings) {
-                values[setting.key] = setting.value
-            }
-            settingValues = values
+        if (form?.settings) {
+            settingValues = Object.fromEntries(
+                form.settings.map((s: { key: string; value: string }) => [s.key, s.value])
+            )
         }
     })
+
+    // Handle range input changes
+    function handleRangeChange(key: string, value: string) {
+        const num = parseFloat(value)
+        const range = rangeSettings[key]
+        if (!isNaN(num) && num >= range.min && num <= range.max) {
+            settingValues = { ...settingValues, [key]: value }
+        }
+    }
 
     // Group settings by provider
     const settingsGroups = $derived({
@@ -106,6 +125,22 @@
                                     rows="4"
                                     class="context-textarea"
                                 ></textarea>
+                            {:else if rangeSettings[setting.key]}
+                                <div class="range-wrapper">
+                                    <input
+                                        id={setting.key}
+                                        name={setting.key}
+                                        type="range"
+                                        min={rangeSettings[setting.key].min}
+                                        max={rangeSettings[setting.key].max}
+                                        step={rangeSettings[setting.key].step ?? 1}
+                                        bind:value={settingValues[setting.key]}
+                                        class="range-input"
+                                    />
+                                    <span class="range-value">
+                                        {settingValues[setting.key] || '0'}
+                                    </span>
+                                </div>
                             {:else}
                                 <input
                                     id={setting.key}
@@ -210,13 +245,41 @@
         width: 200px;
     }
 
-    input[name='HISTORY_LOOKBACK_HOURS'],
-    input[id$='_TEMPERATURE'],
-    input[id$='_TOP_P'],
-    input[id$='_PENALTY'] {
+    input[type='text'][name='HISTORY_LOOKBACK_HOURS'],
+    input[type='text'][id$='_TEMPERATURE'],
+    input[type='text'][id$='_TOP_P'],
+    input[type='text'][id$='_PENALTY'] {
         width: 70px;
         text-align: center;
         padding: 0.6rem 0.5rem;
+    }
+
+    .range-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .range-input {
+        width: 200px;
+        padding: 8px 0;
+        margin: 0;
+    }
+
+    @media (max-width: 768px) {
+        input[type='range'] {
+            accent-color: var(--primary-dark);
+        }
+    }
+
+    .range-value {
+        display: inline-block;
+        min-width: 30px;
+        text-align: center;
+        font-family: monospace;
+        font-size: 1.3em;
+        margin-left: 10px;
+        color: var(--text);
     }
 
     input[name='OPENAI_MODEL'],
@@ -233,25 +296,35 @@
     }
 
     .save {
-        color: var(--primary-dark);
-        border: none;
-        border-radius: var(--border-radius);
         padding: 0.7rem 1.5rem;
-        font-size: 1rem;
-        font-weight: 600;
+        background-color: var(--primary-dark);
+        color: var(--white);
+        border: 1px solid var(--primary-light);
+        border-radius: var(--border-radius);
         cursor: pointer;
+        font-weight: 500;
         transition:
             background-color 0.2s,
             transform 0.1s;
+        min-height: var(--min-touch-size);
+        min-width: var(--min-touch-size);
+        display: flex;
+        align-items: center;
     }
 
     .save:hover {
-        background: var(--primary-dark);
-        color: var(--white);
+        background-color: var(--primary-dark);
     }
 
     .save:active {
-        transform: translateY(1px);
+        transform: scale(0.98);
+    }
+
+    .save:disabled {
+        background-color: var(--light);
+        color: var(--gray);
+        cursor: not-allowed;
+        border-color: var(--light);
     }
 
     .status-message {
