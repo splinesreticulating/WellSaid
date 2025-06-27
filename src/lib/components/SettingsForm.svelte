@@ -6,8 +6,10 @@
         form?: any
     }>()
 
-    // Simple reactive state for form values
-    let settingValues = $state<Record<string, string>>({})
+    // Initialize form values from props
+    let settingValues = $state<Record<string, string>>(
+        Object.fromEntries(settings.map(s => [s.key, s.value]))
+    )
 
     const rangeSettings: Record<string, { min: number; max: number; step?: number }> = {
         HISTORY_LOOKBACK_HOURS: { min: 0, max: 48, step: 1 },
@@ -19,30 +21,21 @@
         GROK_TEMPERATURE: { min: 0, max: 1, step: 0.1 },
     }
 
-    // Initialize and update form values when settings or form data changes
+    // Update form values when settings change
     $effect(() => {
-        // Always update from the latest settings or form data
-        const source = form?.settings || settings;
-        const values: Record<string, string> = {}
-        
-        // First, set all current values to preserve any user input
-        Object.assign(values, settingValues);
-        
-        // Then update with the latest settings from props or form
-        for (const setting of source) {
-            // Only update if the setting exists in the source but not in current values,
-            // or if it's different from the current value (but not empty)
-            if (!(setting.key in values) || 
-                (values[setting.key] === '' && setting.value !== '')) {
-                values[setting.key] = setting.value;
-            }
-        }
-        
-        // Only update if there are actual changes to prevent infinite loops
-        if (JSON.stringify(settingValues) !== JSON.stringify(values)) {
-            settingValues = values;
+        if (form?.settings) {
+            settingValues = Object.fromEntries(form.settings.map(s => [s.key, s.value]));
         }
     })
+    
+    // Handle range input changes
+    function handleRangeChange(key: string, value: string) {
+        const num = parseFloat(value);
+        const range = rangeSettings[key];
+        if (!isNaN(num) && num >= range.min && num <= range.max) {
+            settingValues = { ...settingValues, [key]: value };
+        }
+    }
 
     // Group settings by provider
     const settingsGroups = $derived({
@@ -142,7 +135,9 @@
                                         bind:value={settingValues[setting.key]}
                                         class="range-input"
                                     />
-                                    <span class="range-value">{settingValues[setting.key]}</span>
+                                    <span class="range-value">
+                                        {settingValues[setting.key] || '0'}
+                                    </span>
                                 </div>
                             {:else}
                                 <input
@@ -268,8 +263,13 @@
     }
 
     .range-value {
-        width: 40px;
+        display: inline-block;
+        min-width: 30px;
         text-align: center;
+        font-family: monospace;
+        font-size: 0.9em;
+        margin-left: 10px;
+        color: var(--text);
     }
 
     input[name='OPENAI_MODEL'],
