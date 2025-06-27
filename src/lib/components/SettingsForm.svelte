@@ -290,25 +290,35 @@
     }
 
     .save {
-        color: var(--primary-dark);
-        border: none;
-        border-radius: var(--border-radius);
         padding: 0.7rem 1.5rem;
-        font-size: 1rem;
-        font-weight: 600;
+        background-color: var(--primary-dark);
+        color: var(--white);
+        border: 1px solid var(--primary-light);
+        border-radius: var(--border-radius);
         cursor: pointer;
+        font-weight: 500;
         transition:
             background-color 0.2s,
             transform 0.1s;
+        min-height: var(--min-touch-size);
+        min-width: var(--min-touch-size);
+        display: flex;
+        align-items: center;
     }
 
     .save:hover {
-        background: var(--primary-dark);
-        color: var(--white);
+        background-color: var(--primary-dark);
     }
 
     .save:active {
-        transform: translateY(1px);
+        transform: scale(0.98);
+    }
+
+    .save:disabled {
+        background-color: var(--light);
+        color: var(--gray);
+        cursor: not-allowed;
+        border-color: var(--light);
     }
 
     .status-message {
