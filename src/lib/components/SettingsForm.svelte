@@ -24,16 +24,18 @@
     // Update form values when settings change
     $effect(() => {
         if (form?.settings) {
-            settingValues = Object.fromEntries(form.settings.map((s: { key: string; value: string }) => [s.key, s.value]));
+            settingValues = Object.fromEntries(
+                form.settings.map((s: { key: string; value: string }) => [s.key, s.value])
+            )
         }
     })
-    
+
     // Handle range input changes
     function handleRangeChange(key: string, value: string) {
-        const num = parseFloat(value);
-        const range = rangeSettings[key];
+        const num = parseFloat(value)
+        const range = rangeSettings[key]
         if (!isNaN(num) && num >= range.min && num <= range.max) {
-            settingValues = { ...settingValues, [key]: value };
+            settingValues = { ...settingValues, [key]: value }
         }
     }
 
@@ -260,6 +262,8 @@
 
     .range-input {
         width: 200px;
+        padding: 8px 0;
+        margin: 0;
     }
 
     .range-value {
@@ -267,7 +271,7 @@
         min-width: 30px;
         text-align: center;
         font-family: monospace;
-        font-size: 0.9em;
+        font-size: 1.3em;
         margin-left: 10px;
         color: var(--text);
     }
