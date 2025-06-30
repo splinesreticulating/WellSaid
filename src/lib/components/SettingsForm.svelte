@@ -30,15 +30,6 @@
         }
     })
 
-    // Handle range input changes
-    function handleRangeChange(key: string, value: string) {
-        const num = parseFloat(value)
-        const range = rangeSettings[key]
-        if (!isNaN(num) && num >= range.min && num <= range.max) {
-            settingValues = { ...settingValues, [key]: value }
-        }
-    }
-
     // Group settings by provider
     const settingsGroups = $derived({
         general: settings.filter((s: { key: string; value: string; description: string }) =>
@@ -219,7 +210,7 @@
         padding: 0.6rem 0.8rem;
         box-sizing: border-box;
         font-family: inherit;
-        font-size: 0.95rem;
+        font-size: 1rem;
         width: 100%;
         color: var(--text);
         transition:
