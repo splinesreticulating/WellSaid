@@ -43,6 +43,7 @@
 
     textarea.context-input {
         font-family: var(--label-font);
+        font-size: 1rem; /* Ensure minimum font size */
         width: 100%;
         margin-top: 0.75rem;
         padding: 0.75rem;
@@ -51,6 +52,11 @@
         resize: vertical;
         min-height: 80px;
         color: var(--primary-dark);
+        /* Prevent iOS zooming */
+        text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+        /* Ensure proper touch handling */
+        touch-action: manipulation;
     }
 
     .clear-button {
