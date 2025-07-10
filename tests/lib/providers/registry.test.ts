@@ -38,7 +38,7 @@ describe('provider registry', () => {
 
     it('throws when no providers are configured', async () => {
         const { settings } = await import('$lib/config')
-        Object.keys(settings).forEach((k) => delete (settings as any)[k])
+        Object.keys(settings).forEach((k) => delete (settings as Record<string, unknown>)[k])
 
         const { getDefaultProvider } = await loadRegistry()
         expect(() => getDefaultProvider()).toThrow(
