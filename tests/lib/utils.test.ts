@@ -2,7 +2,7 @@ import {
     extractReplies,
     parseSummaryToHumanReadable,
     formatMessagesAsText,
-    hasPartnerMessages,
+    hasContactMessages,
     safeCompare,
     isoToAppleNanoseconds,
 } from '$lib/utils'
@@ -68,12 +68,12 @@ describe('formatMessagesAsText', () => {
     it('formats messages as text with sender labels', () => {
         const messages = [
             { sender: 'me', text: 'Hello', timestamp: '1' },
-            { sender: 'partner', text: 'Hi there', timestamp: '2' },
+            { sender: "them", text: 'Hi there', timestamp: '2' },
         ]
 
         const formatted = formatMessagesAsText(messages)
 
-        expect(formatted).toBe('me: Hello\npartner: Hi there')
+        expect(formatted).toBe('me: Hello\nthem: Hi there')
     })
 
     it('handles empty message array', () => {
@@ -89,24 +89,24 @@ describe('formatMessagesAsText', () => {
 
     it('preserves message order', () => {
         const messages = [
-            { sender: 'partner', text: 'First', timestamp: '1' },
+            { sender: "them", text: 'First', timestamp: '1' },
             { sender: 'me', text: 'Second', timestamp: '2' },
-            { sender: 'partner', text: 'Third', timestamp: '3' },
+            { sender: "them", text: 'Third', timestamp: '3' },
         ]
 
         const formatted = formatMessagesAsText(messages)
-        expect(formatted).toBe('partner: First\nme: Second\npartner: Third')
+        expect(formatted).toBe('them: First\nme: Second\nthem: Third')
     })
 })
 
-describe('hasPartnerMessages', () => {
-    it('returns true when partner messages exist', () => {
+describe('hasContactMessages', () => {
+    it('returns true when them messages exist', () => {
         const messages = [
             { sender: 'me', text: 'Hello', timestamp: '1' },
-            { sender: 'partner', text: 'Hi there', timestamp: '2' },
+            { sender: "them", text: 'Hi there', timestamp: '2' },
         ]
 
-        expect(hasPartnerMessages(messages)).toBe(true)
+        expect(hasContactMessages(messages)).toBe(true)
     })
 
     it('returns false when only my messages exist', () => {
@@ -115,20 +115,20 @@ describe('hasPartnerMessages', () => {
             { sender: 'me', text: 'How are you?', timestamp: '2' },
         ]
 
-        expect(hasPartnerMessages(messages)).toBe(false)
+        expect(hasContactMessages(messages)).toBe(false)
     })
 
     it('returns false for empty array', () => {
-        expect(hasPartnerMessages([])).toBe(false)
+        expect(hasContactMessages([])).toBe(false)
     })
 
-    it('returns true when only partner messages exist', () => {
+    it('returns true when only them messages exist', () => {
         const messages = [
-            { sender: 'partner', text: 'Hello', timestamp: '1' },
-            { sender: 'partner', text: 'How are you?', timestamp: '2' },
+            { sender: 'them', text: 'Hello', timestamp: '2' },
+            { sender: 'them', text: 'How are you?', timestamp: '2' },
         ]
 
-        expect(hasPartnerMessages(messages)).toBe(true)
+        expect(hasContactMessages(messages)).toBe(true)
     })
 })
 

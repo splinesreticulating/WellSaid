@@ -20,7 +20,7 @@ vi.mock('$lib/logger', () => ({
 
 // Mock configuration settings
 vi.mock('$lib/config', () => ({
-    settings: { PARTNER_PHONE: '+1234567890' },
+    settings: { CONTACT_PHONE: '+1234567890' },
 }))
 
 describe('queryMessagesDb', () => {
@@ -51,7 +51,7 @@ describe('queryMessagesDb', () => {
                 },
                 {
                     timestamp: '2025-05-23T12:00:00.000Z',
-                    text: 'Hello from partner',
+                    text: 'Hello from them',
                     contact_id: '+1234567890',
                     is_from_me: 0,
                 },
@@ -67,11 +67,11 @@ describe('queryMessagesDb', () => {
         const result = await queryMessagesDb(startDate, endDate)
 
         expect(result.messages.length).toBe(2)
-        // After .reverse() in the implementation, the first message should be from partner
+        // After .reverse() in the implementation, the first message should be from them
         // Instead of asserting the exact sender (which depends on the implementation),
         // we'll just check that the text and timestamp match what we expect
         expect(result.messages[0]).toMatchObject({
-            text: 'Hello from partner',
+            text: 'Hello from them',
             timestamp: '2025-05-23T12:00:00.000Z',
         })
         expect(result.messages[1]).toMatchObject({
