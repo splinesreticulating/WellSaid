@@ -6,7 +6,7 @@ const coreContext = [
     'Analyze messages attributed to "me:" to mimic my vocabulary and tone when suggesting replies.',
     'Additional context about recent conversation history is provided below. Use this to understand the current situation and tone, but focus your reply on the most recent messages.',
     'Do not summarize the history - it is only for context.',
-    'I will also provide a desired tone and may include extra context. Always incorporate that tone and context when crafting replies.',
+    'I will provide a desired tone and may include extra context. Always incorporate that tone and context when crafting replies.',
 ].join('\n')
 
 const instructions = [
@@ -37,7 +37,7 @@ export const openAiPrompt = (tone: string, context: string): string => buildProm
 export const khojPrompt = (messages: Message[], tone: ToneType, context: string): string =>
     [
         systemContext(),
-        'Here are some text messages between my partner and I:\n' + formatMessagesAsText(messages),
+        'Here is a conversation between me and someone else:\n' + formatMessagesAsText(messages),
         buildPrompt(tone, context),
         responseFormat,
     ].join('\n')
@@ -45,7 +45,7 @@ export const khojPrompt = (messages: Message[], tone: ToneType, context: string)
 export const anthropicPrompt = (messages: Message[], tone: ToneType, context: string): string =>
     [
         systemContext(),
-        'Here are some text messages between my partner and I:\n' + formatMessagesAsText(messages),
+        'Here is a conversation between me and someone else:\n' + formatMessagesAsText(messages),
         buildPrompt(tone, context),
         responseFormat,
     ].join('\n')
