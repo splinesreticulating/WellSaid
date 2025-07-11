@@ -4,10 +4,9 @@
   <h3 align="center">Empathy. Upgraded.</h3>
   <p align="center">
 
-![GitHub](https://img.shields.io/github/v/release/splinesreticulating/WellSaid)
-![GitHub](https://img.shields.io/github/license/splinesreticulating/WellSaid)
-![GitHub](https://img.shields.io/github/issues/splinesreticulating/WellSaid)
-![GitHub](https://img.shields.io/github/last-commit/splinesreticulating/WellSaid)
+![GitHub](https://img.shields.io/github/v/release/artificial-eq/WellSaid)
+![GitHub](https://img.shields.io/github/license/artificial-eq/WellSaid)
+![GitHub](https://img.shields.io/github/issues/artificial-eq/WellSaid)
 
   </p>
 
@@ -33,7 +32,7 @@
 
 ## Features
 
-- **Conversation Summaries**: Analyze and summarize your Apple iMessage conversations with a specified person from the last 1-24 hours
+- **Conversation Summaries**: Analyze and summarize your Apple iMessage conversations with a specified contact from the last 1-24 hours
 - **Smart Reply Suggestions**: Get short, medium, and long AI-generated reply options based on recent and and historical conversation context
 - **Tone Selection**: Set the tone for your replies with (eg: gentle, funny, reassuring, concise)
 - **Context Addition**: Add additional context to help generate more relevant replies
@@ -51,7 +50,7 @@
 1. Clone the repository
 
 ```bash
-git clone https://github.com/splinesreticulating/WellSaid.git
+git clone https://github.com/artificial-eq/WellSaid.git
 cd WellSaid
 ```
 
@@ -112,7 +111,7 @@ below), it will automatically use those files and start with HTTPS. Pretty cool.
 
 ## How It Works
 
-WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses an AI provider (any combination of OpenAI, Anthropic, Grok, and/or Khoj) to analyze the conversation and generate:
+WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact. It then uses an AI provider (Khoj, OpenAI, Anthropic, or Grok) to analyze the conversation and generate:
 
 1. A summary of the conversation, including emotional tone and key topics
 1. Three suggested replies (short, medium, and long) in your chosen tone
@@ -166,7 +165,7 @@ If you'd like to securely access WellSaid remotely, use [Tailscale](https://tail
 
 Once your Tailscale network is set up, all that's required in the app is that you set the `ALLOWED_HOST` variable in your `.env` file to the address provided by Tailscale. For more details, visit [Tailscale's documentation](https://tailscale.com/kb/).
 
-### iOS Home Screen Icons (and HTTPS Gotchas)
+### iPhone Home Screen Icons (and HTTPS Gotchas)
 
 To make your WellSaid app look great when saved to your iPhone's Home Screen, iOS requires a **valid HTTPS certificate**. This step is optional—if you just want to run the app locally in a browser, you can skip it and use plain HTTP.
 
@@ -210,10 +209,10 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
 
 ### Common Issues
 
-- **0 Messages Found**: Open the Messages app on your Mac and sign in if you haven't already. Summaries and replies will be available once you've signed in and your partner has sent at least one message.
-- **Messages Not Loading**: Ensure you've set the correct `PARTNER_PHONE` in your `.env` file.
-- **Permission Issues**: WellSaid needs access to your Messages database. Make sure Terminal/your editor has Full Disk Access in System Preferences > Security & Privacy.
-- **Go Button Disabled**: Conversation summaries are only available when your partner has responded in the selected time frame.
+- **0 Messages Found**: Open the Messages app on your Mac and sign in if you haven't already. Summaries and replies will be available once you've signed in and your contact has sent at least one message.
+- **Messages Not Loading**: Ensure you've set the correct phone number for your contact in Settings
+- **Permission Issues**: WellSaid needs access to your Messages database. Make sure your terminal and/or editor app has Full Disk Access in System Preferences > Security & Privacy.
+- **Go Button Disabled**: Conversation summaries are only available when your contact has responded in the selected time frame.
 
 ## Acknowledgements
 
@@ -229,7 +228,6 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
 
 <p align="center" style="display: flex; gap: 20px; justify-content: center;">
   <img src="./box-art/front.png" alt="WellSaid Front Cover" width="45%" style="box-shadow: 0 4px 8px rgba(0,0,0,0.3); border-radius: 8px;"/>
-  <img src="./box-art/back.png" alt="WellSaid Back Cover" width="45%" style="box-shadow: 0 4px 8px rgba(0,0,0,0.3); border-radius: 8px;"/>
 </p>
 
 ## Screenshots

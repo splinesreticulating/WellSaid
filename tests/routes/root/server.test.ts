@@ -1,9 +1,9 @@
+import * as config from '$lib/config'
+import * as grok from '$lib/grok'
 import * as queryDb from '$lib/iMessages'
 import * as khoj from '$lib/khoj'
 import * as openai from '$lib/openAi'
-import * as grok from '$lib/grok'
 import * as registry from '$lib/providers/registry'
-import * as config from '$lib/config'
 import type { RequestEvent } from '@sveltejs/kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import * as serverModule from '../../../src/routes/+page.server'
@@ -80,14 +80,14 @@ describe('root page server', () => {
 
     it('load should return messages and multiProvider flag', async () => {
         vi.mocked(queryDb.queryMessagesDb).mockResolvedValue({
-            messages: [{ text: 'hi', sender: 'partner', timestamp: '2025-01-01T00:00:00Z' }],
+            messages: [{ text: 'hi', sender: 'contact', timestamp: '2025-01-01T00:00:00Z' }],
         })
         const event = createMockRequestEvent(new URL('https://example.com/'))
         const data = await serverModule.load(
             event as unknown as Parameters<typeof serverModule.load>[0]
         )
         expect(data).toEqual({
-            messages: [{ text: 'hi', sender: 'partner', timestamp: '2025-01-01T00:00:00Z' }],
+            messages: [{ text: 'hi', sender: 'contact', timestamp: '2025-01-01T00:00:00Z' }],
             multiProvider: false,
             defaultProvider: 'openai',
             availableProviders: [

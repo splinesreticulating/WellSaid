@@ -18,7 +18,7 @@ vi.mock('$lib/config', () => ({
         OPENAI_TOP_P: '0.7',
         OPENAI_FREQUENCY_PENALTY: '0.1',
         OPENAI_PRESENCE_PENALTY: '0.2',
-        CUSTOM_CONTEXT: 'Act as my therapist suggesting replies to my partner',
+        CUSTOM_CONTEXT: 'Act as my therapist suggesting replies to my contact',
     },
 }))
 
@@ -29,7 +29,7 @@ vi.mock('$lib/history', () => ({
 describe('getOpenaiReply', () => {
     beforeEach(async () => {
         vi.clearAllMocks()
-        ;(await import('$lib/config')).settings.OPENAI_API_KEY = 'test-api-key'
+            ; (await import('$lib/config')).settings.OPENAI_API_KEY = 'test-api-key'
         // Mock the fetch function
         global.fetch = vi.fn().mockResolvedValue({
             ok: true,
@@ -43,7 +43,7 @@ describe('getOpenaiReply', () => {
                                         name: 'draft_replies',
                                         arguments: JSON.stringify({
                                             summary:
-                                                "Here's a summary of the conversation. The conversation is about planning a weekend trip. Your partner seems excited about going hiking.",
+                                                "Here's a summary of the conversation. The conversation is about planning a weekend trip. Your contact seems excited about going hiking.",
                                             replies: [
                                                 "I'm excited about the hiking trip too! What trails are you thinking about?",
                                                 'The hiking sounds fun! Should we plan to bring a picnic lunch?',
@@ -63,7 +63,7 @@ describe('getOpenaiReply', () => {
     it('should return summary and replies when API call is successful', async () => {
         const messages: Message[] = [
             {
-                sender: 'partner',
+                sender: 'contact',
                 text: "Let's go hiking this weekend!",
                 timestamp: '2025-05-23T12:00:00Z',
             },
@@ -108,7 +108,7 @@ describe('getOpenaiReply', () => {
 
         const messages: Message[] = [
             {
-                sender: 'partner',
+                sender: 'contact',
                 text: 'How are you today?',
                 timestamp: '2025-05-23T12:00:00Z',
             },
@@ -122,11 +122,11 @@ describe('getOpenaiReply', () => {
 
     it('should handle case when OPENAI_API_KEY is not set', async () => {
         // Mock the setting without the API key
-        ;(await import('$lib/config')).settings.OPENAI_API_KEY = ''
+        ; (await import('$lib/config')).settings.OPENAI_API_KEY = ''
 
         const messages: Message[] = [
             {
-                sender: 'partner',
+                sender: 'contact',
                 text: 'Hello!',
                 timestamp: '2025-05-23T12:00:00Z',
             },
@@ -168,7 +168,7 @@ describe('getOpenaiReply', () => {
 
         const messages: Message[] = [
             {
-                sender: 'partner',
+                sender: 'contact',
                 text: 'Test message',
                 timestamp: '2025-05-23T12:00:00Z',
             },
@@ -187,7 +187,7 @@ describe('getOpenaiReply', () => {
     it('includes optional parameters when environment variables are set', async () => {
         const messages: Message[] = [
             {
-                sender: 'partner',
+                sender: 'contact',
                 text: 'Hello!',
                 timestamp: '2025-05-23T12:00:00Z',
             },
@@ -206,15 +206,15 @@ describe('getOpenaiReply', () => {
     })
 
     it('omits optional parameters when environment variables are empty', async () => {
-        ;(await import('$lib/config')).settings.OPENAI_TOP_P = ''
-        ;(await import('$lib/config')).settings.OPENAI_FREQUENCY_PENALTY = ''
-        ;(await import('$lib/config')).settings.OPENAI_PRESENCE_PENALTY = ''
+        ; (await import('$lib/config')).settings.OPENAI_TOP_P = ''
+            ; (await import('$lib/config')).settings.OPENAI_FREQUENCY_PENALTY = ''
+            ; (await import('$lib/config')).settings.OPENAI_PRESENCE_PENALTY = ''
         vi.resetModules()
         const { getOpenaiReply: getOpenaiReplyNoOpts } = await import('$lib/openAi')
 
         const messages: Message[] = [
             {
-                sender: 'partner',
+                sender: 'contact',
                 text: 'Hi',
                 timestamp: '2025-05-23T12:00:00Z',
             },

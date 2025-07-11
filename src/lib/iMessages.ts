@@ -5,14 +5,14 @@ import path from 'node:path'
 import { open } from 'sqlite'
 import sqlite3 from 'sqlite3'
 import { logger } from './logger'
-import { hasPartnerMessages, isoToAppleNanoseconds } from './utils'
+import { hasContactMessages, isoToAppleNanoseconds } from './utils'
 
 const CHAT_DB_PATH = path.join(os.homedir(), 'Library', 'Messages', 'chat.db')
 
 const buildQuery = (startDate: string, endDate: string) => {
     logger.debug({ startDate, endDate }, 'Getting messages')
     const params = [
-        settings.PARTNER_PHONE,
+        settings.CONTACT_PHONE,
         isoToAppleNanoseconds(startDate),
         isoToAppleNanoseconds(endDate),
     ]
@@ -39,8 +39,8 @@ const formatMessages = (rows: MessageRow[]) => {
         .map((row) => ({
             sender: row.is_from_me
                 ? 'me'
-                : row.contact_id === settings.PARTNER_PHONE
-                  ? 'partner'
+                : row.contact_id === settings.CONTACT_PHONE
+                  ? 'them'
                   : 'unknown',
             text: row.text,
             timestamp: new Date(
@@ -51,8 +51,8 @@ const formatMessages = (rows: MessageRow[]) => {
 }
 
 export const queryMessagesDb = async (startDate: string, endDate: string) => {
-    if (!settings.PARTNER_PHONE) {
-        logger.warn('PARTNER_PHONE setting not configured')
+    if (!settings.CONTACT_PHONE) {
+        logger.warn('CONTACT_PHONE setting not configured')
         return { messages: [] }
     }
 
@@ -61,12 +61,12 @@ export const queryMessagesDb = async (startDate: string, endDate: string) => {
 
     try {
         const rows = (await db.all(query, params)) as MessageRow[]
-        logger.info({ count: rows.length, handleId: settings.PARTNER_PHONE }, 'Fetched messages')
+        logger.info({ count: rows.length, handleId: settings.CONTACT_PHONE }, 'Fetched messages')
 
         const formattedMessages = formatMessages(rows)
 
-        // Return empty array if all messages are from me (no partner messages)
-        return { messages: hasPartnerMessages(formattedMessages) ? formattedMessages : [] }
+        // Return empty array if there are no messages from the contact
+        return { messages: hasContactMessages(formattedMessages) ? formattedMessages : [] }
     } catch (error) {
         logger.error({ error }, 'Error querying messages database')
         return { messages: [] }

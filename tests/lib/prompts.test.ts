@@ -56,7 +56,7 @@ describe('prompts', () => {
     describe('khojPrompt', () => {
         const mockConversation: Message[] = [
             { sender: 'me', text: 'Hey, how was your day?', timestamp: '1' },
-            { sender: 'partner', text: 'It was great! How about yours?', timestamp: '2' },
+            { sender: 'them', text: 'It was great! How about yours?', timestamp: '2' },
             { sender: 'me', text: 'Pretty good, thanks for asking', timestamp: '3' },
         ]
 
@@ -64,9 +64,9 @@ describe('prompts', () => {
             const result = khojPrompt(mockConversation, 'gentle', '')
 
             expect(result).toContain(systemContext())
-            expect(result).toContain('Here are some text messages between my partner and I:')
+            expect(result).toContain('Here is a conversation between me and someone else:')
             expect(result).toContain('me: Hey, how was your day?')
-            expect(result).toContain('partner: It was great! How about yours?')
+            expect(result).toContain('them: It was great! How about yours?')
             expect(result).toContain('me: Pretty good, thanks for asking')
             expect(result).toContain('Suggest 3 replies that I might send')
             expect(result).toContain('Summary:')
@@ -96,13 +96,13 @@ describe('prompts', () => {
             const result = khojPrompt([], 'gentle', '')
 
             expect(result).toContain(systemContext())
-            expect(result).toContain('Here are some text messages between my partner and I:')
+            expect(result).toContain('Here is a conversation between me and someone else:')
             expect(result).toContain('Suggest 3 replies that I might send')
             expect(result).toContain('Summary:')
             expect(result).toContain('Suggested replies:')
             // Check that there are no actual message lines (empty conversation)
             expect(result).not.toContain('\nme: ')
-            expect(result).not.toContain('\npartner: ')
+            expect(result).not.toContain('\ncontact: ')
         })
 
         it('should handle single message conversation', () => {
@@ -117,14 +117,14 @@ describe('prompts', () => {
             expect(result).toContain('Reply 1:')
             expect(result).toContain('Reply 2:')
             expect(result).toContain('Reply 3:')
-            expect(result).not.toContain('partner:')
+            expect(result).not.toContain('contact:')
         })
 
         it('should preserve message order and indexing', () => {
             const result = khojPrompt(mockConversation, 'gentle', '')
 
             const message1Index = result.indexOf('me: Hey, how was your day?')
-            const message2Index = result.indexOf('partner: It was great! How about yours?')
+            const message2Index = result.indexOf('them: It was great! How about yours?')
             const message3Index = result.indexOf('me: Pretty good, thanks for asking')
 
             expect(message1Index).toBeLessThan(message2Index)

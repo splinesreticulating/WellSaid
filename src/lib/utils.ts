@@ -13,8 +13,8 @@ export const parseSummaryToHumanReadable = (rawOutput: string): string => {
     return match[2].trim().replace(/\s*###\s*$/, '')
 }
 
-export const hasPartnerMessages = (formattedRows: Message[]) =>
-    formattedRows.some((msg) => msg.sender !== 'me')
+export const hasContactMessages = (formattedRows: Message[]) =>
+    formattedRows.some((msg) => msg.sender === 'them')
 
 const cleanReplyText = (text: string): string => {
     let cleaned = text.trim()

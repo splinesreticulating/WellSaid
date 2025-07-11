@@ -4,7 +4,7 @@
     "version": "1.4.5",
     "packageManager": "yarn@1.22.22",
     "description": "Empathy. Upgraded.",
-    "author": "splinesreticulating",
+    "author": "Artificial EQ",
     "license": "MIT",
     "type": "module",
     "scripts": {

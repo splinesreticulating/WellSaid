@@ -20,9 +20,9 @@ await db.exec(`CREATE TABLE IF NOT EXISTS settings (
 )`)
 
 const defaultSettings: Record<string, { value?: string; description: string }> = {
-    PARTNER_PHONE: {
-        value: env.PARTNER_PHONE,
-        description: "Your conversation partner's phone number in the Messages app",
+    CONTACT_PHONE: {
+        value: env.CONTACT_PHONE,
+        description: "The phone number of the person you're having a conversation with in the Messages app",
     },
     HISTORY_LOOKBACK_HOURS: {
         value: env.HISTORY_LOOKBACK_HOURS,
@@ -31,7 +31,7 @@ const defaultSettings: Record<string, { value?: string; description: string }> =
     CUSTOM_CONTEXT: {
         value: env.CUSTOM_CONTEXT,
         description:
-            'To guide the AI\'s personality and behavior (Example: "Act as my therapist suggesting replies to my partner" or "You are a helpful assistant")',
+            'To guide the AI\'s personality and behavior (Example: "Act as my therapist suggesting thoughtful replies" or "You are a helpful assistant")',
     },
     OPENAI_API_KEY: {
         value: env.OPENAI_API_KEY,
