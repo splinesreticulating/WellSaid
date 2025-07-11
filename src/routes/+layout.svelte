@@ -8,7 +8,7 @@
 {@render children()}
 
 <footer>
-    <p>(c) {new Date().getFullYear()} splinesreticulating</p>
+    <p>(c) {new Date().getFullYear()} Artificial EQ</p>
 </footer>
 
 <style>
