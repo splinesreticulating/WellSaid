@@ -1,7 +1,7 @@
 {
     "name": "wellsaid",
     "private": true,
-    "version": "1.4.5",
+    "version": "1.4.6",
     "packageManager": "yarn@1.22.22",
     "description": "Empathy. Upgraded.",
     "author": "splinesreticulating",
