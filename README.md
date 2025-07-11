@@ -228,7 +228,6 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
 
 <p align="center" style="display: flex; gap: 20px; justify-content: center;">
   <img src="./box-art/front.png" alt="WellSaid Front Cover" width="45%" style="box-shadow: 0 4px 8px rgba(0,0,0,0.3); border-radius: 8px;"/>
-  <img src="./box-art/back.png" alt="WellSaid Back Cover" width="45%" style="box-shadow: 0 4px 8px rgba(0,0,0,0.3); border-radius: 8px;"/>
 </p>
 
 ## Screenshots
