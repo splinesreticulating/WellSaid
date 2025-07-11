@@ -84,7 +84,7 @@ describe('queryMessagesDb', () => {
         expect(mockDb.close).toHaveBeenCalled()
     })
 
-    it('should return empty array when no partner messages exist', async () => {
+    it('should return empty array when no contact messages exist', async () => {
         // Mock database response with only messages from me
         const mockDb = {
             all: vi.fn().mockResolvedValue([
@@ -112,9 +112,9 @@ describe('queryMessagesDb', () => {
         expect(result.messages).toEqual([])
     })
 
-    it('should return empty array when PARTNER_PHONE is not set', async () => {
+    it('should return empty array when CONTACT_PHONE is not set', async () => {
         // Temporarily unset the environment variable for this test
-        vi.stubEnv('PARTNER_PHONE', '')
+        vi.stubEnv('CONTACT_PHONE', '')
 
         const result = await queryMessagesDb('2025-05-23 12:01:00', '2025-05-23 12:02:00')
 
@@ -123,7 +123,7 @@ describe('queryMessagesDb', () => {
 
         // Restore the original value
         vi.unstubAllEnvs()
-        vi.stubEnv('PARTNER_PHONE', '+1234567890')
+        vi.stubEnv('CONTACT_PHONE', '+1234567890')
     })
 
     // Now that we've added proper error handling, we can test this behavior

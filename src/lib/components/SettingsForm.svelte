@@ -33,7 +33,7 @@
     // Group settings by provider
     const settingsGroups = $derived({
         general: settings.filter((s: { key: string; value: string; description: string }) =>
-            ['HISTORY_LOOKBACK_HOURS', 'PARTNER_PHONE', 'CUSTOM_CONTEXT'].includes(s.key)
+            ['HISTORY_LOOKBACK_HOURS', 'CONTACT_PHONE', 'CUSTOM_CONTEXT'].includes(s.key)
         ),
         khoj: settings.filter((s: { key: string; value: string; description: string }) =>
             s.key.startsWith('KHOJ_')
@@ -232,7 +232,7 @@
     }
 
     /* Specific field widths */
-    input[name='PARTNER_PHONE'] {
+    input[name='CONTACT_PHONE'] {
         width: 200px;
     }
 

@@ -112,7 +112,7 @@ below), it will automatically use those files and start with HTTPS. Pretty cool.
 
 ## How It Works
 
-WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `PARTNER_PHONE` environment variable). It then uses an AI provider (any combination of OpenAI, Anthropic, Grok, and/or Khoj) to analyze the conversation and generate:
+WellSaid connects to your macOS Messages database to fetch your conversations with a specific contact (set via the `CONTACT_PHONE` environment variable). It then uses an AI provider (any combination of OpenAI, Anthropic, Grok, and/or Khoj) to analyze the conversation and generate:
 
 1. A summary of the conversation, including emotional tone and key topics
 1. Three suggested replies (short, medium, and long) in your chosen tone
@@ -210,10 +210,10 @@ Now when you visit your app over HTTPS (via Safari), iOS will trust the cert, an
 
 ### Common Issues
 
-- **0 Messages Found**: Open the Messages app on your Mac and sign in if you haven't already. Summaries and replies will be available once you've signed in and your partner has sent at least one message.
-- **Messages Not Loading**: Ensure you've set the correct `PARTNER_PHONE` in your `.env` file.
+- **0 Messages Found**: Open the Messages app on your Mac and sign in if you haven't already. Summaries and replies will be available once you've signed in and your contact has sent at least one message.
+- **Messages Not Loading**: Ensure you've set the correct `CONTACT_PHONE` in your `.env` file.
 - **Permission Issues**: WellSaid needs access to your Messages database. Make sure Terminal/your editor has Full Disk Access in System Preferences > Security & Privacy.
-- **Go Button Disabled**: Conversation summaries are only available when your partner has responded in the selected time frame.
+- **Go Button Disabled**: Conversation summaries are only available when your contact has responded in the selected time frame.
 
 ## Acknowledgements
 

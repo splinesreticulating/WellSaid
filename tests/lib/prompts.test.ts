@@ -102,7 +102,7 @@ describe('prompts', () => {
             expect(result).toContain('Suggested replies:')
             // Check that there are no actual message lines (empty conversation)
             expect(result).not.toContain('\nme: ')
-            expect(result).not.toContain('\npartner: ')
+            expect(result).not.toContain('\ncontact: ')
         })
 
         it('should handle single message conversation', () => {
@@ -117,7 +117,7 @@ describe('prompts', () => {
             expect(result).toContain('Reply 1:')
             expect(result).toContain('Reply 2:')
             expect(result).toContain('Reply 3:')
-            expect(result).not.toContain('partner:')
+            expect(result).not.toContain('contact:')
         })
 
         it('should preserve message order and indexing', () => {
