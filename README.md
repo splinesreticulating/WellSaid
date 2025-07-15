@@ -118,6 +118,18 @@ WellSaid connects to your macOS Messages database to fetch your conversations wi
 
 ## Technical Details
 
+### Minimal Dependencies and Efficient Architecture
+
+WellSaid is built with a focus on minimalism and efficiency:
+
+- **Core Dependencies**: Uses only essential libraries for its functionality
+- **Frontend**: Built with SvelteKit, providing excellent performance without the overhead of larger frameworks
+- **Backend**: Lightweight Node.js server with minimal dependencies
+- **Database**: Direct integration with macOS Messages database - no additional database required
+- **Authentication**: Simple JWT-based authentication system
+
+This approach results in a lightweight, fast application that runs efficiently on macOS systems while maintaining all core functionality.
+
 - **Frontend**: Svelte 5 with SvelteKit
 - **State Management**: Svelte's built-in $state system
 - **Styling**: Custom CSS with variables for theming
