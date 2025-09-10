@@ -1,20 +1,11 @@
 {
     "$schema": "https://unpkg.com/knip@5/schema.json",
-    "entry": [
-        "src/**/*.{svelte,ts,js}",
-        "vite.config.ts"
-    ],
+    "entry": ["src/**/*.{svelte,ts,js}", "vite.config.ts"],
     "project": ["src/**/*.{ts,js,svelte}"],
     "ignore": [
         "**/{.svelte-kit,node_modules,__tests__,tests,test,mocks,__mocks__}/**",
         "**/*.{test,spec,d}.{ts,js}",
         "src/lib/types.ts"
     ],
-    "ignoreDependencies": [
-        "pino-pretty",
-        "dotenv",
-        "pino",
-        "sqlite",
-        "sqlite3"
-    ]
+    "ignoreDependencies": ["pino-pretty", "dotenv", "pino", "sqlite", "sqlite3"]
 }

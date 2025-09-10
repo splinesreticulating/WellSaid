@@ -3,7 +3,7 @@ import { fetchRelevantHistory } from './history'
 import { logger } from './logger'
 import { openAiPrompt, systemContext } from './prompts'
 import type { Message, OpenAIConfig, ToneType } from './types'
-import { formatMessagesAsText } from './utils'
+import { extractReplies, formatMessagesAsText, parseSummaryToHumanReadable } from './utils'
 
 const API_URL = 'https://api.openai.com/v1/chat/completions'
 const DEFAULT_MODEL = 'gpt-4'
@@ -73,8 +73,7 @@ export const getOpenaiReply = async (
         ...(config.topP && { top_p: config.topP }),
         ...(config.frequencyPenalty && { frequency_penalty: config.frequencyPenalty }),
         ...(config.presencePenalty && { presence_penalty: config.presencePenalty }),
-        tools: [summaryFunction],
-        tool_choice: { type: 'function', function: { name: 'draft_replies' } },
+        response_format: { type: 'text' },
     }
 
     logger.debug({ body }, 'Sending request to OpenAI')
@@ -100,15 +99,18 @@ export const getOpenaiReply = async (
             throw new Error(`OpenAI API error code ${response.status}: ${response.statusText}`)
         }
 
-        const { choices } = await response.json()
-        const functionCall = choices[0]?.message?.tool_calls?.[0]?.function
+        const data = await response.json()
+        const rawOutput = data.choices[0]?.message?.content || ''
 
-        if (!functionCall) throw new Error('No function call in response')
+        if (!rawOutput) {
+            throw new Error('Empty response from OpenAI')
+        }
 
-        const { summary, replies } = JSON.parse(functionCall.arguments)
+        const summary = parseSummaryToHumanReadable(rawOutput)
+        const replies = extractReplies(rawOutput)
 
-        if (!summary || !Array.isArray(replies)) {
-            logger.error({ summary, replies }, 'Invalid response format from OpenAI')
+        if (!summary || !replies.length) {
+            logger.error({ rawOutput }, 'Failed to parse response from OpenAI')
             throw new Error('Invalid response format from OpenAI')
         }
 

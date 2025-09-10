@@ -68,7 +68,7 @@ describe('formatMessagesAsText', () => {
     it('formats messages as text with sender labels', () => {
         const messages = [
             { sender: 'me', text: 'Hello', timestamp: '1' },
-            { sender: "them", text: 'Hi there', timestamp: '2' },
+            { sender: 'them', text: 'Hi there', timestamp: '2' },
         ]
 
         const formatted = formatMessagesAsText(messages)
@@ -89,9 +89,9 @@ describe('formatMessagesAsText', () => {
 
     it('preserves message order', () => {
         const messages = [
-            { sender: "them", text: 'First', timestamp: '1' },
+            { sender: 'them', text: 'First', timestamp: '1' },
             { sender: 'me', text: 'Second', timestamp: '2' },
-            { sender: "them", text: 'Third', timestamp: '3' },
+            { sender: 'them', text: 'Third', timestamp: '3' },
         ]
 
         const formatted = formatMessagesAsText(messages)
@@ -103,7 +103,7 @@ describe('hasContactMessages', () => {
     it('returns true when them messages exist', () => {
         const messages = [
             { sender: 'me', text: 'Hello', timestamp: '1' },
-            { sender: "them", text: 'Hi there', timestamp: '2' },
+            { sender: 'them', text: 'Hi there', timestamp: '2' },
         ]
 
         expect(hasContactMessages(messages)).toBe(true)

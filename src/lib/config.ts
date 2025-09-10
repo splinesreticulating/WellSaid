@@ -22,7 +22,8 @@ await db.exec(`CREATE TABLE IF NOT EXISTS settings (
 const defaultSettings: Record<string, { value?: string; description: string }> = {
     CONTACT_PHONE: {
         value: env.CONTACT_PHONE,
-        description: "The phone number of the person you're having a conversation with in the Messages app",
+        description:
+            "The phone number of the person you're having a conversation with in the Messages app",
     },
     HISTORY_LOOKBACK_HOURS: {
         value: env.HISTORY_LOOKBACK_HOURS,

@@ -3,7 +3,7 @@ import { fetchRelevantHistory } from './history'
 import { logger } from './logger'
 import { openAiPrompt, systemContext } from './prompts'
 import type { Message, ToneType } from './types'
-import { formatMessagesAsText } from './utils'
+import { extractReplies, formatMessagesAsText, parseSummaryToHumanReadable } from './utils'
 
 const API_URL = 'https://grok.x.ai/api/chat/completions'
 const DEFAULT_MODEL = 'grok-1'
@@ -39,24 +39,7 @@ export const getGrokReply = async (
             { role: 'user', content: prompt },
         ],
         temperature: config.temperature,
-        tools: [
-            {
-                type: 'function',
-                function: {
-                    name: 'draft_replies',
-                    description: 'Generate a short summary and three suggested replies',
-                    parameters: {
-                        type: 'object',
-                        properties: {
-                            summary: { type: 'string' },
-                            replies: { type: 'array', items: { type: 'string' } },
-                        },
-                        required: ['summary', 'replies'],
-                    },
-                },
-            },
-        ],
-        tool_choice: { type: 'function', function: { name: 'draft_replies' } },
+        response_format: { type: 'text' },
     }
 
     logger.debug({ body }, 'Sending request to Grok')
@@ -77,13 +60,18 @@ export const getGrokReply = async (
             throw new Error(`Grok API error code ${response.status}: ${response.statusText}`)
         }
 
-        const { choices } = await response.json()
-        const functionCall = choices[0]?.message?.tool_calls?.[0]?.function
-        if (!functionCall) throw new Error('No function call in response')
-        const { summary, replies } = JSON.parse(functionCall.arguments)
+        const data = await response.json()
+        const rawOutput = data.choices[0]?.message?.content || ''
 
-        if (!summary || !Array.isArray(replies)) {
-            logger.error({ summary, replies }, 'Invalid response format from Grok')
+        if (!rawOutput) {
+            throw new Error('Empty response from Grok')
+        }
+
+        const summary = parseSummaryToHumanReadable(rawOutput)
+        const replies = extractReplies(rawOutput)
+
+        if (!summary || !replies.length) {
+            logger.error({ rawOutput }, 'Failed to parse response from Grok')
             throw new Error('Invalid response format from Grok')
         }
 

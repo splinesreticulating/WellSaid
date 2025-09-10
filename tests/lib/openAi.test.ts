@@ -29,7 +29,7 @@ vi.mock('$lib/history', () => ({
 describe('getOpenaiReply', () => {
     beforeEach(async () => {
         vi.clearAllMocks()
-            ; (await import('$lib/config')).settings.OPENAI_API_KEY = 'test-api-key'
+        ;(await import('$lib/config')).settings.OPENAI_API_KEY = 'test-api-key'
         // Mock the fetch function
         global.fetch = vi.fn().mockResolvedValue({
             ok: true,
@@ -122,7 +122,7 @@ describe('getOpenaiReply', () => {
 
     it('should handle case when OPENAI_API_KEY is not set', async () => {
         // Mock the setting without the API key
-        ; (await import('$lib/config')).settings.OPENAI_API_KEY = ''
+        ;(await import('$lib/config')).settings.OPENAI_API_KEY = ''
 
         const messages: Message[] = [
             {
@@ -206,9 +206,9 @@ describe('getOpenaiReply', () => {
     })
 
     it('omits optional parameters when environment variables are empty', async () => {
-        ; (await import('$lib/config')).settings.OPENAI_TOP_P = ''
-            ; (await import('$lib/config')).settings.OPENAI_FREQUENCY_PENALTY = ''
-            ; (await import('$lib/config')).settings.OPENAI_PRESENCE_PENALTY = ''
+        ;(await import('$lib/config')).settings.OPENAI_TOP_P = ''
+        ;(await import('$lib/config')).settings.OPENAI_FREQUENCY_PENALTY = ''
+        ;(await import('$lib/config')).settings.OPENAI_PRESENCE_PENALTY = ''
         vi.resetModules()
         const { getOpenaiReply: getOpenaiReplyNoOpts } = await import('$lib/openAi')
 

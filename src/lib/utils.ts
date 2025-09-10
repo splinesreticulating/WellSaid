@@ -2,7 +2,7 @@ import { timingSafeEqual } from 'node:crypto'
 import type { Message } from './types'
 
 export const parseSummaryToHumanReadable = (rawOutput: string): string => {
-    const summaryRegex = /Summary:[ \t]*(\n+)?([\s\S]*?)(?=\s*Suggested replies:|$)/
+    const summaryRegex = /Summary:[ \t]*(\n+)?([\s\S]*?)(?=\sReply 1|$)/
     const match = rawOutput.match(summaryRegex)
 
     if (!match) {
@@ -38,15 +38,20 @@ const cleanReplyText = (text: string): string => {
 }
 
 export const extractReplies = (rawOutput: string): string[] => {
-    const replyPattern = /\*\*Reply\s*\d:\*\*\s*(.*)|Reply\s*\d:\s*(.*)/g
-    const replies = Array.from(rawOutput.matchAll(replyPattern))
-        .map((m) => {
-            const currentMatch = m as RegExpMatchArray
-            return cleanReplyText(currentMatch[1] || currentMatch[2] || '')
+    // Match formats like:
+    // Reply 1 (Short): [text]
+    // Reply 2: [text]
+    // **Reply 3:** [text]
+    const replyPattern = /(?:Reply\s+\d+\s*(?:\([^)]+\))?:|\*\*Reply\s*\d+\*\*:?)\s*([^\n]+)/gi
+    const matches = rawOutput.match(replyPattern) || []
+
+    return matches
+        .map((reply) => {
+            // Remove the prefix (e.g., "Reply 1 (Short): " or "**Reply 1:** ")
+            const text = reply.replace(/^.*?:\s*/, '').trim()
+            return cleanReplyText(text)
         })
         .filter(Boolean)
-
-    return replies
 }
 
 export const safeCompare = (a: string, b: string): boolean => {
