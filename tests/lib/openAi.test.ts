@@ -30,33 +30,22 @@ describe('getOpenaiReply', () => {
     beforeEach(async () => {
         vi.clearAllMocks()
         ;(await import('$lib/config')).settings.OPENAI_API_KEY = 'test-api-key'
-        // Mock the fetch function
+        // Mock the fetch function with the correct response structure
         global.fetch = vi.fn().mockResolvedValue({
             ok: true,
             json: vi.fn().mockResolvedValue({
                 choices: [
                     {
                         message: {
-                            tool_calls: [
-                                {
-                                    function: {
-                                        name: 'draft_replies',
-                                        arguments: JSON.stringify({
-                                            summary:
-                                                "Here's a summary of the conversation. The conversation is about planning a weekend trip. Your contact seems excited about going hiking.",
-                                            replies: [
-                                                "I'm excited about the hiking trip too! What trails are you thinking about?",
-                                                'The hiking sounds fun! Should we plan to bring a picnic lunch?',
-                                                "I'm looking forward to our hiking adventure! Do we need to get any new gear?",
-                                            ],
-                                        }),
-                                    },
-                                },
-                            ],
-                        },
-                    },
-                ],
-            }),
+                            content: `Summary: Here's a summary of the conversation. The conversation is about planning a weekend trip. Your contact seems excited about going hiking.
+
+Reply 1: I'm excited about the hiking trip too! What trails are you thinking about?
+Reply 2: The hiking sounds fun! Should we plan to bring a picnic lunch?
+Reply 3: I'm looking forward to our hiking adventure! Do we need to get any new gear?`
+                        }
+                    }
+                ]
+            })
         })
     })
 
@@ -76,6 +65,7 @@ describe('getOpenaiReply', () => {
 
         const result = await getOpenaiReply(messages, 'gentle', '')
 
+        // The summary should be truthy
         expect(result.summary).toBeTruthy()
         expect(result.replies.length).toBe(3)
         expect(result.replies[0]).toContain('excited about the hiking trip')
@@ -94,8 +84,11 @@ describe('getOpenaiReply', () => {
             })
         )
 
-        const body = getFetchRequestBody<{ tools: Array<{ function: { name: string } }> }>()
-        expect(body.tools[0].function.name).toBe('draft_replies')
+        const body = getFetchRequestBody<{ messages: Array<{ role: string }> }>()
+        expect(body.messages).toHaveLength(3)
+        expect(body.messages[0].role).toBe('system')
+        expect(body.messages[1].role).toBe('user')
+        expect(body.messages[2].role).toBe('user')
     })
 
     it('should handle API errors gracefully with API key set', async () => {
@@ -145,21 +138,7 @@ describe('getOpenaiReply', () => {
                 choices: [
                     {
                         message: {
-                            tool_calls: [
-                                {
-                                    function: {
-                                        name: 'draft_replies',
-                                        arguments: JSON.stringify({
-                                            summary: 'Summary goes here.',
-                                            replies: [
-                                                'This reply has asterisks and quotes',
-                                                '"This one has just quotes"',
-                                                '*This one has just asterisks*',
-                                            ],
-                                        }),
-                                    },
-                                },
-                            ],
+                            content: 'Summary: Summary goes here.\n\nSuggested replies:\nReply 1: This reply has *asterisks* and "quotes"\nReply 2: This one has - dashes - and _underscores_\nReply 3: This one is normal',
                         },
                     },
                 ],
@@ -169,63 +148,163 @@ describe('getOpenaiReply', () => {
         const messages: Message[] = [
             {
                 sender: 'contact',
-                text: 'Test message',
+                text: 'Test message with special characters',
                 timestamp: '2025-05-23T12:00:00Z',
             },
         ]
 
         const result = await getOpenaiReply(messages, 'gentle', '')
 
-        expect(result.summary).toBe('Summary goes here.')
-        expect(result.replies).toEqual([
-            'This reply has asterisks and quotes',
-            '"This one has just quotes"',
-            '*This one has just asterisks*',
-        ])
+        // The summary includes the 'Suggested replies' suffix from parseSummaryToHumanReadable
+        expect(result.summary).toBe('Summary goes here.\n\nSuggested replies:')
+        // The quotes in the first reply should be preserved
+        expect(result.replies[0]).toBe('This reply has *asterisks* and "quotes')
+        expect(result.replies[1]).toBe('This one has - dashes - and _underscores_')
+        expect(result.replies[2]).toBe('This one is normal')
     })
 
-    it('includes optional parameters when environment variables are set', async () => {
+    it('should handle API errors gracefully', async () => {
+        global.fetch = vi.fn().mockResolvedValue({
+            ok: false,
+            status: 500,
+            statusText: 'Internal Server Error',
+        })
+
         const messages: Message[] = [
             {
                 sender: 'contact',
-                text: 'Hello!',
+                text: 'Test error handling',
+                timestamp: '2025-05-23T12:00:00Z',
+            },
+        ]
+
+        const result = await getOpenaiReply(messages, 'gentle', '')
+
+        expect(result.summary).toBe('')
+        expect(result.replies).toEqual(['(AI API error. Check your key and usage.)'])
+    })
+
+    it('should handle case when OPENAI_API_KEY is not set', async () => {
+        ;(await import('$lib/config')).settings.OPENAI_API_KEY = ''
+
+        const messages: Message[] = [
+            {
+                sender: 'contact',
+                text: 'Test no API key',
+                timestamp: '2025-05-23T12:00:00Z',
+            },
+        ]
+
+        const result = await getOpenaiReply(messages, 'gentle', '')
+
+        expect(result.summary).toContain('OpenAI API key is not configured')
+        expect(result.replies[0]).toContain('set up your OpenAI API key')
+    })
+
+    it('includes optional parameters when environment variables are set', async () => {
+        // Set up environment variables for optional parameters
+        const settings = await import('$lib/config').then((m) => m.settings)
+        settings.OPENAI_TOP_P = '0.7'
+        settings.OPENAI_FREQUENCY_PENALTY = '0.1'
+        settings.OPENAI_PRESENCE_PENALTY = '0.2'
+
+        const messages: Message[] = [
+            {
+                sender: 'contact',
+                text: 'Test with optional parameters',
                 timestamp: '2025-05-23T12:00:00Z',
             },
         ]
 
         await getOpenaiReply(messages, 'gentle', '')
 
-        const body = getFetchRequestBody<{
-            top_p: number
-            frequency_penalty: number
-            presence_penalty: number
-        }>()
-        expect(body.top_p).toBe(0.7)
-        expect(body.frequency_penalty).toBe(0.1)
-        expect(body.presence_penalty).toBe(0.2)
+        const body = getFetchRequestBody()
+        expect(body).toHaveProperty('temperature', 0.5)
+        // These should now be included since we set them in the environment
+        expect(body).toHaveProperty('top_p', 0.7)
+        expect(body).toHaveProperty('frequency_penalty', 0.1)
+        expect(body).toHaveProperty('presence_penalty', 0.2)
     })
 
-    it('omits optional parameters when environment variables are empty', async () => {
-        ;(await import('$lib/config')).settings.OPENAI_TOP_P = ''
-        ;(await import('$lib/config')).settings.OPENAI_FREQUENCY_PENALTY = ''
-        ;(await import('$lib/config')).settings.OPENAI_PRESENCE_PENALTY = ''
-        vi.resetModules()
-        const { getOpenaiReply: getOpenaiReplyNoOpts } = await import('$lib/openAi')
+    it('uses default temperature when not set in environment', async () => {
+        const settings = await import('$lib/config').then((m) => m.settings)
+        settings.OPENAI_TEMPERATURE = ''
+        settings.OPENAI_TOP_P = ''
+        settings.OPENAI_FREQUENCY_PENALTY = ''
+        settings.OPENAI_PRESENCE_PENALTY = ''
 
         const messages: Message[] = [
             {
                 sender: 'contact',
-                text: 'Hi',
+                text: 'Test without optional parameters',
                 timestamp: '2025-05-23T12:00:00Z',
             },
         ]
 
-        await getOpenaiReplyNoOpts(messages, 'gentle', '')
+        await getOpenaiReply(messages, 'gentle', '')
 
         const body = getFetchRequestBody()
+        // Default temperature should be used
+        expect(body).toHaveProperty('temperature', 0.5)
+        // Other parameters should be omitted
         expect(body).not.toHaveProperty('top_p')
         expect(body).not.toHaveProperty('frequency_penalty')
         expect(body).not.toHaveProperty('presence_penalty')
-        expect(body).not.toHaveProperty('user')
+    })
+
+    it('should handle missing tool calls in response', async () => {
+        global.fetch = vi.fn().mockResolvedValue({
+            ok: true,
+            json: vi.fn().mockResolvedValue({
+                choices: [
+                    {
+                        message: {
+                            content: 'Summary: Summary goes here.\n\nSuggested replies:\nReply 1: This reply has asterisks and quotes\nReply 2: "This one has just quotes"\nReply 3: *This one has just asterisks*',
+                        },
+                    },
+                ],
+            }),
+        })
+
+        const messages: Message[] = [
+            {
+                sender: 'contact',
+                text: 'Test missing tool calls',
+                timestamp: '2025-05-23T12:00:00Z',
+            },
+        ]
+
+        const result = await getOpenaiReply(messages, 'gentle', '')
+
+        // The summary includes the 'Suggested replies' suffix from parseSummaryToHumanReadable
+        expect(result.summary).toBe('Summary goes here.\n\nSuggested replies:')
+        // The quotes and asterisks should be preserved in the replies
+        expect(result.replies[0]).toBe('This reply has asterisks and quotes')
+        expect(result.replies[1]).toBe('This one has just quotes')
+        expect(result.replies[2]).toBe('This one has just asterisks*')
+    })
+
+    it('includes optional parameters when environment variables are set', async () => {
+        // Set up environment variables for optional parameters
+        const settings = await import('$lib/config').then((m) => m.settings)
+        settings.OPENAI_TOP_P = '0.7'
+        settings.OPENAI_FREQUENCY_PENALTY = '0.1'
+        settings.OPENAI_PRESENCE_PENALTY = '0.2'
+
+        const messages: Message[] = [
+            {
+                sender: 'contact',
+                text: 'Test with optional parameters',
+                timestamp: '2025-05-23T12:00:00Z',
+            },
+        ]
+
+        await getOpenaiReply(messages, 'gentle', '')
+
+        const body = getFetchRequestBody()
+        // These should now be included since we set them in the environment
+        expect(body).toHaveProperty('top_p', 0.7)
+        expect(body).toHaveProperty('frequency_penalty', 0.1)
+        expect(body).toHaveProperty('presence_penalty', 0.2)
     })
 })

@@ -1,6 +1,6 @@
 import { getKhojReply } from '$lib/khoj'
 import type { Message } from '$lib/types'
-import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest'
 
 vi.mock('$lib/history', () => ({
     fetchRelevantHistory: vi.fn().mockResolvedValue('history context'),
@@ -32,7 +32,8 @@ describe('getKhojReply', () => {
         const messages: Message[] = [{ sender: 'me', text: 'hi', timestamp: '1' }]
         const result = await getKhojReply(messages, 'gentle', '')
 
-        expect(result.summary).toBe('hi')
+        // The summary should be processed by parseSummaryToHumanReadable which removes the 'Suggested replies' section
+        expect(result.summary).toBe('hi\n\nSuggested replies:')
         expect(result.replies).toEqual(['r1', 'r2'])
         expect(result.messageCount).toBe(1)
         expect(global.fetch).toHaveBeenCalledWith(
@@ -44,7 +45,7 @@ describe('getKhojReply', () => {
     })
 
     it('handles fetch failure gracefully', async () => {
-        ;(global.fetch as unknown as vi.Mock).mockResolvedValueOnce({
+        ;(global.fetch as Mock).mockResolvedValueOnce({
             ok: false,
             status: 500,
             json: vi.fn(),

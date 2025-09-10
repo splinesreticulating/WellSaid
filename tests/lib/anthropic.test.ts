@@ -1,6 +1,6 @@
 import { getAnthropicReply } from '$lib/anthropic'
 import type { Message } from '$lib/types'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest'
 
 vi.mock('$lib/history', () => ({
     fetchRelevantHistory: vi.fn().mockResolvedValue('history context'),
@@ -38,7 +38,8 @@ describe('getAnthropicReply', () => {
         const messages: Message[] = [{ sender: 'me', text: 'hi', timestamp: '1' }]
         const result = await getAnthropicReply(messages, 'gentle', '')
 
-        expect(result.summary).toBe('hi')
+        // The summary should be processed by parseSummaryToHumanReadable which removes the 'Suggested replies' section
+        expect(result.summary).toBe('hi\n\nSuggested replies:')
         expect(result.replies).toEqual(['r1', 'r2'])
         expect(global.fetch).toHaveBeenCalledWith(
             'https://api.anthropic.com/v1/messages',
@@ -47,7 +48,7 @@ describe('getAnthropicReply', () => {
     })
 
     it('handles fetch failure gracefully', async () => {
-        ;(global.fetch as unknown as vi.Mock).mockResolvedValueOnce({
+        ;(global.fetch as Mock).mockResolvedValueOnce({
             ok: false,
             status: 500,
             json: vi.fn(),

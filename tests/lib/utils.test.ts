@@ -12,7 +12,6 @@ describe('parseSummaryToHumanReadable', () => {
     it('should extract summary from text with "Summary:" prefix', () => {
         const rawOutput = `Summary: This is a summary of the conversation.
 
-Suggested replies:
 Reply 1: First reply
 Reply 2: Second reply`
 
@@ -26,7 +25,6 @@ This is a summary.
 It spans multiple lines.
 It has details about the conversation.
 
-Suggested replies:
 Reply 1: First reply`
 
         const result = parseSummaryToHumanReadable(rawOutput)

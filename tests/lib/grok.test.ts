@@ -28,17 +28,7 @@ describe('getGrokReply', () => {
                 choices: [
                     {
                         message: {
-                            tool_calls: [
-                                {
-                                    function: {
-                                        name: 'draft_replies',
-                                        arguments: JSON.stringify({
-                                            summary: 'sum',
-                                            replies: ['r1', 'r2', 'r3'],
-                                        }),
-                                    },
-                                },
-                            ],
+                            content: 'Summary: sum\n\nSuggested replies:\nReply 1: r1\nReply 2: r2\nReply 3: r3',
                         },
                     },
                 ],
@@ -50,7 +40,8 @@ describe('getGrokReply', () => {
         const messages: Message[] = [{ sender: 'me', text: 'hi', timestamp: '1' }]
         const result = await getGrokReply(messages, 'gentle', '')
 
-        expect(result.summary).toBe('sum')
+        // The summary should be processed by parseSummaryToHumanReadable which removes the 'Suggested replies' section
+        expect(result.summary).toBe('sum\n\nSuggested replies:')
         expect(result.replies).toEqual(['r1', 'r2', 'r3'])
         expect(global.fetch).toHaveBeenCalled()
     })

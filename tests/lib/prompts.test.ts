@@ -12,7 +12,7 @@ describe('prompts', () => {
         it('should include custom context and instructions', () => {
             expect(systemContext()).toContain('Test custom context for prompts')
             expect(systemContext()).toContain(
-                'mimic my vocabulary and tone when suggesting replies'
+                'mimic my specific vocabulary, sentence structure, and communication style when suggesting replies'
             )
         })
     })
@@ -21,24 +21,24 @@ describe('prompts', () => {
         it('should generate prompt with tone and no context', () => {
             const result = openAiPrompt('gentle', '')
 
-            expect(result).toContain('Given the conversation above')
-            expect(result).toContain('Suggest 3 replies that I might send')
-            expect(result).toContain('one short reply, one medium-length reply, and one long reply')
-            expect(result).toContain('Always use this tone when drafting replies: gentle')
-            expect(result).not.toContain('Extra context:')
-            expect(result).not.toContain('Summary:')
-            expect(result).not.toContain('Suggested replies:')
+            expect(result).toContain('Given the conversation above, provide a brief summary')
+            expect(result).toContain('Then suggest 3 possible replies I might send')
+            expect(result).toContain('- Short (1-2 sentences)')
+            expect(result).toContain('- Medium (3-4 sentences)')
+            expect(result).toContain('- Long (5+ sentences)')
+            expect(result).toContain('For all replies, maintain the following tone: gentle')
+            expect(result).not.toContain('Additional context to consider:')
+            expect(result).toContain('Summary:')
         })
 
         it('should generate prompt with tone and context', () => {
             const context = 'Previous conversation about weekend plans'
             const result = openAiPrompt('professional', context)
 
-            expect(result).toContain('Suggest 3 replies that I might send')
-            expect(result).toContain('Extra context: ' + context)
-            expect(result).toContain('Always use this tone when drafting replies: professional')
-            expect(result).not.toContain('Summary:')
-            expect(result).not.toContain('Suggested replies:')
+            expect(result).toContain('Given the conversation above, provide a brief summary')
+            expect(result).toContain('Additional context to consider: ' + context)
+            expect(result).toContain('For all replies, maintain the following tone: professional')
+            expect(result).toContain('Summary:')
         })
 
         it('should handle different tone types', () => {
@@ -46,9 +46,9 @@ describe('prompts', () => {
 
             tones.forEach((tone) => {
                 const result = openAiPrompt(tone, '')
-                expect(result).toContain('Suggest 3 replies that I might send')
-                expect(result).toContain(`brief summary including the emotional tone`)
-                expect(result).toContain(`Always use this tone when drafting replies: ${tone}`)
+                expect(result).toContain('Given the conversation above, provide a brief summary')
+                expect(result).toContain('Then suggest 3 possible replies I might send')
+                expect(result).toContain(`For all replies, maintain the following tone: ${tone}`)
             })
         })
     })
@@ -64,16 +64,16 @@ describe('prompts', () => {
             const result = khojPrompt(mockConversation, 'gentle', '')
 
             expect(result).toContain(systemContext())
-            expect(result).toContain('Here is a conversation between me and someone else:')
+            expect(result).toContain('Here are some text messages between my partner and I:')
             expect(result).toContain('me: Hey, how was your day?')
             expect(result).toContain('them: It was great! How about yours?')
             expect(result).toContain('me: Pretty good, thanks for asking')
-            expect(result).toContain('Suggest 3 replies that I might send')
+            expect(result).toContain('Given the conversation above, provide a brief summary')
+            expect(result).toContain('Then suggest 3 possible replies I might send')
             expect(result).toContain('Summary:')
-            expect(result).toContain('Suggested replies:')
-            expect(result).toContain('Reply 1:')
-            expect(result).toContain('Reply 2:')
-            expect(result).toContain('Reply 3:')
+            expect(result).toContain('Reply 1 (Short):')
+            expect(result).toContain('Reply 2 (Medium):')
+            expect(result).toContain('Reply 3 (Long):')
             expect(result).not.toContain('Extra context:')
         })
 
@@ -83,23 +83,22 @@ describe('prompts', () => {
 
             expect(result).toContain(systemContext())
             expect(result).toContain('me: Hey, how was your day?')
-            expect(result).toContain('Suggest 3 replies that I might send')
-            expect(result).toContain('Extra context: ' + context)
+            expect(result).toContain('Given the conversation above, provide a brief summary')
+            expect(result).toContain('Additional context to consider: ' + context)
             expect(result).toContain('Summary:')
-            expect(result).toContain('Suggested replies:')
-            expect(result).toContain('Reply 1:')
-            expect(result).toContain('Reply 2:')
-            expect(result).toContain('Reply 3:')
+            expect(result).toContain('Reply 1 (Short):')
+            expect(result).toContain('Reply 2 (Medium):')
+            expect(result).toContain('Reply 3 (Long):')
         })
 
         it('should handle empty conversation', () => {
             const result = khojPrompt([], 'gentle', '')
 
             expect(result).toContain(systemContext())
-            expect(result).toContain('Here is a conversation between me and someone else:')
-            expect(result).toContain('Suggest 3 replies that I might send')
+            expect(result).toContain('Here are some text messages between my partner and I:')
+            expect(result).toContain('Given the conversation above, provide a brief summary')
+            expect(result).toContain('Then suggest 3 possible replies I might send')
             expect(result).toContain('Summary:')
-            expect(result).toContain('Suggested replies:')
             // Check that there are no actual message lines (empty conversation)
             expect(result).not.toContain('\nme: ')
             expect(result).not.toContain('\ncontact: ')
@@ -113,10 +112,9 @@ describe('prompts', () => {
 
             expect(result).toContain('me: Hello there!')
             expect(result).toContain('Summary:')
-            expect(result).toContain('Suggested replies:')
-            expect(result).toContain('Reply 1:')
-            expect(result).toContain('Reply 2:')
-            expect(result).toContain('Reply 3:')
+            expect(result).toContain('Reply 1 (Short):')
+            expect(result).toContain('Reply 2 (Medium):')
+            expect(result).toContain('Reply 3 (Long):')
             expect(result).not.toContain('contact:')
         })
 
@@ -151,10 +149,9 @@ describe('prompts', () => {
 
             // Only khojPrompt should include the full response format
             expect(khojResult).toContain('Summary:')
-            expect(khojResult).toContain('Suggested replies:')
-            expect(khojResult).toContain('Reply 1:')
-            expect(khojResult).toContain('Reply 2:')
-            expect(khojResult).toContain('Reply 3:')
+            expect(khojResult).toContain('Reply 1 (Short):')
+            expect(khojResult).toContain('Reply 2 (Medium):')
+            expect(khojResult).toContain('Reply 3 (Long):')
 
             // Both should include the context when provided
             expect(openAiResult).toContain('test context')
