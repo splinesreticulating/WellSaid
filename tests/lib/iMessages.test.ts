@@ -48,12 +48,14 @@ describe('queryMessagesDb', () => {
                     text: 'Hello from me',
                     contact_id: '+1234567890',
                     is_from_me: 1,
+                    guid: 'guid-1',
                 },
                 {
                     timestamp: '2025-05-23T12:00:00.000Z',
                     text: 'Hello from them',
                     contact_id: '+1234567890',
                     is_from_me: 0,
+                    guid: 'guid-2',
                 },
             ]),
             close: vi.fn().mockResolvedValue(undefined),
@@ -67,6 +69,7 @@ describe('queryMessagesDb', () => {
         const result = await queryMessagesDb(startDate, endDate)
 
         expect(result.messages.length).toBe(2)
+        expect(result.embeddableMessages.length).toBe(2)
         // After .reverse() in the implementation, the first message should be from them
         // Instead of asserting the exact sender (which depends on the implementation),
         // we'll just check that the text and timestamp match what we expect
@@ -93,12 +96,14 @@ describe('queryMessagesDb', () => {
                     text: 'Hello from me',
                     contact_id: '+1234567890',
                     is_from_me: 1,
+                    guid: 'guid-3',
                 },
                 {
                     timestamp: '2025-05-23 12:02:00',
                     text: 'Another message from me',
                     contact_id: '+1234567890',
                     is_from_me: 1,
+                    guid: 'guid-4',
                 },
             ]),
             close: vi.fn().mockResolvedValue(undefined),

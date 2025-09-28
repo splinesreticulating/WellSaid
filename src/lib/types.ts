@@ -10,6 +10,7 @@ export interface MessageRow {
     date: string
     contact_id?: string
     timestamp: string
+    guid: string
 }
 
 export interface PageData {
@@ -34,4 +35,18 @@ export interface OpenAIConfig {
     presencePenalty?: number
     apiUrl: string
     apiKey?: string
+}
+
+export interface MessageEmbeddingInput {
+    message_id: string
+    thread_id: string
+    ts: string
+    sender: string
+    text: string
+}
+
+export interface SimilarMessageSnippet {
+    text: string
+    ts: string
+    sender: string
 }

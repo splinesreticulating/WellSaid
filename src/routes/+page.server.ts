@@ -1,5 +1,5 @@
 import { getAnthropicReply } from '$lib/anthropic'
-import { getAllSettings, updateSetting } from '$lib/config'
+import { getAllSettings, settings, updateSetting } from '$lib/config'
 import { getGrokReply } from '$lib/grok'
 import { queryMessagesDb } from '$lib/iMessages'
 import { getKhojReply } from '$lib/khoj'
@@ -8,6 +8,8 @@ import { getOpenaiReply } from '$lib/openAi'
 import { DEFAULT_PROVIDER } from '$lib/provider'
 import { getAvailableProviders, hasMultipleProviders } from '$lib/providers/registry'
 import type { Message, ToneType } from '$lib/types'
+import { indexMessages } from '$lib/server/indexMessages'
+import { getSimilarMessages } from '$lib/server/getSimilarMessages'
 import { fail } from '@sveltejs/kit'
 import type { Actions, PageServerLoad } from './$types'
 
@@ -17,16 +19,25 @@ export const load: PageServerLoad = async ({ url }) => {
     const lookBack = Number.parseInt(url.searchParams.get('lookBackHours') || '1')
     const end = new Date()
     const start = new Date(end.getTime() - lookBack * ONE_HOUR)
-    const { messages } = await queryMessagesDb(start.toISOString(), end.toISOString())
-    const settings = await getAllSettings()
+    const { messages, embeddableMessages = [] } = await queryMessagesDb(
+        start.toISOString(),
+        end.toISOString()
+    )
+    const currentSettings = await getAllSettings()
     const availableProviders = getAvailableProviders()
+
+    try {
+        await indexMessages(embeddableMessages)
+    } catch (error) {
+        logger.error({ error }, 'Failed to index messages during load')
+    }
 
     return {
         messages,
         multiProvider: hasMultipleProviders(),
         defaultProvider: DEFAULT_PROVIDER || '', // Handle null case
         availableProviders,
-        settings,
+        settings: currentSettings,
     }
 }
 
@@ -68,7 +79,12 @@ export const actions: Actions = {
                 })
             }
 
-            const result = await getReplies(messages, tone, context || '')
+            const augmentedContext = await buildContextWithSimilarSnippets(
+                messages,
+                context || ''
+            )
+
+            const result = await getReplies(messages, tone, augmentedContext)
             logger.debug({ resultFromService: result }, 'Result received from AI service in action')
 
             // Return the result directly - SvelteKit handles the JSON serialization
@@ -111,4 +127,36 @@ export const actions: Actions = {
             })
         }
     },
+}
+
+const buildContextWithSimilarSnippets = async (
+    messages: Message[],
+    baseContext: string
+): Promise<string> => {
+    const threadId = settings.CONTACT_PHONE
+    const lastMessage = messages.at(-1)
+
+    if (!threadId || !lastMessage?.text?.trim()) {
+        return baseContext
+    }
+
+    try {
+        const snippets = await getSimilarMessages(lastMessage.text, threadId, 5)
+
+        if (!snippets.length) {
+            return baseContext
+        }
+
+        const snippetLines = snippets.map((snippet) => {
+            const timestamp = new Date(snippet.ts).toISOString()
+            return `- ${snippet.sender} (${timestamp}): ${snippet.text}`
+        })
+
+        const semanticContext = ['Similar Past Snippets:', ...snippetLines].join('\n')
+
+        return [baseContext, semanticContext].filter(Boolean).join('\n\n')
+    } catch (error) {
+        logger.error({ error }, 'Failed to fetch similar messages for context')
+        return baseContext
+    }
 }

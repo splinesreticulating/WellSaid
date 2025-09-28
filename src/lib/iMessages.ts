@@ -1,5 +1,5 @@
 import { settings } from '$lib/config'
-import type { MessageRow } from '$lib/types'
+import type { Message, MessageEmbeddingInput, MessageRow } from '$lib/types'
 import os from 'node:os'
 import path from 'node:path'
 import { open } from 'sqlite'
@@ -22,7 +22,8 @@ const buildQuery = (startDate: string, endDate: string) => {
             datetime(message.date / 1000000000 + strftime('%s', '2001-01-01'), 'unixepoch') AS timestamp,
             message.text AS text,
             handle.id AS contact_id,
-            message.is_from_me
+            message.is_from_me,
+            message.guid AS guid
         FROM message
         JOIN handle ON message.handle_id = handle.ROWID
         WHERE message.text IS NOT NULL
@@ -50,10 +51,27 @@ const formatMessages = (rows: MessageRow[]) => {
         .reverse() // Reverse to get chronological order
 }
 
-export const queryMessagesDb = async (startDate: string, endDate: string) => {
+const mapEmbeddableMessages = (rows: MessageRow[]): MessageEmbeddingInput[] => {
+    return rows.map((row) => ({
+        message_id: row.guid,
+        thread_id: row.contact_id ?? settings.CONTACT_PHONE ?? 'unknown',
+        ts: new Date(row.timestamp.endsWith('Z') ? row.timestamp : `${row.timestamp}Z`).toISOString(),
+        sender: row.is_from_me
+            ? 'me'
+            : row.contact_id === settings.CONTACT_PHONE
+              ? 'them'
+              : row.contact_id || 'unknown',
+        text: row.text || '',
+    }))
+}
+
+export const queryMessagesDb = async (
+    startDate: string,
+    endDate: string
+): Promise<{ messages: Message[]; embeddableMessages: MessageEmbeddingInput[] }> => {
     if (!settings.CONTACT_PHONE) {
         logger.warn('CONTACT_PHONE setting not configured')
-        return { messages: [] }
+        return { messages: [], embeddableMessages: [] }
     }
 
     const db = await open({ filename: CHAT_DB_PATH, driver: sqlite3.Database })
@@ -64,12 +82,16 @@ export const queryMessagesDb = async (startDate: string, endDate: string) => {
         logger.info({ count: rows.length, handleId: settings.CONTACT_PHONE }, 'Fetched messages')
 
         const formattedMessages = formatMessages(rows)
+        const embeddableMessages = mapEmbeddableMessages(rows)
 
         // Return empty array if there are no messages from the contact
-        return { messages: hasContactMessages(formattedMessages) ? formattedMessages : [] }
+        return {
+            messages: hasContactMessages(formattedMessages) ? formattedMessages : [],
+            embeddableMessages,
+        }
     } catch (error) {
         logger.error({ error }, 'Error querying messages database')
-        return { messages: [] }
+        return { messages: [], embeddableMessages: [] }
     } finally {
         await db.close()
     }
