@@ -4,6 +4,8 @@ import * as queryDb from '$lib/iMessages'
 import * as khoj from '$lib/khoj'
 import * as openai from '$lib/openAi'
 import * as registry from '$lib/providers/registry'
+import * as indexer from '$lib/server/indexMessages'
+import * as semantic from '$lib/server/getSimilarMessages'
 import type { RequestEvent } from '@sveltejs/kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import * as serverModule from '../../../src/routes/+page.server'
@@ -21,6 +23,7 @@ vi.mock('$lib/provider', () => ({
 }))
 vi.mock('$lib/config', () => ({
     getAllSettings: vi.fn(),
+    settings: { CONTACT_PHONE: '+15555555555' },
 }))
 vi.mock('$lib/logger', () => ({
     logger: {
@@ -29,6 +32,12 @@ vi.mock('$lib/logger', () => ({
         info: vi.fn(),
         warn: vi.fn(),
     },
+}))
+vi.mock('$lib/server/indexMessages', () => ({
+    indexMessages: vi.fn().mockResolvedValue(undefined),
+}))
+vi.mock('$lib/server/getSimilarMessages', () => ({
+    getSimilarMessages: vi.fn().mockResolvedValue([]),
 }))
 
 function createMockRequestEvent(
@@ -76,11 +85,22 @@ describe('root page server', () => {
         ])
         vi.mocked(registry.hasMultipleProviders).mockReturnValue(false)
         vi.mocked(config.getAllSettings).mockResolvedValue([])
+        vi.mocked(indexer.indexMessages).mockResolvedValue(undefined)
+        vi.mocked(semantic.getSimilarMessages).mockResolvedValue([])
     })
 
     it('load should return messages and multiProvider flag', async () => {
         vi.mocked(queryDb.queryMessagesDb).mockResolvedValue({
             messages: [{ text: 'hi', sender: 'contact', timestamp: '2025-01-01T00:00:00Z' }],
+            embeddableMessages: [
+                {
+                    message_id: 'guid-1',
+                    thread_id: '+15555555555',
+                    ts: '2025-01-01T00:00:00Z',
+                    sender: 'contact',
+                    text: 'hi',
+                },
+            ],
         })
         const event = createMockRequestEvent(new URL('https://example.com/'))
         const data = await serverModule.load(
@@ -101,6 +121,15 @@ describe('root page server', () => {
             ],
             settings: [],
         })
+        expect(indexer.indexMessages).toHaveBeenCalledWith([
+            {
+                message_id: 'guid-1',
+                thread_id: '+15555555555',
+                ts: '2025-01-01T00:00:00Z',
+                sender: 'contact',
+                text: 'hi',
+            },
+        ])
     })
 
     it('generate action should return suggestions', async () => {
@@ -155,6 +184,48 @@ describe('root page server', () => {
             [{ text: 'test', sender: 'user', timestamp: '2025-01-01T00:00:00Z' }],
             'gentle',
             'test context'
+        )
+    })
+
+    it('appends similar snippets to the context when available', async () => {
+        const mockResponse = { summary: 'sum', replies: ['r1'] }
+        vi.mocked(openai.getOpenaiReply).mockResolvedValue(mockResponse)
+        vi.mocked(semantic.getSimilarMessages).mockResolvedValue([
+            { text: 'past chat', ts: '2025-01-02T00:00:00Z', sender: 'them' },
+        ])
+
+        const messagesPayload = [
+            { text: 'draft', sender: 'user', timestamp: '2025-01-03T00:00:00Z' },
+        ]
+
+        const formData = new FormData()
+        formData.append('messages', JSON.stringify(messagesPayload))
+        formData.append('tone', 'gentle')
+        formData.append('context', 'base context')
+        formData.append('provider', 'openai')
+
+        const request = new Request('https://example.com/', { method: 'POST', body: formData })
+        const event = { ...createMockRequestEvent(new URL('https://example.com/')), request }
+
+        await serverModule.actions.generate({
+            request: event.request,
+            cookies: event.cookies,
+            fetch: event.fetch,
+            getClientAddress: event.getClientAddress,
+            locals: {},
+            params: {},
+            platform: undefined,
+            route: { id: '/' },
+            setHeaders: vi.fn(),
+            url: event.url,
+            isDataRequest: false,
+            isSubRequest: false,
+        } as unknown as Parameters<typeof serverModule.actions.generate>[0])
+
+        expect(openai.getOpenaiReply).toHaveBeenCalledWith(
+            messagesPayload,
+            'gentle',
+            'base context\n\nSimilar Past Snippets:\n- them (2025-01-02T00:00:00.000Z): past chat'
         )
     })
 
